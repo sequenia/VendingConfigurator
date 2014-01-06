@@ -12,3 +12,9 @@
 {
 	padding: 1em;
 }
+
+.recipe-selector
+{
+	width: 50%;
+	margin: 0 auto;
+}

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Мензурка</title>
+	<title>BizFlow</title>
 	<meta charset="utf-8">
 
 	<script src="jquery/jquery-2.0.3.min.js" type="text/javascript"></script>
@@ -31,7 +31,7 @@
 			<div class="row-fluid selecter-container">
 				<div class="col-xs-12 recipe-selecter">
 					<h2><b>Рецепт:</b></h2>
-					<select id="inputRecipe" class="form-control" ng-model="recipeName">
+					<select id="inputRecipe" class="form-control recipe-selector" ng-model="recipeName">
 		                <option ng-repeat="recipe in recipes">{{ recipe.name }}</option>
 		            </select>
 				</div>
