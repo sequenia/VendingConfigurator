@@ -23,8 +23,18 @@
 	<div ng-controller="CylinderCtrl">
 		<div id="converter-container" class="container-fluid">
 			<div class="row-fluid">
-				<div class="col-xs-{{ colInputType() }}" ng-repeat="input in recipes[recipeName].inputs">
-					<div cylinder type="input" label='{{input.name + " (" + input.uom + ")"}}' proportion="{{input.parts}}" having="{{input.onHand}}" critical="{{input.critical}}" accuracy="{{input.accuracy}}"></div>
+				<div class="col-xs-12 elements-container">
+					<div class="row-fluid">
+						<div class="col-xs-{{ colInputType() }}" ng-repeat="input in recipes[recipeName].inputs">
+						<div cylinder type="input" label='{{input.name + " (" + input.uom + ")"}}' proportion="{{input.parts}}" having="{{input.onHand}}" critical="{{input.critical}}" accuracy="{{input.accuracy}}"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row-fluid">
+				<div class="col-xs-12">
+					<div class="arrow-input"></div>
 				</div>
 			</div>
 
@@ -38,8 +48,18 @@
 			</div>
 
 			<div class="row-fluid">
-				<div class="col-xs-{{ colOutputType() }}" ng-repeat="output in recipes[recipeName].outputs">
-					<div cylinder type="output" label='{{output.name + " (" + output.uom + ")"}}' proportion="{{output.parts}}" rounding="{{output.rounding}}" accuracy="{{output.accuracy}}"></div>
+				<div class="col-xs-12">
+					<div class="arrow-output"></div>
+				</div>
+			</div>
+
+			<div class="row-fluid">
+				<div class="col-xs-12 elements-container">
+					<div class="row-fluid">
+						<div class="col-xs-{{ colOutputType() }}" ng-repeat="output in recipes[recipeName].outputs">
+							<div cylinder type="output" label='{{output.name + " (" + output.uom + ")"}}' proportion="{{output.parts}}" rounding="{{output.rounding}}" accuracy="{{output.accuracy}}"></div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
