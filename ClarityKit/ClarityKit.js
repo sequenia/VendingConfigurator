@@ -90,13 +90,13 @@
     touchDidMove: function (touches) 
     {
       var value = this.valueAtMouseDown + touches.translation.x / 5 * this.step;
-      this.updateRolloverEffects();
       var setter = this.setter;
       value = ((value / this.step).round() * this.step).limit(this.min, this.max);
       var scope = angular.element(this.element).scope();
       scope.$apply(function() {
         scope[setter](value);
       }); 
+      this.updateRolloverEffects();
     },
     
     touchDidGoUp: function (touches) 
