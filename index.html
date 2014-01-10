@@ -7,6 +7,10 @@
 	<script src="jquery/jquery-2.0.3.min.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 	<script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="bootstrap/js/tab.js" type="text/javascript"></script>
+
+	<script src="flot/jquery.flot.min.js" type="text/javascript"></script>
+	<script src="flot/jquery.flot.resize.min.js" type="text/javascript"></script>
 
 	<script src="angular/angular.min.js" type="text/javascript"></script>
 	<script src="angular/cylinder/mootools.js" type="text/javascript"></script>
@@ -14,56 +18,139 @@
 	<script src="angular/cylinder/cylinder.js" type="text/javascript"></script>
 	<link   href="angular/cylinder/cylinder.css" type="text/css" rel="stylesheet">
 	<script src="ctrl.js" type="text/javascript"></script>
+	<script src="atdctrl.js" type="text/javascript"></script>
+
+	<script type="text/javascript" src="Clarity.js"></script>
+	<link rel="stylesheet" href="ClarityKit/ClarityKit.css" type="text/css">
+    <script type="text/javascript" src="ClarityKit/ClarityKit.js"></script>
 
 	<link rel="stylesheet" href="main.css">
 	<script src="main.js" type="text/javascript"></script>
 </head>
 <body>
-	<div ng-app="app">
-	<div ng-controller="CylinderCtrl">
-		<div id="converter-container" class="container-fluid">
-			<div class="row-fluid">
-				<div class="col-xs-12 elements-container">
+
+	<ul class="nav nav-tabs">
+	    <li class="active"><a href="#production" data-toggle="tab">Производство</a></li>
+	    <li><a href="#atd" data-toggle="tab">АЦП</a></li>
+	</ul>
+
+	<div class="tab-content">
+	    <div class="tab-pane active" id="production">
+
+	    	<br/>
+	    	<div id="app">
+			<div ng-controller="CylinderCtrl">
+				<div id="production-container" class="container-fluid">
 					<div class="row-fluid">
-						<div class="col-xs-{{ colInputType() }}" ng-repeat="input in recipes[recipeName].inputs">
-						<div cylinder type="input" label='{{input.name + " (" + input.uom + ")"}}' proportion="{{input.parts}}" having="{{input.onHand}}" critical="{{input.critical}}" accuracy="{{input.accuracy}}"></div>
+						<div class="col-xs-12 elements-container">
+							<div class="row-fluid">
+								<div class="col-xs-{{ colInputType() }}" ng-repeat="input in recipes[recipeName].inputs">
+								<div cylinder type="input" label='{{input.name + " (" + input.uom + ")"}}' proportion="{{input.parts}}" having="{{input.onHand}}" critical="{{input.critical}}" accuracy="{{input.accuracy}}"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row-fluid">
+						<div class="col-xs-12">
+							<div class="arrow-input"></div>
+						</div>
+					</div>
+
+					<div class="row-fluid selecter-container">
+						<div class="col-xs-12 recipe-selecter">
+							<h2><b>Рецепт:</b></h2>
+							<select id="inputRecipe" class="form-control recipe-selector" ng-model="recipeName">
+				                <option ng-repeat="recipe in recipes">{{ recipe.name }}</option>
+				            </select>
+						</div>
+					</div>
+
+					<div class="row-fluid">
+						<div class="col-xs-12">
+							<div class="arrow-output"></div>
+						</div>
+					</div>
+
+					<div class="row-fluid">
+						<div class="col-xs-12 elements-container">
+							<div class="row-fluid">
+								<div class="col-xs-{{ colOutputType() }}" ng-repeat="output in recipes[recipeName].outputs">
+									<div cylinder type="output" label='{{output.name + " (" + output.uom + ")"}}' proportion="{{output.parts}}" rounding="{{output.rounding}}" accuracy="{{output.accuracy}}"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+		    </div>    
 
-			<div class="row-fluid">
-				<div class="col-xs-12">
-					<div class="arrow-input"></div>
-				</div>
-			</div>
+	    </div>
+	    <div class="tab-pane" id="atd">
 
-			<div class="row-fluid selecter-container">
-				<div class="col-xs-12 recipe-selecter">
-					<h2><b>Рецепт:</b></h2>
-					<select id="inputRecipe" class="form-control recipe-selector" ng-model="recipeName">
-		                <option ng-repeat="recipe in recipes">{{ recipe.name }}</option>
-		            </select>
-				</div>
-			</div>
+	    	<div id="converter">
+			<div ng-controller="ConverterCtrl">
+				<div id="converter-container" class="container">
+					<br/>
+					<div class="row">
+						<div class="col-xs-12 info-page">
+							<div class="info-container">
+								Аналого-цифровое преобразование сигнала включает в себя два этапа:
+								<ul>
+								<li>Дискретизация сигнала (во времени или пространстве)</li>
+								<li>Квантование по уровню</li>
+								</ul>
+								На этапе дискретизации берутся отсчёты сигнала с некоторым периодом дискретизации (Т = {{ digital.samplingPeriod }}). 
+								<div class="ValueDragContainer"><span class="ValueDrag" data-step="0.1" data-min="0.1" data-setter="setSamplingFrqnc" data-getter="getSamplingFrqnc" data-label="Частоту дискретизации">{{ digital.samplingFrqnc }}</span></div> можно определить по формуле f = 1 / T.<br/>
 
-			<div class="row-fluid">
-				<div class="col-xs-12">
-					<div class="arrow-output"></div>
-				</div>
-			</div>
+								Количество уровней квантования определяется по формуле N = 2^n = {{ digital.quantLvls }}.
+								<ul>
+								<li>n — <div class="ValueDragContainer"><span class="ValueDrag" data-min="0" data-max="12" data-setter="setDigitCount" data-getter="getDigitCount" data-label="количество разрядов">{{ digital.digitCount }}</span></div></li>
+								<li>N — уровень квантования</li>
+								</ul>
+							</div>
 
-			<div class="row-fluid">
-				<div class="col-xs-12 elements-container">
-					<div class="row-fluid">
-						<div class="col-xs-{{ colOutputType() }}" ng-repeat="output in recipes[recipeName].outputs">
-							<div cylinder type="output" label='{{output.name + " (" + output.uom + ")"}}' proportion="{{output.parts}}" rounding="{{output.rounding}}" accuracy="{{output.accuracy}}"></div>
+							<div class="row">
+								<div class="col-xs-2">
+									<div class="device">
+										<div class="device-info">
+											<b>Генератор</b>
+											<span class="ValueDrag" style="width: 100%;" data-setter="setAmplitude" data-getter="getAmplitude" data-label="Амплитуда">{{ analog.amplitude }}</span>
+											<span class="ValueDrag" style="width: 100%;" data-step="0.1" data-min="0.1" data-setter="setCyclicFrqnc" data-getter="getCyclicFrqnc" data-label="Циклическая частота">{{ analog.cyclicFrqnc }}</span>
+											<span class="ValueDrag" style="width: 100%;" data-max="120" data-setter="setTimeLimit" data-getter="getTimeLimit" data-label="Временной предел">{{ timeLimit }}</span>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-4">
+									<div class="signal-container">
+										<div id="analog" class="signal-placeholder"></div>
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<div class="device"><div class="device-info">АЦП</div></div>
+								</div>
+								<div class="col-xs-4">
+									<div class="signal-container">
+										<div id="digital" class="signal-placeholder"></div>
+									</div>
+								</div>
+							</div>
+
+							<div class="info-container">
+								Процесс получения отсчёта входного сигнала должен занимать очень малую часть периода дискретизации, что бы снизить динамические ошибки преобразования, обусловленные изменением сигнала за время снятия отсчёта.
+
+								Частота дискретизации выбирается из теоремы Котельникова. В ней утверждается, что для того что бы по отсчётам сигнала можно было бы сколь угодно точно восстановить непрерывный сигнал необходимо что бы частота дискретизации не менее чем в два раза превосходила верхнюю частоту спектра дискретизируемого сигнала.<br/><br/>
+
+								Выбор количества уровней квантования сигналов производится на основе компромиссного подхода, учитывающего с одной стороны необходимость достаточно точного представления сигнала, что требует большого числа уровней квантования, а с другой стороны количество уровней квантования должно быть меньше, что бы разрядность кода была минимальной.
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		    </div>
+
+	    </div>
 	</div>
-    </div>    
+
 </body>
 </html>

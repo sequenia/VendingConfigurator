@@ -1,4 +1,4 @@
-var app = angular.module("app", []);
+var app = angular.module("ProductionApp", []);
 
 var CylinderCtrl = function ($scope) 
 {
