@@ -303,7 +303,7 @@ function CylinderDirective($compile)
 				function initializeDrag()
 			    {
 			        isDragging = false;
-			        new BVTouchable($(element).find('#qty')[0], drag);
+			        new BVTouchable($(element).find('#grad-cylinder')[0], drag);
 			    }
 		        
 		        initializeHover();
