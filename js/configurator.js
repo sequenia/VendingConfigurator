@@ -43,10 +43,10 @@ var ConfiguratorCtrl = function($scope) {
 			type: $scope.toolTypes.shelf,
 			name: "Полка",
 			toolClass: "shelf-tool",
-			objectClass: "shelf",
-			isTool: true
+			objectClass: "shelf"
 		}
 	};
+
 
 	$scope.onShelfDragComplete = function($data, $event, hole) {
 		console.log("onShelfDragComplete");
@@ -64,10 +64,9 @@ var ConfiguratorCtrl = function($scope) {
 
 		switch(dataType) {
 			case $scope.toolTypes.shelf:
-				if(hole.shelf === undefined || !hole.shelf.isTool) {
-					console.log("Hole is empty. Shelf added");
+				if(hole.shelf === undefined) {
+					console.log("Shelf added");
 					hole.shelf = $data;
-					hole.shelf.isTool = false;
 				}
 				break;
 		}

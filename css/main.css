@@ -33,7 +33,7 @@ body {
 
 .machine {
 	width: 400px;
-	border: 1px solid #818181;
+	border: 2px solid #818181;
 	background-color: #C7C7C7;
 
 	-moz-border-radius: 5px;
@@ -90,7 +90,7 @@ body {
 
 .hole-label {
 	position: absolute;
-	left: -20px;
+	left: -24px;
 	top: 5px;
 }
 
