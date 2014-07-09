@@ -18,34 +18,70 @@
 						{{tool.name}}
 					</div>
 					<div class="tool-container"
-					ng-drag="true"
-					ng-drag-data="tool"
-					ng-drag-success="onToolDragComplete($data, $event)"
-					ng-mousedown="onToolMouseDown(tool)"
-					ng-mouseup="onToolMouseUp(tool)">
+						ng-drag="true"
+						ng-drag-data="tool"
+						ng-drag-success="onToolDragComplete($data, $event)"
+						ng-mousedown="onToolMouseDown(tool)"
+						ng-mouseup="onToolMouseUp(tool)">
 						<div class="{{tool.toolClass}}"></div>
 					</div>
 				</li>
 			</ul>
 		</div>
 
-		<div class="machine">
+		<div class="machine" ng-show="mode == modes.machine">
 			<div class="hole"
-			ng-repeat="hole in holes"
-			ng-drop="true"
-			ng-drop-success="onHoleDropComplete($data, $event, hole)"
-			ng-class="{'not-empty': hole.shelf,
-			'tool-mouse-over': tools.shelf.mouseOver && !hole.shelf}">
+				ng-repeat="hole in holes"
+				ng-drop="true"
+				ng-drop-success="onHoleDropComplete($data, $event, hole)"
+				ng-class="{'not-empty': hole.shelf,
+				'tool-mouse-over': tools.shelf.mouseOver && !hole.shelf}">
 				<div class="circle left"></div>
 				<div class="circle right"></div>
 				<div class="hole-label">{{hole.id}}</div>
+				<div class="configure-shelf" ng-show="hole.shelf">
+					<button type="button" ng-click="configureShelf(hole.shelf)">Настроить</button>
+				</div>
 				<div class="{{hole.shelf.objectClass}}"
-				ng-show="hole.shelf"
-				ng-drag="true"
-				ng-drag-data="hole.shelf"
-				ng-drag-success="onShelfDragComplete($data, $event, hole)"
-				ng-mousedown="onToolMouseDown(tools.shelf)"
-				ng-mouseup="onToolMouseUp(tools.shelf)"></div>
+					ng-show="hole.shelf"
+					ng-drag="true"
+					ng-drag-data="hole.shelf"
+					ng-drag-success="onShelfDragComplete($data, $event, hole)"
+					ng-mousedown="onToolMouseDown(tools.shelf)"
+					ng-mouseup="onToolMouseUp(tools.shelf)"></div>
+			</div>
+		</div>
+
+		<div class="shelf-generator" ng-show="mode == modes.shelf">
+			<div class="shelf-model">
+				<div class="motor-place"></div>
+				<div class="spiral-places">
+					<div class="place-offset"></div>
+					<div class="spiral-place" ng-repeat="spiralPlace in currentShelf.spiralPlaces">
+						<div class="spiral-hole"></div>
+						<div class="rail"></div>
+					</div>
+					<div class="place-offset"></div>
+				</div>
+				<div class="single-spiral-detectors">
+					<div class="place-offset"></div>
+					<div class="single-spiral-detector"
+						ng-repeat="spiralPlace in currentShelf.spiralPlaces"
+						ng-drop="true"
+						ng-drop-success="onSpiralPlaceDropComplete($data, $event, $index)"
+						ng-class="{'not-empty': spiralPlace.item}">
+						<div class="{{spiralPlace.item.objectClass}}"
+							ng-drag="true"
+							ng-drag-data="spiralPlace.item"
+							ng-drag-success="onItemDragComplete($data, $event, spiralPlace)"></div>
+						<div class="detector-rail"
+							ng-class="{'tool-mouse-over': tools.spiral.mouseOver && !spiralPlace.item}"></div>
+					</div>
+					<div class="place-offset"></div>
+				</div>
+			</div>
+			<div class="to-machine">
+				<button type="button" ng-click="configureMachine()">К автомату</button>
 			</div>
 		</div>
 
