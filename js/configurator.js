@@ -11,12 +11,15 @@ var ConfiguratorCtrl = function($scope) {
 		shelf: 0,
 		spiral: 1,
 		splitter: 2,
-		emptity: 3
+		singleMotor: 3,
+		doubleMotor: 4,
+		emptity: 5
 	};
 
 	$scope.classes = {
 		canDrop: "can-drop",
 		canNotDrop: "can-not-drop",
+		canNotDropButShow: "can-not-drop-but-show",
 		noClass: ""
 	};
 
@@ -61,6 +64,18 @@ var ConfiguratorCtrl = function($scope) {
 				{item: undefined},
 				{item: undefined},
 				{item: undefined}
+			],
+			motorPlaces: [
+				{item: undefined},
+				{item: undefined},
+				{item: undefined},
+				{item: undefined},
+				{item: undefined},
+				{item: undefined},
+				{item: undefined},
+				{item: undefined},
+				{item: undefined},
+				{item: undefined}
 			]}
 	};
 
@@ -78,6 +93,20 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Разделитель",
 			toolClass: "splitter-tool",
 			objectClass: "splitter"
+		},
+
+		singleMotor: {
+			type: $scope.toolTypes.singleMotor,
+			name: "Мотор",
+			toolClass: "single-motor-tool",
+			objectClass: "single-motor"
+		},
+
+		doubleMotor: {
+			type: $scope.toolTypes.doubleMotor,
+			name: "Двойной мотор",
+			toolClass: "double-motor-tool",
+			objectClass: "double-motor"
 		}
 	};
 
@@ -92,6 +121,11 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.onShelfDragComplete = function($data, $event, hole) {
 		console.log("onShelfDragComplete");
 		hole.shelf = undefined;
+	};
+
+	// Вызывается, когда отпускается инструмент
+	$scope.onToolDragComplete = function($data, $event) {
+		console.log("onToolDragComplete");
 	};
 
 	// Вызывается, когда отпускается любой элемент в конфигураторе полок
@@ -205,11 +239,6 @@ var ConfiguratorCtrl = function($scope) {
 		return $scope.isSpiral(index - 2);
 	};
 
-	// Вызывается, когда отпускается инструмент
-	$scope.onToolDragComplete = function($data, $event) {
-		console.log("onToolDragComplete");
-	};
-
 	// Вызывается, когда на дырку падает инструмент
 	$scope.onHoleDropComplete = function($data, $event, hole){
 		console.log("onHoleDropComplete");
@@ -253,6 +282,23 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	};
 
+	$scope.onMotorPlaceDropComplete = function($data, $event, index) {
+		console.log("onMotorPlaceDropComplete");
+
+		var dataType = $data.type;
+		var motorPlace = $scope.currentShelf.motorPlaces[index];
+
+		switch(dataType) {
+			case $scope.toolTypes.doubleMotor:
+				if($scope.canInsertDoubleMotor(index)) {
+					console.log("Double motor added");
+					motorPlace.item = $.extend(true, {}, $data);
+					motorPlace.item.index = index;
+				}
+				break;
+		}
+	};
+
 	$scope.canInsertSplitter = function(spiralPlace) {
 		if(spiralPlace.item === undefined) {
 			return true;
@@ -289,6 +335,10 @@ var ConfiguratorCtrl = function($scope) {
 		return false;
 	};
 
+	$scope.canInsertDoubleMotor = function(index) {
+		return $scope.twoSpiralsCenter(index);
+	};
+
 	// Вызывается, когда что-то падает на мусор
 	$scope.onGarbageDropComplete = function($data, $event, hole){
 		console.log("onGarbageDropComplete");
@@ -310,6 +360,12 @@ var ConfiguratorCtrl = function($scope) {
 				$scope.addSplitterClassesToPlaces(index);
 				$scope.currentTool = $scope.tools.splitter;
 				break;
+
+			case $scope.toolTypes.doubleMotor:
+				$scope.tools.singleMotor.mouseOver = true;
+				$scope.addDoubleMotorClassesToPlaces(index);
+				$scope.currentTool = $scope.tools.doubleMotor;
+				break;
 		}
 	};
 
@@ -325,6 +381,10 @@ var ConfiguratorCtrl = function($scope) {
 
 			case $scope.toolTypes.splitter:
 				$scope.tools.splitter.mouseOver = false;
+				$scope.removeClassesFromPlaces();
+				break;
+
+			case $scope.toolTypes.doubleMotor:
 				$scope.removeClassesFromPlaces();
 				break;
 		}
@@ -361,9 +421,86 @@ var ConfiguratorCtrl = function($scope) {
 		});
 	};
 
+	$scope.addDoubleMotorClassesToPlaces = function(index) {
+		angular.forEach($scope.currentShelf.motorPlaces, function(motorPlace, idx) {
+			if($scope.twoSpiralsRight(idx) ) {
+				motorPlace.class = $scope.classes.canNotDropButShow;
+				$scope.currentShelf.motorPlaces[idx + 1].class = $scope.classes.canDrop;
+				$scope.currentShelf.motorPlaces[idx + 2].class = $scope.classes.canNotDropButShow;
+			} else {
+				if(motorPlace.class != $scope.classes.canDrop &&
+					motorPlace.class != $scope.classes.canNotDropButShow) {
+					motorPlace.class = $scope.classes.canNotDrop;
+				}
+			}
+		});
+	};
+
+	$scope.twoSpiralsRight = function(index) {
+		var length = $scope.currentShelf.motorPlaces.length;
+
+		if(index > length - 3) {
+			return false;
+		}
+
+		if($scope.currentShelf.spiralPlaces[index].item === undefined ||
+			$scope.currentShelf.spiralPlaces[index + 2].item === undefined) {
+			return false;
+		}
+
+		var twoSpirals = $scope.currentShelf.spiralPlaces[index].item.type == $scope.toolTypes.spiral &&
+						$scope.currentShelf.spiralPlaces[index + 2].item.type == $scope.toolTypes.spiral;
+		if(!twoSpirals) {
+			return false;
+		}
+
+		if($scope.currentShelf.spiralPlaces[index + 1].item === undefined) {
+			return true;
+		}
+
+		if($scope.currentShelf.spiralPlaces[index + 1].item.type == $scope.toolTypes.emptity) {
+			return true;
+		}
+
+		return false;
+	};
+
+	$scope.twoSpiralsCenter = function(index) {
+		var length = $scope.currentShelf.motorPlaces.length;
+
+		if(index === 0 || index == length - 1) {
+			return false;
+		}
+
+		if($scope.currentShelf.spiralPlaces[index - 1].item === undefined ||
+			$scope.currentShelf.spiralPlaces[index + 1].item === undefined) {
+			return false;
+		}
+
+		var twoSpirals = $scope.currentShelf.spiralPlaces[index - 1].item.type == $scope.toolTypes.spiral &&
+						$scope.currentShelf.spiralPlaces[index + 1].item.type == $scope.toolTypes.spiral;
+		if(!twoSpirals) {
+			return false;
+		}
+
+		if($scope.currentShelf.spiralPlaces[index].item === undefined) {
+			return true;
+		}
+
+		if($scope.currentShelf.spiralPlaces[index].item.type == $scope.toolTypes.emptity) {
+			return true;
+		}
+
+		return false;
+	};
+
 	$scope.removeClassesFromPlaces = function() {
 		angular.forEach($scope.currentShelf.spiralPlaces, function(spiralPlace) {
 			spiralPlace.class = $scope.classes.noClass;
+		});
+
+		angular.forEach($scope.currentShelf.motorPlaces, function(motorPlace) {
+			motorPlace.class = $scope.classes.noClass;
 		});
 	};
 

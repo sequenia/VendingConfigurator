@@ -80,6 +80,17 @@
 					</div>
 					<div class="place-offset"></div>
 				</div>
+				<div class="motor-detectors">
+					<div class="motor-offset"></div>
+					<div class="motor-detector {{motorPlace.class}}"
+						ng-class="{'tool-mouse-over': currentTool.mouseOver}"
+						ng-repeat="motorPlace in currentShelf.motorPlaces"
+						ng-drop="true"
+						ng-drop-success="onMotorPlaceDropComplete($data, $event, $index)">
+						<div class="{{motorPlace.item.objectClass}}"></div>
+					</div>
+					<div class="motor-offset"></div>
+				</div>
 			</div>
 			<div class="to-machine">
 				<button type="button" ng-click="configureMachine()">К автомату</button>

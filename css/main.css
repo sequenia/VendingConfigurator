@@ -239,6 +239,51 @@ body {
 	cursor: pointer;
 }
 
+.single-motor-tool {
+	width: 40px;
+	height: 20px;
+	background-color: #252525;
+	margin-top: -8px;
+
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+}
+
+.single-motor {
+	width: 40px;
+	height: 20px;
+	background-color: #252525;
+
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+}
+
+.double-motor-tool {
+	width: 100px;
+	height: 20px;
+	background-color: #252525;
+	margin-top: -8px;
+
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+}
+
+.double-motor {
+	width: 100px;
+	height: 20px;
+	background-color: #252525;
+	position: absolute;
+	left: -37px;
+	top: 10px;
+
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+}
+
 .garbage {
 	width: 50px;
 	border: 1px solid #818181;
@@ -313,6 +358,12 @@ body {
 	float: left;
 }
 
+.motor-offset {
+	width: 15px;
+	height: 30px;
+	float: left;
+}
+
 .spiral-hole {
 	width: 14px;
 	height: 4px;
@@ -327,9 +378,26 @@ body {
 	position: absolute;
 }
 
+.motor-detectors {
+	width: 100%;
+	height: 30px;
+	top: 30px;
+	position: absolute;
+	top: 0;
+}
+
 .single-spiral-detector {
 	width: 26px;
 	height: 370px;
+	margin-left: 2px;
+	margin-right: 2px;
+	float: left;
+	position: relative;
+}
+
+.motor-detector {
+	width: 26px;
+	height: 30px;
 	margin-left: 2px;
 	margin-right: 2px;
 	float: left;
@@ -354,6 +422,22 @@ body {
 
 .single-spiral-detector.drag-enter.can-not-drop .spiral {
 	background: #FF6060 !important;
+}
+
+.motor-detector.tool-mouse-over.can-drop {
+	background: #7076FF;
+}
+
+.motor-detector.tool-mouse-over.can-not-drop-but-show {
+	background: #7076FF;
+}
+
+.motor-detector.drag-enter.can-drop {
+	background-color: #83FF7C;
+}
+
+.motor-detector.drag-enter.can-not-drop-but-show {
+	background-color: #FF6060;
 }
 
 .rail {
