@@ -10,9 +10,8 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.toolTypes = {
 		shelf: 0,
 		spiral: 1,
-		doubleSpiral: 2,
-		splitter: 3,
-		emptity: 4
+		splitter: 2,
+		emptity: 3
 	};
 
 	$scope.classes = {
@@ -72,13 +71,6 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Спираль",
 			toolClass: "spiral-tool",
 			objectClass: "spiral"
-		},
-
-		doubleSpiral: {
-			type: $scope.toolTypes.doubleSpiral,
-			name: "Двойная спираль",
-			toolClass: "double-spiral-tool",
-			objectClass: "double-spiral"
 		},
 
 		splitter: {
