@@ -11,7 +11,8 @@ var ConfiguratorCtrl = function($scope) {
 		shelf: 0,
 		spiral: 1,
 		doubleSpiral: 2,
-		emptity: 3
+		splitter: 3,
+		emptity: 4
 	};
 
 	$scope.classes = {
@@ -78,6 +79,13 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Двойная спираль",
 			toolClass: "double-spiral-tool",
 			objectClass: "double-spiral"
+		},
+
+		splitter: {
+			type: $scope.toolTypes.splitter,
+			name: "Разделитель",
+			toolClass: "splitter-tool",
+			objectClass: "splitter"
 		}
 	};
 
@@ -102,68 +110,107 @@ var ConfiguratorCtrl = function($scope) {
 		switch(dataType) {
 			case $scope.toolTypes.spiral:
 				$scope.deleteEmptinessesOnEdges(spiralPlace.item.index);
+				spiralPlace.item = undefined;
+				break;
+
+			case $scope.toolTypes.splitter:
+				spiralPlace.item = $scope.getNewItemAfterSplitter(spiralPlace.item.index);
+				break;
+
+			default:
+				spiralPlace.item = undefined;
 				break;
 		}
-
-		spiralPlace.item = undefined;
 	};
 
 	$scope.deleteEmptinessesOnEdges = function(index) {
 		if(index > 0) {
-			$scope.deleteLeftEmptity(index);
+			if($scope.isEmptiness(index - 1)) {
+				$scope.deleteLeftEmptity(index);
+			}
 		}
 
 		if(index < $scope.currentShelf.spiralPlaces.length - 1) {
-			$scope.deleteRightEmptity(index);
+			if($scope.isEmptiness(index + 1)) {
+				$scope.deleteRightEmptity(index);
+			}
 		}
 	};
 
+	$scope.isEmptiness = function(index) {
+		var item = $scope.currentShelf.spiralPlaces[index].item;
+
+		if(item === undefined) {
+			return false;
+		}
+
+		if(item.type === $scope.toolTypes.emptity) {
+			return true;
+		}
+
+		return false;
+	};
+
+	$scope.getNewItemAfterSplitter = function(index) {
+		var newItem;
+
+		if(index > 0) {
+			if($scope.isSpiral(index - 1)) {
+				newItem = $.extend(true, {}, $scope.emptity);
+			}
+		}
+
+		if(index < $scope.currentShelf.spiralPlaces.length - 1) {
+			if($scope.isSpiral(index + 1)) {
+				newItem = $.extend(true, {}, $scope.emptity);
+			}
+		}
+
+		return newItem;
+	};
+
+	$scope.isSpiral = function(index) {
+		var item = $scope.currentShelf.spiralPlaces[index].item;
+
+		if(item === undefined) {
+			return false;
+		}
+
+		if(item.type === $scope.toolTypes.spiral) {
+			return true;
+		}
+
+		return false;
+	};
+
 	$scope.deleteLeftEmptity = function(index) {
-		if(!$scope.isThereSomethingLeft(index)) {
+		if(!$scope.isThereSpiralLeft(index)) {
 			$scope.currentShelf.spiralPlaces[index - 1].item = undefined;
 		}
 	};
 
 	$scope.deleteRightEmptity = function(index) {
-		if(!$scope.isThereSomethingRight(index)) {
+		if(!$scope.isThereSpiralRight(index)) {
 			$scope.currentShelf.spiralPlaces[index + 1].item = undefined;
 		}
 	};
 
-	$scope.isThereSomethingRight = function(index) {
+	$scope.isThereSpiralRight = function(index) {
 		var length = $scope.currentShelf.spiralPlaces.length;
 
 		if(index == length - 2) {
 			return false;
 		}
 
-		var rightItem = $scope.currentShelf.spiralPlaces[index + 2].item;
-		if(rightItem === undefined) {
-			return false;
-		}
-
-		if(rightItem.type == $scope.toolTypes.emptity) {
-			return false;
-		}
-
-		return true;
+		return $scope.isSpiral(index + 2);
 	};
 
-	$scope.isThereSomethingLeft = function(index) {
+	$scope.isThereSpiralLeft = function(index) {
 		if(index == 1) {
 			return false;
 		}
 
-		var leftItem = $scope.currentShelf.spiralPlaces[index - 2].item;
-		if(leftItem === undefined) {
-			return false;
-		}
-
-		if(leftItem.type == $scope.toolTypes.emptity) {
-			return false;
-		}
-
-		return true;
+		return $scope.isSpiral(index - 2);
 	};
 
 	// Вызывается, когда отпускается инструмент
@@ -203,17 +250,51 @@ var ConfiguratorCtrl = function($scope) {
 					$scope.addEmptinessesOnEdges(index);
 				}
 				break;
+
+			case $scope.toolTypes.splitter:
+				if($scope.canInsertSplitter(spiralPlace)) {
+					console.log("Splitter added");
+					spiralPlace.item = $.extend(true, {}, $data);
+					spiralPlace.item.index = index;
+				}
+				break;
 		}
+	};
+
+	$scope.canInsertSplitter = function(spiralPlace) {
+		if(spiralPlace.item === undefined) {
+			return true;
+		}
+
+		if(spiralPlace.item.type == $scope.toolTypes.emptity) {
+			return true;
+		}
+
+		return false;
 	};
 
 	$scope.addEmptinessesOnEdges = function(index) {
 		if(index > 0) {
-			$scope.currentShelf.spiralPlaces[index - 1].item = $.extend(true, {}, $scope.emptity);
+			if($scope.canAddEmptiness(index - 1)) {
+				$scope.currentShelf.spiralPlaces[index - 1].item = $.extend(true, {}, $scope.emptity);
+			}
 		}
 
 		if(index < $scope.currentShelf.spiralPlaces.length - 1) {
-			$scope.currentShelf.spiralPlaces[index + 1].item = $.extend(true, {}, $scope.emptity);
+			if($scope.canAddEmptiness(index + 1)) {
+				$scope.currentShelf.spiralPlaces[index + 1].item = $.extend(true, {}, $scope.emptity);
+			}
 		}
+	};
+
+	$scope.canAddEmptiness = function(index) {
+		var item = $scope.currentShelf.spiralPlaces[index].item;
+
+		if(item === undefined) {
+			return true;
+		}
+
+		return false;
 	};
 
 	// Вызывается, когда что-то падает на мусор
@@ -228,7 +309,14 @@ var ConfiguratorCtrl = function($scope) {
 		switch(tool.type) {
 			case $scope.toolTypes.spiral:
 				$scope.tools.spiral.mouseOver = true;
-				$scope.addClassesToPlaces(index);
+				$scope.addSpiralClassesToPlaces(index);
+				$scope.currentTool = $scope.tools.spiral;
+				break;
+
+			case $scope.toolTypes.splitter:
+				$scope.tools.splitter.mouseOver = true;
+				$scope.addSplitterClassesToPlaces(index);
+				$scope.currentTool = $scope.tools.splitter;
 				break;
 		}
 	};
@@ -242,14 +330,19 @@ var ConfiguratorCtrl = function($scope) {
 				$scope.tools.spiral.mouseOver = false;
 				$scope.removeClassesFromPlaces();
 				break;
+
+			case $scope.toolTypes.splitter:
+				$scope.tools.splitter.mouseOver = false;
+				$scope.removeClassesFromPlaces();
+				break;
 		}
 	};
 
-	$scope.addClassesToPlaces = function(index) {
+	$scope.addSpiralClassesToPlaces = function(index) {
 		angular.forEach($scope.currentShelf.spiralPlaces, function(spiralPlace, idx) {
 			if(spiralPlace.item) {
-				if( spiralPlace.item.type == $scope.toolTypes.emptity && idx == index -1 && !$scope.isThereSomethingLeft(index) ||
-					spiralPlace.item.type == $scope.toolTypes.emptity && idx == index + 1 && !$scope.isThereSomethingRight(index) ||
+				if( spiralPlace.item.type == $scope.toolTypes.emptity && idx == index -1 && !$scope.isThereSpiralLeft(index) ||
+					spiralPlace.item.type == $scope.toolTypes.emptity && idx == index + 1 && !$scope.isThereSpiralRight(index) ||
 					idx == index) {
 					spiralPlace.class = $scope.classes.canDrop;
 				} else {
@@ -257,6 +350,20 @@ var ConfiguratorCtrl = function($scope) {
 				}
 			}
 			else {
+				spiralPlace.class = $scope.classes.canDrop;
+			}
+		});
+	};
+
+	$scope.addSplitterClassesToPlaces = function(index) {
+		angular.forEach($scope.currentShelf.spiralPlaces, function(spiralPlace, idx) {
+			if(spiralPlace.item && idx != index) {
+				if(spiralPlace.item.type == $scope.toolTypes.emptity) {
+					spiralPlace.class = $scope.classes.canDrop;
+				} else {
+					spiralPlace.class = $scope.classes.canNotDrop;
+				}
+			} else {
 				spiralPlace.class = $scope.classes.canDrop;
 			}
 		});

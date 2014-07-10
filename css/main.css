@@ -212,6 +212,33 @@ body {
 	cursor: pointer;
 }
 
+.splitter-tool {
+	width: 150px;
+	height: 5px;
+	background-color: #252525;
+
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+}
+
+.splitter {
+	position: absolute;
+	height: 365px;
+	width: 8px;
+	left: 9px;
+
+	background-color: #252525;
+
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+}
+
+.splitter:hover {
+	cursor: pointer;
+}
+
 .garbage {
 	width: 50px;
 	border: 1px solid #818181;

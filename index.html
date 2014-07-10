@@ -66,7 +66,7 @@
 				<div class="single-spiral-detectors">
 					<div class="place-offset"></div>
 					<div class="single-spiral-detector {{spiralPlace.class}}"
-						ng-class="{'tool-mouse-over': tools.spiral.mouseOver}"
+						ng-class="{'tool-mouse-over': currentTool.mouseOver}"
 						ng-repeat="spiralPlace in currentShelf.spiralPlaces"
 						ng-drop="true"
 						ng-drop-success="onSpiralPlaceDropComplete($data, $event, $index)">
