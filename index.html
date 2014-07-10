@@ -65,17 +65,18 @@
 				</div>
 				<div class="single-spiral-detectors">
 					<div class="place-offset"></div>
-					<div class="single-spiral-detector"
+					<div class="single-spiral-detector {{spiralPlace.class}}"
+						ng-class="{'tool-mouse-over': tools.spiral.mouseOver}"
 						ng-repeat="spiralPlace in currentShelf.spiralPlaces"
 						ng-drop="true"
-						ng-drop-success="onSpiralPlaceDropComplete($data, $event, $index)"
-						ng-class="{'not-empty': spiralPlace.item}">
+						ng-drop-success="onSpiralPlaceDropComplete($data, $event, $index)">
 						<div class="{{spiralPlace.item.objectClass}}"
 							ng-drag="true"
 							ng-drag-data="spiralPlace.item"
-							ng-drag-success="onItemDragComplete($data, $event, spiralPlace)"></div>
-						<div class="detector-rail"
-							ng-class="{'tool-mouse-over': tools.spiral.mouseOver && !spiralPlace.item}"></div>
+							ng-drag-success="onItemDragComplete($data, $event, spiralPlace)"
+							ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
+							ng-mouseup="onToolMouseUp(spiralPlace.item, $index)"></div>
+						<div class="detector-rail"></div>
 					</div>
 					<div class="place-offset"></div>
 				</div>
