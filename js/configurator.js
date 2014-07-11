@@ -89,8 +89,8 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Двойной мотор",
 			toolClass: "double-motor-tool",
 			objectClass: "double-motor",
-			leftOffset: 2,
-			rightOffset: 2
+			leftOffset: 3,
+			rightOffset: 3
 		}
 	};
 
@@ -111,7 +111,12 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается, когда отпускается любой элемент в конфигураторе полок
 	$scope.onItemDragComplete = function($data, $event, index) {
-		deleteItemFromShelf(index);
+		if($data.type == $scope.toolTypes.spiral ||
+			$data.type == $scope.toolTypes.splitter) {
+			deleteSpiralFromShelf(index);
+		} else {
+			deleteMotorFromShelf(index);
+		}
 	};
 
 	// Вызывается, когда на дырку падает инструмент
@@ -137,9 +142,23 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	};
 
-	function deleteItemFromShelf(index) {
+	$scope.onMotorPlaceDropComplete = function($data, $event, index) {
+		if($data.type == $scope.toolTypes.singleMotor ||
+			$data.type == $scope.toolTypes.doubleMotor) {
+			if(canInsertItemToMotorPlace($data, index)) {
+				insertItemToMotorPlace($data, index);
+			}
+		}
+	};
+
+	function deleteSpiralFromShelf(index) {
 		clearSpiralCollision(index);
 		$scope.currentShelf.spiralPlaces[index].item = undefined;
+	}
+
+	function deleteMotorFromShelf(index) {
+		clearMotorCollision(index);
+		$scope.currentShelf.motorPlaces[index].item = undefined;
 	}
 
 	function clearSpiralCollision(index, collision) {
@@ -156,8 +175,21 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	}
 
-	function canInsertItemToSpiralPlace(item, index, collision) {
+	function clearMotorCollision(index, collision) {
+		var motorCollision = collision || $scope.currentShelf.motorCollision;
 
+		var item = $scope.currentShelf.motorPlaces[index].item;
+		var collisionCount = motorCollision.length;
+		var collisionIndex = index * 2 + 1;
+
+		for(var i = collisionIndex - item.leftOffset; i <= collisionIndex + item.rightOffset; i++) {
+			if(i >= 0 && i < collisionCount) {
+				motorCollision[i] = false;
+			}
+		}
+	}
+
+	function canInsertItemToSpiralPlace(item, index, collision) {
 		var spiralCollision = collision || $scope.currentShelf.spiralCollision;
 		var collisionCount = spiralCollision.length;
 		var collisionIndex = index * 2 + 1;
@@ -169,6 +201,29 @@ var ConfiguratorCtrl = function($scope) {
 					canInsert = false;
 					break;
 				}
+			} else {
+				canInsert = false;
+				break;
+			}
+		}
+		return canInsert;
+	}
+
+	function canInsertItemToMotorPlace(item, index, collision) {
+		var motorCollision = collision || $scope.currentShelf.motorCollision;
+		var collisionCount = motorCollision.length;
+		var collisionIndex = index * 2 + 1;
+
+		var canInsert = true;
+		for(var i = collisionIndex - item.leftOffset; i <= collisionIndex + item.rightOffset; i++) {
+			if(i >= 0 && i < collisionCount) {
+				if(motorCollision[i]) {
+					canInsert = false;
+					break;
+				}
+			} else {
+				canInsert = false;
+				break;
 			}
 		}
 		return canInsert;
@@ -177,6 +232,11 @@ var ConfiguratorCtrl = function($scope) {
 	function insertItemToSpiralPlace(item, index) {
 		fillSpiralCollision(item, index);
 		$scope.currentShelf.spiralPlaces[index].item = $.extend(true, {}, item);
+	}
+
+	function insertItemToMotorPlace(item, index) {
+		fillMotorCollision(item, index);
+		$scope.currentShelf.motorPlaces[index].item = $.extend(true, {}, item);
 	}
 
 	function fillSpiralCollision(item, index) {
@@ -190,22 +250,15 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	}
 
-	$scope.onMotorPlaceDropComplete = function($data, $event, index) {
-		var dataType = $data.type;
-		var motorPlace = $scope.currentShelf.motorPlaces[index];
+	function fillMotorCollision(item, index) {
+		var collisionCount = $scope.currentShelf.motorCollision.length;
+		var collisionIndex = index * 2 + 1;
 
-		switch(dataType) {
-			case $scope.toolTypes.doubleMotor:
-				if(canInsertDoubleMotor(index)) {
-					motorPlace.item = $.extend(true, {}, $data);
-					motorPlace.item.index = index;
-				}
-				break;
+		for(var i = collisionIndex - item.leftOffset; i <= collisionIndex + item.rightOffset; i++) {
+			if(i >= 0 && i < collisionCount) {
+				$scope.currentShelf.motorCollision[i] = true;
+			}
 		}
-	};
-
-	function canInsertDoubleMotor(index) {
-		return twoSpiralsCenter(index);
 	}
 
 	// Вызывается, когда что-то падает на мусор
@@ -229,9 +282,15 @@ var ConfiguratorCtrl = function($scope) {
 				break;
 
 			case $scope.toolTypes.doubleMotor:
-				$scope.tools.singleMotor.mouseOver = true;
+				$scope.tools.doubleMotor.mouseOver = true;
 				showFreeMotorPlaces(tool, index);
 				$scope.currentTool = $scope.tools.doubleMotor;
+				break;
+
+			case $scope.toolTypes.singleMotor:
+				$scope.tools.singleMotor.mouseOver = true;
+				showFreeMotorPlaces(tool, index);
+				$scope.currentTool = $scope.tools.singleMotor;
 				break;
 		}
 	};
@@ -252,6 +311,12 @@ var ConfiguratorCtrl = function($scope) {
 				break;
 
 			case $scope.toolTypes.doubleMotor:
+				$scope.tools.doubleMotor.mouseOver = false;
+				removeClassesFromPlaces();
+				break;
+
+			case $scope.toolTypes.singleMotor:
+				$scope.tools.singleMotor.mouseOver = false;
 				removeClassesFromPlaces();
 				break;
 		}
@@ -276,77 +341,23 @@ var ConfiguratorCtrl = function($scope) {
 		});
 	}
 
-	function addDoubleMotorClassesToPlaces(index) {
+	function showFreeMotorPlaces(tool, index) {
+		var collisionWithoutItem;
+		if(index !== undefined) {
+			collisionWithoutItem = [];
+			for(var i = 0; i < $scope.currentShelf.motorCollision.length; i++) {
+				collisionWithoutItem.push($scope.currentShelf.motorCollision[i]);
+			}
+			clearMotorCollision(index, collisionWithoutItem);
+		}
+
 		angular.forEach($scope.currentShelf.motorPlaces, function(motorPlace, idx) {
-			if(twoSpiralsRight(idx)) {
-				motorPlace.class = $scope.classes.canNotDropButShow;
-				$scope.currentShelf.motorPlaces[idx + 1].class = $scope.classes.canDrop;
-				$scope.currentShelf.motorPlaces[idx + 2].class = $scope.classes.canNotDropButShow;
+			if(canInsertItemToMotorPlace(tool, idx, collisionWithoutItem)) {
+				motorPlace.class = $scope.classes.canDrop;
 			} else {
-				if(motorPlace.class != $scope.classes.canDrop &&
-					motorPlace.class != $scope.classes.canNotDropButShow) {
-					motorPlace.class = $scope.classes.canNotDrop;
-				}
+				motorPlace.class = $scope.classes.canNotDrop;
 			}
 		});
-	}
-
-	function twoSpiralsRight(index) {
-		var length = $scope.currentShelf.motorPlaces.length;
-
-		if(index > length - 3) {
-			return false;
-		}
-
-		if($scope.currentShelf.spiralPlaces[index].item === undefined ||
-			$scope.currentShelf.spiralPlaces[index + 2].item === undefined) {
-			return false;
-		}
-
-		var twoSpirals = $scope.currentShelf.spiralPlaces[index].item.type == $scope.toolTypes.spiral &&
-						$scope.currentShelf.spiralPlaces[index + 2].item.type == $scope.toolTypes.spiral;
-		if(!twoSpirals) {
-			return false;
-		}
-
-		if($scope.currentShelf.spiralPlaces[index + 1].item === undefined) {
-			return true;
-		}
-
-		if($scope.currentShelf.spiralPlaces[index + 1].item.type == $scope.toolTypes.emptity) {
-			return true;
-		}
-
-		return false;
-	}
-
-	function twoSpiralsCenter(index) {
-		var length = $scope.currentShelf.motorPlaces.length;
-
-		if(index === 0 || index == length - 1) {
-			return false;
-		}
-
-		if($scope.currentShelf.spiralPlaces[index - 1].item === undefined ||
-			$scope.currentShelf.spiralPlaces[index + 1].item === undefined) {
-			return false;
-		}
-
-		var twoSpirals = $scope.currentShelf.spiralPlaces[index - 1].item.type == $scope.toolTypes.spiral &&
-						$scope.currentShelf.spiralPlaces[index + 1].item.type == $scope.toolTypes.spiral;
-		if(!twoSpirals) {
-			return false;
-		}
-
-		if($scope.currentShelf.spiralPlaces[index].item === undefined) {
-			return true;
-		}
-
-		if($scope.currentShelf.spiralPlaces[index].item.type == $scope.toolTypes.emptity) {
-			return true;
-		}
-
-		return false;
 	}
 
 	function removeClassesFromPlaces() {

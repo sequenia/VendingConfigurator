@@ -11,6 +11,8 @@
 </head>
 <body>
 	<div class="configurator" ng-controller="ConfiguratorCtrl">
+		{{currentShelf.motorCollision}}
+		<br>
 		{{currentShelf.spiralCollision}}
 		<div class="tools">
 			<ul>
@@ -88,7 +90,12 @@
 						ng-repeat="motorPlace in currentShelf.motorPlaces"
 						ng-drop="true"
 						ng-drop-success="onMotorPlaceDropComplete($data, $event, $index)">
-						<div class="{{motorPlace.item.objectClass}}"></div>
+						<div class="{{motorPlace.item.objectClass}}"
+							ng-drag="true"
+							ng-drag-data="motorPlace.item"
+							ng-drag-success="onItemDragComplete($data, $event, $index)"
+							ng-mousedown="onToolMouseDown(motorPlace.item, $index)"
+							ng-mouseup="onToolMouseUp(motorPlace.item, $index)"></div>
 					</div>
 					<div class="motor-offset"></div>
 				</div>
