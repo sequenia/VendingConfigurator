@@ -10,7 +10,8 @@
 	<script type="text/javascript" src="js/ngDraggable.js"></script>
 </head>
 <body>
-	<div class="configurator" ng-controller="ConfiguratorCtrl" ng-show="currentMachine">
+	<div class="configurator" ng-controller="ConfiguratorCtrl">
+		{{currentShelf.spiralCollision}}
 		<div class="tools">
 			<ul>
 				<li ng-repeat="tool in tools">
@@ -73,7 +74,7 @@
 						<div class="{{spiralPlace.item.objectClass}}"
 							ng-drag="true"
 							ng-drag-data="spiralPlace.item"
-							ng-drag-success="onItemDragComplete($data, $event, spiralPlace)"
+							ng-drag-success="onItemDragComplete($data, $event, $index)"
 							ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
 							ng-mouseup="onToolMouseUp(spiralPlace.item, $index)"></div>
 						<div class="detector-rail"></div>
