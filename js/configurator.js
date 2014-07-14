@@ -134,8 +134,7 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается, когда на место в полке падает инструмент
 	$scope.onSpiralPlaceDropComplete = function($data, $event, index) {
-		if($data.type == $scope.toolTypes.spiral ||
-			$data.type == $scope.toolTypes.splitter) {
+		if($data.type == $scope.toolTypes.spiral || $data.type == $scope.toolTypes.splitter) {
 			if(canInsertItemToPlace($data, index, $scope.currentShelf.spiralCollision)) {
 				insertItemToPlace($data, index);
 			}
@@ -143,8 +142,7 @@ var ConfiguratorCtrl = function($scope) {
 	};
 
 	$scope.onMotorPlaceDropComplete = function($data, $event, index) {
-		if($data.type == $scope.toolTypes.singleMotor ||
-			$data.type == $scope.toolTypes.doubleMotor) {
+		if($data.type == $scope.toolTypes.singleMotor || $data.type == $scope.toolTypes.doubleMotor) {
 			if(canInsertItemToPlace($data, index, $scope.currentShelf.motorCollision)) {
 				insertItemToPlace($data, index);
 			}
@@ -179,6 +177,8 @@ var ConfiguratorCtrl = function($scope) {
 		var collisionCount = collision.length;
 		var collisionIndex = index * 2 + 1;
 
+		console.log(index);
+
 		// Проверяем свои коллизии
 		var canInsert = true;
 		for(var i = collisionIndex - item.leftOffset; i <= collisionIndex + item.rightOffset; i++) {
@@ -192,6 +192,8 @@ var ConfiguratorCtrl = function($scope) {
 				break;
 			}
 		}
+
+		console.log(canInsert);
 
 		// Проверяем чужие коллизии
 		if(canInsert) {
@@ -212,33 +214,9 @@ var ConfiguratorCtrl = function($scope) {
 				break;
 
 			case $scope.toolTypes.spiral:
-				var motor = $scope.currentShelf.motorPlaces[index].item;
-				var singleMotorOnPlace = false;
-				if(motor !== undefined) {
-					if(motor.type == $scope.toolTypes.singleMotor) {
-						singleMotorOnPlace = true;
-					}
-				}
-
-				var leftDoubleMotorOnPlace = false;
-				if(index > 0) {
-					var leftDoubleMotor = $scope.currentShelf.motorPlaces[index - 1].item;
-					if(leftDoubleMotor !== undefined) {
-						if(leftDoubleMotor.type == $scope.toolTypes.doubleMotor) {
-							leftDoubleMotorOnPlace = true;
-						}
-					}
-				}
-
-				var rightDoubleMotorOnPlace = false;
-				if(index < $scope.currentShelf.motorPlaces.length - 1) {
-					var rightDoubleMotor = $scope.currentShelf.motorPlaces[index + 1].item;
-					if(rightDoubleMotor !== undefined) {
-						if(rightDoubleMotor.type == $scope.toolTypes.doubleMotor) {
-							rightDoubleMotorOnPlace = true;
-						}
-					}
-				}
+				var singleMotorOnPlace = isItem(index, $scope.toolTypes.singleMotor);
+				var leftDoubleMotorOnPlace = isItem(index - 1, $scope.toolTypes.doubleMotor);
+				var rightDoubleMotorOnPlace = isItem(index + 1, $scope.toolTypes.doubleMotor);
 
 				canInsert = (!$scope.currentShelf.motorCollision[collisionIndex - 1] &&
 							!$scope.currentShelf.motorCollision[collisionIndex] &&
@@ -253,18 +231,21 @@ var ConfiguratorCtrl = function($scope) {
 						!$scope.currentShelf.spiralCollision[collisionIndex] &&
 						!$scope.currentShelf.spiralCollision[collisionIndex + 1];
 
-				var spiral = $scope.currentShelf.spiralPlaces[index].item;
-				var spiralOnPlace = false;
-				if(spiral !== undefined) {
-					if(spiral.type == $scope.toolTypes.spiral) {
-						spiralOnPlace = true;
-					}
-				}
+				var spiralOnPlace = isItem(index, $scope.toolTypes.spiral);
 
 				canInsert = threeEmptySpaces || spiralOnPlace;
 				break;
 
 			case $scope.toolTypes.doubleMotor:
+				var emptyOnCenter = !$scope.currentShelf.spiralCollision[collisionIndex];
+				var emptyOrSpiralLeft = isItem(index - 1, $scope.toolTypes.spiral) ||
+					($scope.currentShelf.spiralPlaces[index - 1].item === undefined &&
+						!$scope.currentShelf.spiralCollision[collisionIndex - 3]);
+				var emptyOrSpiralRight = isItem(index + 1, $scope.toolTypes.spiral) ||
+					($scope.currentShelf.spiralPlaces[index + 1].item === undefined &&
+						!$scope.currentShelf.spiralCollision[collisionIndex + 3]);
+
+				canInsert = emptyOnCenter && emptyOrSpiralLeft && emptyOrSpiralRight;
 				break;
 
 			default:
@@ -272,6 +253,30 @@ var ConfiguratorCtrl = function($scope) {
 		}
 
 		return canInsert;
+	}
+
+	function isItem(index, type) {
+		if(index < 0 || index > $scope.currentShelf.spiralPlaces.length - 1) {
+			return false;
+		}
+
+		var item;
+
+		if(type == $scope.toolTypes.spiral || type == $scope.toolTypes.splitter) {
+			item = $scope.currentShelf.spiralPlaces[index].item;
+		} else {
+			item = $scope.currentShelf.motorPlaces[index].item;
+		}
+
+		var _isItem = false;
+
+		if(item !== undefined) {
+			if(item.type == type) {
+				_isItem = true;
+			}
+		}
+
+		return _isItem;
 	}
 
 	function insertItemToPlace(item, index) {

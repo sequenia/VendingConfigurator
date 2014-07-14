@@ -263,6 +263,10 @@ body {
 	border-radius: 2.5px;
 }
 
+.single-motor:hover {
+	cursor: pointer;
+}
+
 .double-motor-tool {
 	width: 100px;
 	height: 20px;
@@ -285,6 +289,10 @@ body {
 	-moz-border-radius: 2.5px;
 	-webkit-border-radius: 2.5px;
 	border-radius: 2.5px;
+}
+
+.double-motor:hover {
+	cursor: pointer;
 }
 
 .garbage {
