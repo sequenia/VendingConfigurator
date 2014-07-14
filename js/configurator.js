@@ -177,8 +177,6 @@ var ConfiguratorCtrl = function($scope) {
 		var collisionCount = collision.length;
 		var collisionIndex = index * 2 + 1;
 
-		console.log(index);
-
 		// Проверяем свои коллизии
 		var canInsert = true;
 		for(var i = collisionIndex - item.leftOffset; i <= collisionIndex + item.rightOffset; i++) {
@@ -192,8 +190,6 @@ var ConfiguratorCtrl = function($scope) {
 				break;
 			}
 		}
-
-		console.log(canInsert);
 
 		// Проверяем чужие коллизии
 		if(canInsert) {
@@ -330,6 +326,10 @@ var ConfiguratorCtrl = function($scope) {
 				$scope.currentTool = $scope.tools.singleMotor;
 				break;
 		}
+
+		if(index !== undefined) {
+			$scope.toStorage = "to-storage";
+		}
 	};
 
 	// Вызывается, когда инструмент отпускается
@@ -357,6 +357,8 @@ var ConfiguratorCtrl = function($scope) {
 				removeClassesFromPlaces();
 				break;
 		}
+
+		$scope.toStorage = "";
 	};
 
 	function showFreeSpiralPlaces(tool, index) {

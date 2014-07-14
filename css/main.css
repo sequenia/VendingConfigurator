@@ -116,7 +116,7 @@ body {
 
 .tools {
 	border: 1px solid #818181;
-	width: 150px;
+	width: 160px;
 
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -127,30 +127,34 @@ body {
 	float: left;
 }
 
+.to-storage {
+	background-color: #9E9FFF;
+}
+
+.to-storage.drag-enter {
+	background-color: #83FF7C !important;
+}
+
 .tools ul {
 	list-style-type: none;
 }
 
-.tools ul li {
-	height: 40px;
-}
-
-.tools ul li .title {
+.title {
 	height: 20px;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 .tool-container {
 	display: inline-block;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding: 5px;
 }
 
 .tool-container:hover {
-	height: 20px;
 	cursor: pointer;
 }
 
-.shelf-tool {
+.shelf-tool div {
 	width: 150px;
 	height: 5px;
 	background-color: #252525;
@@ -160,30 +164,17 @@ body {
 	border-radius: 2.5px;
 }
 
-.double-spiral-tool {
-    position: relative;
-    width: 150px;
-    height: 10px;
-
-    background: #7d7e7d; /* Old browsers */
-	background: -moz-repeating-linear-gradient(45deg, #eeeeee 0%, #aaaaaa 10%); /* FF3.6+ */
-	background: -webkit-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* Chrome10+,Safari5.1+ */
-	background: -o-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* Opera 11.10+ */
-	background: -ms-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* IE10+ */
-	background: repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* W3C */
-}
-
-.spiral-tool {
-    position: relative;
-    width: 150px;
-    height: 5px;
+.spiral-tool div {
+    width: 7px;
+    height: 50px;
+    margin-top: -8px;
 
     background: #eeeeee; /* Old browsers */
-	background: -moz-repeating-linear-gradient(45deg, #eeeeee 0%, #aaaaaa 10%); /* FF3.6+ */
-	background: -webkit-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* Chrome10+,Safari5.1+ */
-	background: -o-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* Opera 11.10+ */
-	background: -ms-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* IE10+ */
-	background: repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* W3C */
+	background: -moz-repeating-linear-gradient(45deg, #eeeeee 0%, #aaaaaa 30%); /* FF3.6+ */
+	background: -webkit-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* Chrome10+,Safari5.1+ */
+	background: -o-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* Opera 11.10+ */
+	background: -ms-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* IE10+ */
+	background: repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* W3C */
 }
 
 .spiral {
@@ -212,10 +203,11 @@ body {
 	cursor: pointer;
 }
 
-.splitter-tool {
-	width: 150px;
-	height: 5px;
+.splitter-tool div {
+	width: 7px;
+	height: 50px;
 	background-color: #252525;
+	margin-top: -8px;
 
 	-moz-border-radius: 2.5px;
 	-webkit-border-radius: 2.5px;
@@ -239,7 +231,7 @@ body {
 	cursor: pointer;
 }
 
-.single-motor-tool {
+.single-motor-tool div {
 	width: 40px;
 	height: 20px;
 	background-color: #252525;
@@ -267,7 +259,7 @@ body {
 	cursor: pointer;
 }
 
-.double-motor-tool {
+.double-motor-tool div {
 	width: 100px;
 	height: 20px;
 	background-color: #252525;
@@ -285,6 +277,7 @@ body {
 	position: absolute;
 	left: -37px;
 	top: 10px;
+	z-index: 10;
 
 	-moz-border-radius: 2.5px;
 	-webkit-border-radius: 2.5px;
@@ -293,18 +286,6 @@ body {
 
 .double-motor:hover {
 	cursor: pointer;
-}
-
-.garbage {
-	width: 50px;
-	border: 1px solid #818181;
-
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	padding: 5px;
-
-	float: left;
 }
 
 .dragging {
@@ -317,10 +298,6 @@ body {
 
 .hole.tool-mouse-over .circle {
 	background: #7076FF;
-}
-
-.drag-enter.garbage {
-	background-color: #C5C5C5;
 }
 
 .shelf-model {

@@ -11,19 +11,24 @@
 </head>
 <body>
 	<div class="configurator" ng-controller="ConfiguratorCtrl">
-		<div class="tools">
+		<div class="tools {{toStorage}}"
+			ng-drop="true"
+			ng-drop-success="onGarbageDropComplete($data, $event)">
+			<div class="title">
+				<strong>Склад</strong>
+			</div>
 			<ul>
 				<li ng-repeat="tool in tools">
 					<div class="title">
 						{{tool.name}}
 					</div>
-					<div class="tool-container"
+					<div class="tool-container {{tool.toolClass}}"
 						ng-drag="true"
 						ng-drag-data="tool"
 						ng-drag-success="onToolDragComplete($data, $event)"
 						ng-mousedown="onToolMouseDown(tool)"
 						ng-mouseup="onToolMouseUp(tool)">
-						<div class="{{tool.toolClass}}"></div>
+						<div></div>
 					</div>
 				</li>
 			</ul>
@@ -47,8 +52,8 @@
 					ng-drag="true"
 					ng-drag-data="hole.shelf"
 					ng-drag-success="onShelfDragComplete($data, $event, hole)"
-					ng-mousedown="onToolMouseDown(tools.shelf)"
-					ng-mouseup="onToolMouseUp(tools.shelf)"></div>
+					ng-mousedown="onToolMouseDown(tools.shelf, $index)"
+					ng-mouseup="onToolMouseUp(tools.shelf, $index)"></div>
 			</div>
 		</div>
 
@@ -100,12 +105,6 @@
 			<div class="to-machine">
 				<button type="button" ng-click="configureMachine()">К автомату</button>
 			</div>
-		</div>
-
-		<div class="garbage"
-		ng-drop="true"
-		ng-drop-success="onGarbageDropComplete($data, $event)">
-			Мусор
 		</div>
 	</div>
 </body>
