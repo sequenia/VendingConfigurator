@@ -116,7 +116,7 @@ body {
 
 .tools {
 	border: 1px solid #818181;
-	width: 160px;
+	width: 150px;
 
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -141,13 +141,12 @@ body {
 
 .title {
 	height: 20px;
-	padding-left: 5px;
-	padding-right: 5px;
 }
 
 .tool-container {
 	display: inline-block;
-	padding: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 .tool-container:hover {
