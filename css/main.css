@@ -48,7 +48,9 @@ font-size: 14px;
 .single-motor-tool div,
 .double-motor-tool div,
 .double-motor,
-.single-motor {
+.single-motor,
+.machine-single-motor,
+.machine-double-motor {
 	-moz-border-radius: 2.5px;
 	-webkit-border-radius: 2.5px;
 	border-radius: 2.5px;
@@ -260,6 +262,18 @@ font-size: 14px;
 	top: 10px;
 }
 
+.machine-single-motor,
+.machine-double-motor {
+	background-color: #9C9C9C;
+}
+
+.machine-single-motor {
+	width: 30px;
+	height: 27px;
+	margin-left: -3px;
+	margin-top: -27px;
+}
+
 .single-motor:hover {
 	cursor: pointer;
 }
@@ -277,6 +291,13 @@ font-size: 14px;
 	left: -37px;
 	top: 10px;
 	z-index: 10;
+}
+
+.machine-double-motor {
+	width: 78px;
+	height: 27px;
+	margin-left: -27px;
+	margin-top: -27px;
 }
 
 .double-motor:hover {

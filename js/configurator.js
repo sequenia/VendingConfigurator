@@ -83,6 +83,7 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Мотор",
 			toolClass: "single-motor-tool",
 			objectClass: "single-motor",
+			machineClass: "machine-single-motor",
 			leftOffset: 1,
 			rightOffset: 1,
 			count: 14
@@ -93,6 +94,7 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Двойной мотор",
 			toolClass: "double-motor-tool",
 			objectClass: "double-motor",
+			machineClass: "machine-double-motor",
 			leftOffset: 3,
 			rightOffset: 3,
 			count: 6

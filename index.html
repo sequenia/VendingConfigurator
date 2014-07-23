@@ -59,11 +59,20 @@
 				ng-drag-success="onShelfDragComplete($data, $event, hole)"
 				ng-mousedown="onToolMouseDown(tools.shelf, $index)"
 				ng-mouseup="onToolMouseUp(tools.shelf, $index)">
-					<div class="machine-place-offset"></div>
-					<div class="machine-place" ng-repeat="spiralPlace in hole.shelf.spiralPlaces">
-						<div class="{{spiralPlace.item.machineClass}}"></div>
+					<div class="machine-items">
+						<div class="machine-place-offset"></div>
+						<div class="machine-place" ng-repeat="motorPlace in hole.shelf.motorPlaces">
+							<div class="{{motorPlace.item.machineClass}}"></div>
+						</div>
+						<div class="machine-place-offset"></div>
 					</div>
-					<div class="machine-place-offset"></div>
+					<div class="machine-items">
+						<div class="machine-place-offset"></div>
+						<div class="machine-place" ng-repeat="spiralPlace in hole.shelf.spiralPlaces">
+							<div class="{{spiralPlace.item.machineClass}}"></div>
+						</div>
+						<div class="machine-place-offset"></div>
+					</div>
 				</div>
 			</div>
 		</div>
