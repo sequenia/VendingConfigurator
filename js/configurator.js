@@ -130,6 +130,9 @@ var ConfiguratorCtrl = function($scope) {
 			case $scope.toolTypes.shelf:
 				if(hole.shelf === undefined) {
 					hole.shelf = $.extend(true, {}, $data);
+				} else {
+					$scope.machineTools.shelf.count++;
+					restoreTools($data);
 				}
 				break;
 		}
@@ -140,6 +143,8 @@ var ConfiguratorCtrl = function($scope) {
 		if($data.type == $scope.toolTypes.spiral || $data.type == $scope.toolTypes.splitter) {
 			if(canInsertItemToPlace($data, index, $scope.currentShelf.spiralCollision)) {
 				insertItemToPlace($data, index);
+			} else {
+				getTool($data.type).count++;
 			}
 		}
 	};
@@ -148,6 +153,8 @@ var ConfiguratorCtrl = function($scope) {
 		if($data.type == $scope.toolTypes.singleMotor || $data.type == $scope.toolTypes.doubleMotor) {
 			if(canInsertItemToPlace($data, index, $scope.currentShelf.motorCollision)) {
 				insertItemToPlace($data, index);
+			} else {
+				getTool($data.type).count++;
 			}
 		}
 	};
@@ -156,6 +163,9 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.onGarbageDropComplete = function($data, $event, hole) {
 		var tool = getTool($data.type);
 		tool.count++;
+		if($data.type == $scope.toolTypes.shelf) {
+			restoreTools($data);
+		}
 	};
 
 	function deleteSpiralFromShelf(index) {
@@ -415,5 +425,19 @@ var ConfiguratorCtrl = function($scope) {
 		}
 
 		return tool;
+	}
+
+	function restoreTools(shelf) {
+		angular.forEach(shelf.spiralPlaces, function(place) {
+			if(place.item) {
+				getTool(place.item.type).count++;
+			}
+		});
+
+		angular.forEach(shelf.motorPlaces, function(place) {
+			if(place.item) {
+				getTool(place.item.type).count++;
+			}
+		});
 	}
 };
