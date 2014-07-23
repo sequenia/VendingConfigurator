@@ -35,6 +35,11 @@
 		</div>
 
 		<div class="machine" ng-show="mode == modes.machine">
+			<div>
+				<div class="machine-place-offset"></div>
+				<div class="machine-place" ng-repeat="place in machineTools.shelf.spiralPlaces"></div>
+				<div class="machine-place-offset"></div>
+			</div>
 			<div class="hole"
 				ng-repeat="hole in holes"
 				ng-drop="true"
@@ -53,7 +58,8 @@
 					ng-drag-data="hole.shelf"
 					ng-drag-success="onShelfDragComplete($data, $event, hole)"
 					ng-mousedown="onToolMouseDown(tools.shelf, $index)"
-					ng-mouseup="onToolMouseUp(tools.shelf, $index)"></div>
+					ng-mouseup="onToolMouseUp(tools.shelf, $index)">
+				</div>
 			</div>
 		</div>
 

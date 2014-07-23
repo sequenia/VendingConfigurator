@@ -31,17 +31,55 @@ body {
 	padding: 30px;
 }
 
-.machine {
-	width: 400px;
-	border: 2px solid #818181;
-	background-color: #C7C7C7;
-
+.machine,
+.hole,
+.tools,
+.shelf-model {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
+}
+
+.circle,
+.shelf,
+.shelf-tool div,
+.splitter-tool div,
+.splitter,
+.single-motor-tool div,
+.double-motor-tool div,
+.double-motor,
+.single-motor {
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+}
+
+.machine,
+.shelf-model,
+.spiral-hole {
+	background-color: #C7C7C7;
+}
+
+.shelf,
+.shelf-tool div,
+.splitter-tool div,
+.splitter,
+.single-motor-tool div,
+.single-motor,
+.double-motor-tool div,
+.double-motor {
+	background-color: #252525;
+}
+
+.machine,
+.tools,
+.shelf-model {
+	border: 1px solid #818181;
+}
+
+.machine {
 	padding: 5px;
 	margin-right: 15px;
-
 	float: left;
 }
 
@@ -53,38 +91,17 @@ body {
 	height: 5px;
 	margin-top: 3px;
 	margin-bottom: 3px;
-
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-}
-
-.hole.drag-enter{
-	background-color: #83FF7C;
-}
-
-.hole.drag-enter.not-empty{
-	background-color: #FF6060;
 }
 
 .circle {
 	width: 5px;
 	height: 5px;
 	background: #FFFFFF;
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
 }
 
 .shelf {
 	width: 100%;
 	height: 5px;
-	background-color: #252525;
-
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
-
 	max-width: 400px;
 }
 
@@ -115,15 +132,9 @@ body {
 }
 
 .tools {
-	border: 1px solid #818181;
 	width: 150px;
-
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
 	padding: 5px;
 	margin-right: 35px;
-
 	float: left;
 }
 
@@ -156,11 +167,6 @@ body {
 .shelf-tool div {
 	width: 150px;
 	height: 5px;
-	background-color: #252525;
-
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
 }
 
 .spiral-tool div {
@@ -205,12 +211,7 @@ body {
 .splitter-tool div {
 	width: 7px;
 	height: 50px;
-	background-color: #252525;
 	margin-top: -8px;
-
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
 }
 
 .splitter {
@@ -218,12 +219,6 @@ body {
 	height: 365px;
 	width: 8px;
 	left: 9px;
-
-	background-color: #252525;
-
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
 }
 
 .splitter:hover {
@@ -233,25 +228,15 @@ body {
 .single-motor-tool div {
 	width: 40px;
 	height: 20px;
-	background-color: #252525;
 	margin-top: -8px;
-
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
 }
 
 .single-motor {
 	width: 40px;
 	height: 20px;
-	background-color: #252525;
 	position: absolute;
 	left: -7px;
 	top: 10px;
-
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
 }
 
 .single-motor:hover {
@@ -261,26 +246,16 @@ body {
 .double-motor-tool div {
 	width: 100px;
 	height: 20px;
-	background-color: #252525;
 	margin-top: -8px;
-
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
 }
 
 .double-motor {
 	width: 100px;
 	height: 20px;
-	background-color: #252525;
 	position: absolute;
 	left: -37px;
 	top: 10px;
 	z-index: 10;
-
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
 }
 
 .double-motor:hover {
@@ -295,27 +270,29 @@ body {
 	background-color: #FFFFFF !important;
 }
 
-.hole.tool-mouse-over .circle {
-	background: #7076FF;
-}
-
 .shelf-model {
 	height: 400px;
-	border: 2px solid #818181;
-	background-color: #C7C7C7;
-
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
 	margin-right: 15px;
-
 	float: left;
-
 	position: relative;
 }
 
 .to-machine {
 	display: inline-block;
+}
+
+.spiral-places,
+.spiral-place,
+.place-offset,
+.single-spiral-detectors,
+.single-spiral-detector {
+	height: 370px;
+}
+
+.spiral-places {
+	width: 100%;
+	top: 30px;
+	position: relative;
 }
 
 .motor-place {
@@ -325,57 +302,60 @@ body {
 	position: absolute;
 }
 
-.spiral-places {
-	width: 100%;
-	height: 370px;
-	top: 30px;
-	position: relative;
+.spiral-place,
+.machine-place {
+	width: 30px;
+	float: left;
 }
 
 .spiral-place {
-	width: 30px;
-	height: 370px;
-	float: left;
 	position: relative;
 }
 
-.place-offset {
+.machine-place {
+	height: 1px;
+}
+
+.place-offset,
+.motor-offset,
+.machine-place-offset {
 	width: 15px;
-	height: 370px;
 	float: left;
 }
 
 .motor-offset {
-	width: 15px;
 	height: 30px;
-	float: left;
+}
+
+.machine-place-offset {
+	height: 1px;
 }
 
 .spiral-hole {
 	width: 14px;
 	height: 4px;
-	background: #C7C7C7;
 	margin: 0 auto;
 }
 
-.single-spiral-detectors {
+.single-spiral-detectors,
+.motor-detectors {
 	width: 100%;
-	height: 370px;
-	top: 30px;
 	position: absolute;
+	position: absolute;
+}
+
+.single-spiral-detectors {
+	top: 30px;
 }
 
 .motor-detectors {
-	width: 100%;
 	height: 30px;
-	top: 30px;
-	position: absolute;
 	top: 0;
 }
 
-.single-spiral-detector {
+.single-spiral-detector,
+.motor-detector {
 	width: 26px;
-	height: 370px;
 	margin-left: 2px;
 	margin-right: 2px;
 	float: left;
@@ -383,27 +363,16 @@ body {
 }
 
 .motor-detector {
-	width: 26px;
 	height: 30px;
-	margin-left: 2px;
-	margin-right: 2px;
-	float: left;
-	position: relative;
-}
-
-.single-spiral-detector.tool-mouse-over.can-drop .detector-rail {
-	background: #7076FF;
 }
 
 .single-spiral-detector.drag-enter .detector-rail {
 	background-color: #7A7A7A !important;
 }
 
-.single-spiral-detector.drag-enter.can-drop {
-	background-color: #83FF7C;
-}
-
-.single-spiral-detector.drag-enter.can-not-drop {
+.single-spiral-detector.drag-enter.can-not-drop,
+.motor-detector.drag-enter.can-not-drop-but-show,
+.hole.drag-enter.not-empty {
 	background-color: #FF6060;
 }
 
@@ -411,31 +380,30 @@ body {
 	background: #FF6060 !important;
 }
 
-.motor-detector.tool-mouse-over.can-drop {
+.single-spiral-detector.tool-mouse-over.can-drop .detector-rail,
+.motor-detector.tool-mouse-over.can-drop,
+.motor-detector.tool-mouse-over.can-not-drop-but-show,
+.hole.tool-mouse-over .circle {
 	background: #7076FF;
 }
 
-.motor-detector.tool-mouse-over.can-not-drop-but-show {
-	background: #7076FF;
-}
-
-.motor-detector.drag-enter.can-drop {
+.single-spiral-detector.drag-enter.can-drop,
+.motor-detector.drag-enter.can-drop,
+.hole.drag-enter {
 	background-color: #83FF7C;
 }
 
-.motor-detector.drag-enter.can-not-drop-but-show {
-	background-color: #FF6060;
+.rail,
+.detector-rail {
+	width: 2px;
+	height: 350px;
 }
 
 .rail {
-	width: 2px;
 	background: #7A7A7A;
-	height: 350px;
 	margin: 0px auto 0px auto;
 }
 
 .detector-rail {
-	width: 2px;
-	height: 350px;
 	margin: 4px auto 0px auto;
 }
