@@ -12,8 +12,8 @@
 <body>
 	<div class="configurator" ng-controller="ConfiguratorCtrl">
 		<div class="tools {{toStorage}}"
-			ng-drop="true"
-			ng-drop-success="onGarbageDropComplete($data, $event)">
+		ng-drop="true"
+		ng-drop-success="onGarbageDropComplete($data, $event)">
 			<div class="title">
 				<strong>Склад</strong>
 			</div>
@@ -23,11 +23,11 @@
 						{{tool.name}}
 					</div>
 					<div class="tool-container {{tool.toolClass}}"
-						ng-drag="true"
-						ng-drag-data="tool"
-						ng-drag-success="onToolDragComplete($data, $event)"
-						ng-mousedown="onToolMouseDown(tool)"
-						ng-mouseup="onToolMouseUp(tool)">
+					ng-drag="true"
+					ng-drag-data="tool"
+					ng-drag-success="onToolDragComplete($data, $event)"
+					ng-mousedown="onToolMouseDown(tool)"
+					ng-mouseup="onToolMouseUp(tool)">
 						<div></div>
 					</div>
 				</li>
@@ -41,10 +41,10 @@
 				<div class="machine-place-offset"></div>
 			</div>
 			<div class="hole"
-				ng-repeat="hole in holes"
-				ng-drop="true"
-				ng-drop-success="onHoleDropComplete($data, $event, hole)"
-				ng-class="{'not-empty': hole.shelf,
+			ng-repeat="hole in holes"
+			ng-drop="true"
+			ng-drop-success="onHoleDropComplete($data, $event, hole)"
+			ng-class="{'not-empty': hole.shelf,
 				'tool-mouse-over': tools.shelf.mouseOver && !hole.shelf}">
 				<div class="circle left"></div>
 				<div class="circle right"></div>
@@ -53,12 +53,17 @@
 					<button type="button" ng-click="configureShelf(hole.shelf)">Настроить</button>
 				</div>
 				<div class="{{hole.shelf.objectClass}}"
-					ng-show="hole.shelf"
-					ng-drag="true"
-					ng-drag-data="hole.shelf"
-					ng-drag-success="onShelfDragComplete($data, $event, hole)"
-					ng-mousedown="onToolMouseDown(tools.shelf, $index)"
-					ng-mouseup="onToolMouseUp(tools.shelf, $index)">
+				ng-show="hole.shelf"
+				ng-drag="true"
+				ng-drag-data="hole.shelf"
+				ng-drag-success="onShelfDragComplete($data, $event, hole)"
+				ng-mousedown="onToolMouseDown(tools.shelf, $index)"
+				ng-mouseup="onToolMouseUp(tools.shelf, $index)">
+					<div class="machine-place-offset"></div>
+					<div class="machine-place" ng-repeat="spiralPlace in hole.shelf.spiralPlaces">
+						<div class="{{spiralPlace.item.machineClass}}"></div>
+					</div>
+					<div class="machine-place-offset"></div>
 				</div>
 			</div>
 		</div>
@@ -77,16 +82,16 @@
 				<div class="single-spiral-detectors">
 					<div class="place-offset"></div>
 					<div class="single-spiral-detector {{spiralPlace.class}}"
-						ng-class="{'tool-mouse-over': currentTool.mouseOver}"
-						ng-repeat="spiralPlace in currentShelf.spiralPlaces"
-						ng-drop="true"
-						ng-drop-success="onSpiralPlaceDropComplete($data, $event, $index)">
+					ng-class="{'tool-mouse-over': currentTool.mouseOver}"
+					ng-repeat="spiralPlace in currentShelf.spiralPlaces"
+					ng-drop="true"
+					ng-drop-success="onSpiralPlaceDropComplete($data, $event, $index)">
 						<div class="{{spiralPlace.item.objectClass}}"
-							ng-drag="true"
-							ng-drag-data="spiralPlace.item"
-							ng-drag-success="onItemDragComplete($data, $event, $index)"
-							ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
-							ng-mouseup="onToolMouseUp(spiralPlace.item, $index)"></div>
+						ng-drag="true"
+						ng-drag-data="spiralPlace.item"
+						ng-drag-success="onItemDragComplete($data, $event, $index)"
+						ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
+						ng-mouseup="onToolMouseUp(spiralPlace.item, $index)"></div>
 						<div class="detector-rail"></div>
 					</div>
 					<div class="place-offset"></div>
@@ -94,16 +99,16 @@
 				<div class="motor-detectors">
 					<div class="motor-offset"></div>
 					<div class="motor-detector {{motorPlace.class}}"
-						ng-class="{'tool-mouse-over': currentTool.mouseOver}"
-						ng-repeat="motorPlace in currentShelf.motorPlaces"
-						ng-drop="true"
-						ng-drop-success="onMotorPlaceDropComplete($data, $event, $index)">
+					ng-class="{'tool-mouse-over': currentTool.mouseOver}"
+					ng-repeat="motorPlace in currentShelf.motorPlaces"
+					ng-drop="true"
+					ng-drop-success="onMotorPlaceDropComplete($data, $event, $index)">
 						<div class="{{motorPlace.item.objectClass}}"
-							ng-drag="true"
-							ng-drag-data="motorPlace.item"
-							ng-drag-success="onItemDragComplete($data, $event, $index)"
-							ng-mousedown="onToolMouseDown(motorPlace.item, $index)"
-							ng-mouseup="onToolMouseUp(motorPlace.item, $index)"></div>
+						ng-drag="true"
+						ng-drag-data="motorPlace.item"
+						ng-drag-success="onItemDragComplete($data, $event, $index)"
+						ng-mousedown="onToolMouseDown(motorPlace.item, $index)"
+						ng-mouseup="onToolMouseUp(motorPlace.item, $index)"></div>
 					</div>
 					<div class="motor-offset"></div>
 				</div>

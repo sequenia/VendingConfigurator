@@ -37,9 +37,7 @@ var ConfiguratorCtrl = function($scope) {
 		{id: 7},
 		{id: 8},
 		{id: 9},
-		{id: 10},
-		{id: 11},
-		{id: 12}
+		{id: 10}
 	];
 
 //- ИНСТРУМЕНТЫ ---------------------------------
@@ -62,6 +60,7 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Спираль",
 			toolClass: "spiral-tool",
 			objectClass: "spiral",
+			machineClass: "machine-spiral",
 			leftOffset: 1,
 			rightOffset: 1
 		},
@@ -71,6 +70,7 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Разделитель",
 			toolClass: "splitter-tool",
 			objectClass: "splitter",
+			machineClass: "machine-splitter",
 			leftOffset: 0,
 			rightOffset: 0
 		},
@@ -92,10 +92,6 @@ var ConfiguratorCtrl = function($scope) {
 			leftOffset: 3,
 			rightOffset: 3
 		}
-	};
-
-	$scope.emptity = {
-		type: $scope.toolTypes.emptity
 	};
 
 	$scope.tools = $scope.machineTools;
