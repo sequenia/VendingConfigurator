@@ -18,9 +18,9 @@
 				<strong>Склад</strong>
 			</div>
 			<ul>
-				<li ng-repeat="tool in tools">
+				<li ng-repeat="tool in tools" ng-show="tool.count > 0">
 					<div class="title">
-						{{tool.name}}
+						{{tool.name}} ({{tool.count}})
 					</div>
 					<div class="tool-container {{tool.toolClass}}"
 					ng-drag="true"

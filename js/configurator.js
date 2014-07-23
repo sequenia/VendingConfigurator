@@ -50,7 +50,8 @@ var ConfiguratorCtrl = function($scope) {
 			spiralPlaces: createPlaces($scope.placesOnShelf),
 			motorPlaces: createPlaces($scope.placesOnShelf),
 			spiralCollision: createCollision($scope.placesOnShelf),
-			motorCollision: createCollision($scope.placesOnShelf)
+			motorCollision: createCollision($scope.placesOnShelf),
+			count: 5
 		}
 	};
 
@@ -62,7 +63,8 @@ var ConfiguratorCtrl = function($scope) {
 			objectClass: "spiral",
 			machineClass: "machine-spiral",
 			leftOffset: 1,
-			rightOffset: 1
+			rightOffset: 1,
+			count: 15
 		},
 
 		splitter: {
@@ -72,7 +74,8 @@ var ConfiguratorCtrl = function($scope) {
 			objectClass: "splitter",
 			machineClass: "machine-splitter",
 			leftOffset: 0,
-			rightOffset: 0
+			rightOffset: 0,
+			count: 25
 		},
 
 		singleMotor: {
@@ -81,7 +84,8 @@ var ConfiguratorCtrl = function($scope) {
 			toolClass: "single-motor-tool",
 			objectClass: "single-motor",
 			leftOffset: 1,
-			rightOffset: 1
+			rightOffset: 1,
+			count: 14
 		},
 
 		doubleMotor: {
@@ -90,7 +94,8 @@ var ConfiguratorCtrl = function($scope) {
 			toolClass: "double-motor-tool",
 			objectClass: "double-motor",
 			leftOffset: 3,
-			rightOffset: 3
+			rightOffset: 3,
+			count: 6
 		}
 	};
 
@@ -103,7 +108,9 @@ var ConfiguratorCtrl = function($scope) {
 	};
 
 	// Вызывается, когда отпускается инструмент
-	$scope.onToolDragComplete = function($data, $event) {};
+	$scope.onToolDragComplete = function($data, $event) {
+		$data.count--;
+	};
 
 	// Вызывается, когда отпускается любой элемент в конфигураторе полок
 	$scope.onItemDragComplete = function($data, $event, index) {
@@ -146,7 +153,10 @@ var ConfiguratorCtrl = function($scope) {
 	};
 
 	// Вызывается, когда что-то падает на мусор
-	$scope.onGarbageDropComplete = function($data, $event, hole) {};
+	$scope.onGarbageDropComplete = function($data, $event, hole) {
+		var tool = getTool($data.type);
+		tool.count++;
+	};
 
 	function deleteSpiralFromShelf(index) {
 		clearCollision(index, $scope.currentShelf.spiralPlaces[index].item, $scope.currentShelf.spiralCollision);
@@ -295,33 +305,16 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается при нажатии на инструмент или элемент
 	$scope.onToolMouseDown = function(tool, index) {
-		tool.mouseOver = true;
+		var curTool = getTool(tool.type);
 
-		switch(tool.type) {
-			case $scope.toolTypes.spiral:
-				$scope.tools.spiral.mouseOver = true;
-				showFreeSpiralPlaces(tool, index);
-				$scope.currentTool = $scope.tools.spiral;
-				break;
-
-			case $scope.toolTypes.splitter:
-				$scope.tools.splitter.mouseOver = true;
-				showFreeSpiralPlaces(tool, index);
-				$scope.currentTool = $scope.tools.splitter;
-				break;
-
-			case $scope.toolTypes.doubleMotor:
-				$scope.tools.doubleMotor.mouseOver = true;
-				showFreeMotorPlaces(tool, index);
-				$scope.currentTool = $scope.tools.doubleMotor;
-				break;
-
-			case $scope.toolTypes.singleMotor:
-				$scope.tools.singleMotor.mouseOver = true;
-				showFreeMotorPlaces(tool, index);
-				$scope.currentTool = $scope.tools.singleMotor;
-				break;
+		curTool.mouseOver = true;
+		if(tool.type == $scope.toolTypes.spiral || tool.type == $scope.toolTypes.splitter) {
+			showFreePlaces(tool, index, $scope.currentShelf.spiralCollision, $scope.currentShelf.spiralPlaces);
 		}
+		if(tool.type == $scope.toolTypes.singleMotor || tool.type == $scope.toolTypes.doubleMotor) {
+			showFreePlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
+		}
+		$scope.currentTool = curTool;
 
 		if(index !== undefined) {
 			$scope.toStorage = "to-storage";
@@ -330,67 +323,29 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается, когда инструмент отпускается
 	$scope.onToolMouseUp = function(tool) {
-		tool.mouseOver = false;
-
-		switch(tool.type) {
-			case $scope.toolTypes.spiral:
-				$scope.tools.spiral.mouseOver = false;
-				removeClassesFromPlaces();
-				break;
-
-			case $scope.toolTypes.splitter:
-				$scope.tools.splitter.mouseOver = false;
-				removeClassesFromPlaces();
-				break;
-
-			case $scope.toolTypes.doubleMotor:
-				$scope.tools.doubleMotor.mouseOver = false;
-				removeClassesFromPlaces();
-				break;
-
-			case $scope.toolTypes.singleMotor:
-				$scope.tools.singleMotor.mouseOver = false;
-				removeClassesFromPlaces();
-				break;
+		var curTool = getTool(tool.type);
+		curTool.mouseOver = false;
+		if(tool.type != $scope.toolTypes.shelf) {
+			removeClassesFromPlaces();
 		}
-
 		$scope.toStorage = "";
 	};
 
-	function showFreeSpiralPlaces(tool, index) {
+	function showFreePlaces(tool, index, collision, places) {
 		var collisionWithoutItem;
 		if(index !== undefined) {
 			collisionWithoutItem = [];
-			for(var i = 0; i < $scope.currentShelf.spiralCollision.length; i++) {
-				collisionWithoutItem.push($scope.currentShelf.spiralCollision[i]);
+			for(var i = 0; i < collision.length; i++) {
+				collisionWithoutItem.push(collision[i]);
 			}
-			clearCollision(index, $scope.currentShelf.spiralPlaces[index].item, collisionWithoutItem);
+			clearCollision(index, places[index].item, collisionWithoutItem);
 		}
 
-		angular.forEach($scope.currentShelf.spiralPlaces, function(spiralPlace, idx) {
-			if(canInsertItemToPlace(tool, idx, collisionWithoutItem || $scope.currentShelf.spiralCollision)) {
-				spiralPlace.class = $scope.classes.canDrop;
+		angular.forEach(places, function(place, idx) {
+			if(canInsertItemToPlace(tool, idx, collisionWithoutItem || collision)) {
+				place.class = $scope.classes.canDrop;
 			} else {
-				spiralPlace.class = $scope.classes.canNotDrop;
-			}
-		});
-	}
-
-	function showFreeMotorPlaces(tool, index) {
-		var collisionWithoutItem;
-		if(index !== undefined) {
-			collisionWithoutItem = [];
-			for(var i = 0; i < $scope.currentShelf.motorCollision.length; i++) {
-				collisionWithoutItem.push($scope.currentShelf.motorCollision[i]);
-			}
-			clearCollision(index, $scope.currentShelf.motorPlaces[index].item, collisionWithoutItem);
-		}
-
-		angular.forEach($scope.currentShelf.motorPlaces, function(motorPlace, idx) {
-			if(canInsertItemToPlace(tool, idx, collisionWithoutItem || $scope.currentShelf.motorCollision)) {
-				motorPlace.class = $scope.classes.canDrop;
-			} else {
-				motorPlace.class = $scope.classes.canNotDrop;
+				place.class = $scope.classes.canNotDrop;
 			}
 		});
 	}
@@ -432,5 +387,33 @@ var ConfiguratorCtrl = function($scope) {
 			collision.push(false);
 		}
 		return collision;
+	}
+
+	function getTool(toolType) {
+		var tool;
+
+		switch(toolType) {
+			case $scope.toolTypes.shelf:
+				tool = $scope.machineTools.shelf;
+				break;
+
+			case $scope.toolTypes.spiral:
+				tool = $scope.shelfTools.spiral;
+				break;
+
+			case $scope.toolTypes.splitter:
+				tool = $scope.shelfTools.splitter;
+				break;
+
+			case $scope.toolTypes.singleMotor:
+				tool = $scope.shelfTools.singleMotor;
+				break;
+
+			case $scope.toolTypes.doubleMotor:
+				tool = $scope.shelfTools.doubleMotor;
+				break;
+		}
+
+		return tool;
 	}
 };
