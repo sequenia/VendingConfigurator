@@ -19,6 +19,16 @@ var ConfiguratorCtrl = function($scope) {
 		ski: 5
 	};
 
+	$scope.spiralToolTypes = [
+		$scope.toolTypes.spiral,
+		$scope.toolTypes.splitter
+	];
+
+	$scope.motorToolTypes = [
+		$scope.toolTypes.singleMotor,
+		$scope.toolTypes.doubleMotor
+	];
+
 	$scope.classes = {
 		canDrop: "can-drop",
 		canNotDrop: "can-not-drop",
@@ -149,8 +159,7 @@ var ConfiguratorCtrl = function($scope) {
 	// Вызывается при отпускании элемента в конфигураторе полок
 	$scope.onItemDragComplete = function($data, $event, index) {
 		if($data) {
-			if($data.type == $scope.toolTypes.spiral ||
-				$data.type == $scope.toolTypes.splitter) {
+			if(typeIsInGroup($data.type, $scope.spiralToolTypes)) {
 				deleteSpiralFromShelf(index);
 			} else {
 				deleteMotorFromShelf(index);
@@ -176,7 +185,7 @@ var ConfiguratorCtrl = function($scope) {
 	// Вызывается при падении чего-либо на место спирали
 	$scope.onSpiralPlaceDropComplete = function($data, $event, index) {
 		while(true) {
-			if($data.type == $scope.toolTypes.spiral || $data.type == $scope.toolTypes.splitter) {
+			if(typeIsInGroup($data.type, $scope.spiralToolTypes)) {
 				if(canInsertItemToPlace($data, index, $scope.currentShelf.spiralCollision)) {
 					insertItemToPlace($data, index);
 				} else {
@@ -203,7 +212,7 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается при падении чего-либо на место моторов
 	$scope.onMotorPlaceDropComplete = function($data, $event, index) {
-		if($data.type == $scope.toolTypes.singleMotor || $data.type == $scope.toolTypes.doubleMotor) {
+		if(typeIsInGroup($data.type, $scope.motorToolTypes)) {
 			if(canInsertItemToPlace($data, index, $scope.currentShelf.motorCollision)) {
 				insertItemToPlace($data, index);
 			} else {
@@ -338,7 +347,7 @@ var ConfiguratorCtrl = function($scope) {
 
 		var item;
 
-		if(type == $scope.toolTypes.spiral || type == $scope.toolTypes.splitter) {
+		if(typeIsInGroup(type, $scope.spiralToolTypes)) {
 			item = $scope.currentShelf.spiralPlaces[index].item;
 		} else {
 			item = $scope.currentShelf.motorPlaces[index].item;
@@ -356,8 +365,7 @@ var ConfiguratorCtrl = function($scope) {
 	}
 
 	function insertItemToPlace(item, index) {
-		if(item.type == $scope.toolTypes.spiral ||
-			item.type == $scope.toolTypes.splitter) {
+		if(typeIsInGroup(item.type, $scope.spiralToolTypes)) {
 			fillItemCollision(item, index, $scope.currentShelf.spiralCollision);
 			$scope.currentShelf.spiralPlaces[index].item = $.extend(true, {}, item);
 		} else {
@@ -383,10 +391,10 @@ var ConfiguratorCtrl = function($scope) {
 		var curTool = getTool(tool.type);
 
 		curTool.mouseOver = true;
-		if(tool.type == $scope.toolTypes.spiral || tool.type == $scope.toolTypes.splitter) {
+		if(typeIsInGroup(tool.type, $scope.spiralToolTypes)) {
 			showFreePlaces(tool, index, $scope.currentShelf.spiralCollision, $scope.currentShelf.spiralPlaces);
 		}
-		if(tool.type == $scope.toolTypes.singleMotor || tool.type == $scope.toolTypes.doubleMotor) {
+		if(typeIsInGroup(tool.type, $scope.motorToolTypes)) {
 			showFreePlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
 		}
 		if(tool.type == $scope.toolTypes.ski) {
@@ -533,5 +541,14 @@ var ConfiguratorCtrl = function($scope) {
 		});
 
 		$scope.tools = newTools;
+	}
+
+	function typeIsInGroup(type, group) {
+		for(var i = 0; i < group.length; i++) {
+			if(group[i] == type) {
+				return true;
+			}
+		}
+		return false;
 	}
 };
