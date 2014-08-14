@@ -229,15 +229,6 @@ font-size: 14px;
 	background: repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* W3C */
 }
 
-/*.spiral:after {
-      content: "";
-      background-color: #252525;
-      height: 100%;
-      width: 10px;
-      display: block;
-      margin-left: 16px;
-}*/
-
 .machine-spiral {
 	-moz-border-radius: 13px;
 	-webkit-border-radius: 13px;
