@@ -145,7 +145,6 @@ var ConfiguratorCtrl = function($scope) {
 				if(hole.shelf === undefined) {
 					hole.shelf = $.extend(true, {}, $data);
 				} else {
-					$scope.machineTools.shelf.count++;
 					restoreTools($data);
 				}
 				break;
@@ -159,7 +158,7 @@ var ConfiguratorCtrl = function($scope) {
 				if(canInsertItemToPlace($data, index, $scope.currentShelf.spiralCollision)) {
 					insertItemToPlace($data, index);
 				} else {
-					getTool($data.type).count++;
+					restoreTools($data);
 				}
 
 				break;
@@ -169,13 +168,13 @@ var ConfiguratorCtrl = function($scope) {
 				if(canInsertSki(index)) {
 					$scope.currentShelf.spiralPlaces[index].item.ski = $data;
 				} else {
-					getTool($data.type).count++;
+					restoreTools($data);
 				}
 
 				break;
 			}
 
-			getTool($data.type).count++;
+			restoreTools($data);
 			break;
 		}
 	};
@@ -185,20 +184,16 @@ var ConfiguratorCtrl = function($scope) {
 			if(canInsertItemToPlace($data, index, $scope.currentShelf.motorCollision)) {
 				insertItemToPlace($data, index);
 			} else {
-				getTool($data.type).count++;
+				restoreTools($data);
 			}
 		} else {
-			getTool($data.type).count++;
+			restoreTools($data);
 		}
 	};
 
 	// Вызывается, когда что-то падает на мусор
 	$scope.onGarbageDropComplete = function($data, $event, hole) {
-		var tool = getTool($data.type);
-		tool.count++;
-		//if($data.type == $scope.toolTypes.shelf) {
 		restoreTools($data);
-		//}
 	};
 
 	function deleteSpiralFromShelf(index) {
@@ -488,6 +483,8 @@ var ConfiguratorCtrl = function($scope) {
 	}
 
 	function restoreTools(tool) {
+		getTool(tool.type).count++;
+
 		if(tool.type == $scope.toolTypes.shelf) {
 			restoreShelf(tool);
 		}
