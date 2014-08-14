@@ -12,7 +12,8 @@ var ConfiguratorCtrl = function($scope) {
 		spiral: 1,
 		splitter: 2,
 		singleMotor: 3,
-		doubleMotor: 4
+		doubleMotor: 4,
+		ski: 5
 	};
 
 	$scope.classes = {
@@ -98,6 +99,15 @@ var ConfiguratorCtrl = function($scope) {
 			leftOffset: 3,
 			rightOffset: 3,
 			count: 6
+		},
+
+		ski: {
+			type: $scope.toolTypes.ski,
+			name: "Лыжа",
+			toolClass: "ski-tool",
+			objectClass: "ski",
+			machineClass: "machine-ski",
+			count: 15
 		}
 	};
 
@@ -116,11 +126,13 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается, когда отпускается любой элемент в конфигураторе полок
 	$scope.onItemDragComplete = function($data, $event, index) {
-		if($data.type == $scope.toolTypes.spiral ||
-			$data.type == $scope.toolTypes.splitter) {
-			deleteSpiralFromShelf(index);
-		} else {
-			deleteMotorFromShelf(index);
+		if($data) {
+			if($data.type == $scope.toolTypes.spiral ||
+				$data.type == $scope.toolTypes.splitter) {
+				deleteSpiralFromShelf(index);
+			} else {
+				deleteMotorFromShelf(index);
+			}
 		}
 	};
 
@@ -148,6 +160,8 @@ var ConfiguratorCtrl = function($scope) {
 			} else {
 				getTool($data.type).count++;
 			}
+		} else {
+			getTool($data.type).count++;
 		}
 	};
 
@@ -158,6 +172,21 @@ var ConfiguratorCtrl = function($scope) {
 			} else {
 				getTool($data.type).count++;
 			}
+		} else {
+			getTool($data.type).count++;
+		}
+	};
+
+	// Вызывается, когда на место в полке падает инструмент
+	$scope.onSpiralDropComplete = function($data, $event, index) {
+		if($data.type == $scope.toolTypes.ski) {
+			if(canInsertSki(index)) {
+				$scope.currentShelf.spiralPlaces[index].item.ski = $data;
+			} else {
+				getTool($data.type).count++;
+			}
+		} else {
+			getTool($data.type).count++;
 		}
 	};
 
@@ -165,9 +194,9 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.onGarbageDropComplete = function($data, $event, hole) {
 		var tool = getTool($data.type);
 		tool.count++;
-		if($data.type == $scope.toolTypes.shelf) {
-			restoreTools($data);
-		}
+		//if($data.type == $scope.toolTypes.shelf) {
+		restoreTools($data);
+		//}
 	};
 
 	function deleteSpiralFromShelf(index) {
@@ -215,6 +244,17 @@ var ConfiguratorCtrl = function($scope) {
 		}
 
 		return canInsert;
+	}
+
+	function canInsertSki(index) {
+		var result = false;
+		if(isItem(index, $scope.toolTypes.spiral)) {
+			if($scope.currentShelf.spiralPlaces[index].item.ski === undefined) {
+				result = true;
+			}
+		}
+
+		return result;
 	}
 
 	function checkOppositeCollision(item, index) {
@@ -424,22 +464,44 @@ var ConfiguratorCtrl = function($scope) {
 			case $scope.toolTypes.doubleMotor:
 				tool = $scope.shelfTools.doubleMotor;
 				break;
+
+			case $scope.toolTypes.ski:
+				tool = $scope.shelfTools.ski;
 		}
 
 		return tool;
 	}
 
-	function restoreTools(shelf) {
+	function restoreTools(tool) {
+		if(tool.type == $scope.toolTypes.shelf) {
+			restoreShelf(tool);
+		}
+
+		if(tool.type == $scope.toolTypes.spiral) {
+			restoreSpiral(tool);
+		}
+	}
+
+	function restoreShelf(shelf) {
 		angular.forEach(shelf.spiralPlaces, function(place) {
-			if(place.item) {
-				getTool(place.item.type).count++;
-			}
-		});
+				if(place.item) {
+					getTool(place.item.type).count++;
+					if(place.item.type == $scope.toolTypes.spiral) {
+						restoreSpiral(place.item);
+					}
+				}
+			});
 
 		angular.forEach(shelf.motorPlaces, function(place) {
 			if(place.item) {
 				getTool(place.item.type).count++;
 			}
 		});
+	}
+
+	function restoreSpiral(spiral) {
+		if(spiral.ski) {
+			$scope.shelfTools.ski.count++;
+		}
 	}
 };

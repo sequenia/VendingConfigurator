@@ -69,7 +69,10 @@ font-size: 14px;
 .single-motor-tool div,
 .single-motor,
 .double-motor-tool div,
-.double-motor {
+.double-motor,
+.ski,
+.machine-ski,
+.ski-tool {
 	background-color: #252525;
 }
 
@@ -173,16 +176,35 @@ font-size: 14px;
 }
 
 .spiral-tool div {
-    width: 7px;
-    height: 50px;
-    margin-top: -8px;
+	width: 7px;
+	height: 50px;
+	margin-top: -8px;
 
-    background: #eeeeee; /* Old browsers */
+	background: #eeeeee; /* Old browsers */
 	background: -moz-repeating-linear-gradient(45deg, #eeeeee 0%, #aaaaaa 30%); /* FF3.6+ */
 	background: -webkit-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* Chrome10+,Safari5.1+ */
 	background: -o-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* Opera 11.10+ */
 	background: -ms-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* IE10+ */
 	background: repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* W3C */
+}
+
+.ski {
+	height: 360px;
+	width: 10px;
+	margin-left: 16px;
+}
+
+.machine-ski {
+	width: 12px;
+	height: 10px;
+	margin-left: 7px;
+	margin-top: 13px;
+}
+
+.ski-tool div {
+	width: 7px;
+	height: 50px;
+	margin-top: -8px;
 }
 
 .spiral {
@@ -206,6 +228,15 @@ font-size: 14px;
 	background: -ms-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* IE10+ */
 	background: repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* W3C */
 }
+
+/*.spiral:after {
+      content: "";
+      background-color: #252525;
+      height: 100%;
+      width: 10px;
+      display: block;
+      margin-left: 16px;
+}*/
 
 .machine-spiral {
 	-moz-border-radius: 13px;

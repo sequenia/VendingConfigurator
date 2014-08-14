@@ -69,7 +69,9 @@
 					<div class="machine-items">
 						<div class="machine-place-offset"></div>
 						<div class="machine-place" ng-repeat="spiralPlace in hole.shelf.spiralPlaces">
-							<div class="{{spiralPlace.item.machineClass}}"></div>
+							<div class="{{spiralPlace.item.machineClass}}">
+								<div class="{{spiralPlace.item.ski.machineClass}}"></div>
+							</div>
 						</div>
 						<div class="machine-place-offset"></div>
 					</div>
@@ -100,7 +102,11 @@
 						ng-drag-data="spiralPlace.item"
 						ng-drag-success="onItemDragComplete($data, $event, $index)"
 						ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
-						ng-mouseup="onToolMouseUp(spiralPlace.item, $index)"></div>
+						ng-mouseup="onToolMouseUp(spiralPlace.item, $index)"
+						ng-drop="true"
+						ng-drop-success="onSpiralDropComplete($data, $event, $index)">
+							<div class="{{spiralPlace.item.ski.objectClass}}"></div>
+						</div>
 						<div class="detector-rail"></div>
 					</div>
 					<div class="place-offset"></div>
