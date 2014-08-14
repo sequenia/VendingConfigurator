@@ -41,11 +41,12 @@ var ConfiguratorCtrl = function($scope) {
 	 *     spiralCollision: [],        // Массив коллизий для спиралей (только у полки)
 	 *     motorCollision: [],         // Массив коллизий для моторов (только у полки)
 	 *     leftOffset: 1,              // Левая граница элемента (необходимо для рассчета коллизий)
-	 *     rightOffset: 1              // Левая граница элемента (необходимо для рассчета коллизий)
+	 *     rightOffset: 1,             // Левая граница элемента (необходимо для рассчета коллизий)
+	 *     modes: [0, 1]               // Режимы, в которых доступен данный инструмент
 	 * }
 	 ******************/
 
-	$scope.machineTools = {
+	$scope.allTools = {
 		shelf: {
 			type: $scope.toolTypes.shelf,
 			name: "Полка",
@@ -55,11 +56,10 @@ var ConfiguratorCtrl = function($scope) {
 			motorPlaces: createPlaces($scope.placesOnShelf),
 			spiralCollision: createCollision($scope.placesOnShelf),
 			motorCollision: createCollision($scope.placesOnShelf),
-			count: 5
-		}
-	};
+			count: 5,
+			mode: $scope.modes.machine
+		},
 
-	$scope.shelfTools = {
 		spiral: {
 			type: $scope.toolTypes.spiral,
 			name: "Спираль",
@@ -68,7 +68,8 @@ var ConfiguratorCtrl = function($scope) {
 			machineClass: "machine-spiral",
 			leftOffset: 1,
 			rightOffset: 1,
-			count: 15
+			count: 15,
+			mode: $scope.modes.shelf
 		},
 
 		splitter: {
@@ -79,7 +80,8 @@ var ConfiguratorCtrl = function($scope) {
 			machineClass: "machine-splitter",
 			leftOffset: 0,
 			rightOffset: 0,
-			count: 25
+			count: 25,
+			mode: $scope.modes.shelf
 		},
 
 		singleMotor: {
@@ -90,7 +92,8 @@ var ConfiguratorCtrl = function($scope) {
 			machineClass: "machine-single-motor",
 			leftOffset: 1,
 			rightOffset: 1,
-			count: 14
+			count: 14,
+			mode: $scope.modes.shelf
 		},
 
 		doubleMotor: {
@@ -101,7 +104,8 @@ var ConfiguratorCtrl = function($scope) {
 			machineClass: "machine-double-motor",
 			leftOffset: 3,
 			rightOffset: 3,
-			count: 6
+			count: 6,
+			mode: $scope.modes.shelf
 		},
 
 		ski: {
@@ -110,13 +114,13 @@ var ConfiguratorCtrl = function($scope) {
 			toolClass: "ski-tool",
 			objectClass: "ski",
 			machineClass: "machine-ski",
-			count: 15
+			count: 15,
+			mode: $scope.modes.shelf
 		}
 	};
 
 //- РАБОЧИЕ ПЕРЕМЕННЫЕ ---------------------------------
-	$scope.mode = $scope.modes.machine;
-	$scope.tools = $scope.machineTools;
+	setMode($scope.modes.machine);
 	$scope.holes = [
 		{id: 0},
 		{id: 1},
@@ -132,17 +136,17 @@ var ConfiguratorCtrl = function($scope) {
 	];
 
 //- МЕТОДЫ ---------------------------------
-	// Вызывается, когда полка отпускается
+	// Вызывается при отпускании полки
 	$scope.onShelfDragComplete = function($data, $event, hole) {
 		hole.shelf = undefined;
 	};
 
-	// Вызывается, когда отпускается инструмент
+	// Вызывается при отпускании инструмента
 	$scope.onToolDragComplete = function($data, $event) {
 		$data.count--;
 	};
 
-	// Вызывается, когда отпускается любой элемент в конфигураторе полок
+	// Вызывается при отпускании элемента в конфигураторе полок
 	$scope.onItemDragComplete = function($data, $event, index) {
 		if($data) {
 			if($data.type == $scope.toolTypes.spiral ||
@@ -154,7 +158,7 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	};
 
-	// Вызывается, когда на дырку падает инструмент
+	// Вызывается при падении чего-либо на дырку
 	$scope.onHoleDropComplete = function($data, $event, hole){
 		var dataType = $data.type;
 
@@ -169,7 +173,7 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	};
 
-	// Вызывается, когда на место в полке падает инструмент
+	// Вызывается при падении чего-либо на место спирали
 	$scope.onSpiralPlaceDropComplete = function($data, $event, index) {
 		while(true) {
 			if($data.type == $scope.toolTypes.spiral || $data.type == $scope.toolTypes.splitter) {
@@ -197,6 +201,7 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	};
 
+	// Вызывается при падении чего-либо на место моторов
 	$scope.onMotorPlaceDropComplete = function($data, $event, index) {
 		if($data.type == $scope.toolTypes.singleMotor || $data.type == $scope.toolTypes.doubleMotor) {
 			if(canInsertItemToPlace($data, index, $scope.currentShelf.motorCollision)) {
@@ -209,7 +214,7 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	};
 
-	// Вызывается, когда что-то падает на мусор
+	// Вызывается, когда что-то падает на склад
 	$scope.onGarbageDropComplete = function($data, $event, hole) {
 		restoreTools($data);
 	};
@@ -224,6 +229,7 @@ var ConfiguratorCtrl = function($scope) {
 		$scope.currentShelf.motorPlaces[index].item = undefined;
 	}
 
+	// Очищает массив коллизий по заданному индексу для конкретного типа элемента
 	function clearCollision(index, item, collision) {
 		var collisionCount = collision.length;
 		var collisionIndex = index * 2 + 1;
@@ -324,6 +330,7 @@ var ConfiguratorCtrl = function($scope) {
 		return canInsert;
 	}
 
+	// Проверяет принадлежность элемента к конкретному типу. Возвращает true, если типы совпали
 	function isItem(index, type) {
 		if(index < 0 || index > $scope.currentShelf.spiralPlaces.length - 1) {
 			return false;
@@ -372,6 +379,7 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается при нажатии на инструмент или элемент
 	$scope.onToolMouseDown = function(tool, index) {
+		console.log(tool);
 		var curTool = getTool(tool.type);
 
 		curTool.mouseOver = true;
@@ -430,6 +438,7 @@ var ConfiguratorCtrl = function($scope) {
 		});
 	}
 
+	// Очищает классы подсветки
 	function removeClassesFromPlaces() {
 		angular.forEach($scope.currentShelf.spiralPlaces, function(spiralPlace) {
 			spiralPlace.class = $scope.classes.noClass;
@@ -443,14 +452,12 @@ var ConfiguratorCtrl = function($scope) {
 	// Включает режим редактирования полки
 	$scope.configureShelf = function(shelf) {
 		$scope.currentShelf = shelf;
-		$scope.mode = $scope.modes.shelf;
-		$scope.tools = $scope.shelfTools;
+		setMode($scope.modes.shelf);
 	};
 
 	// Включает режим редактирования автомата
 	$scope.configureMachine = function() {
-		$scope.mode = $scope.modes.machine;
-		$scope.tools = $scope.machineTools;
+		setMode($scope.modes.machine);
 	};
 
 	function createPlaces(count) {
@@ -472,30 +479,11 @@ var ConfiguratorCtrl = function($scope) {
 	function getTool(toolType) {
 		var tool;
 
-		switch(toolType) {
-			case $scope.toolTypes.shelf:
-				tool = $scope.machineTools.shelf;
-				break;
-
-			case $scope.toolTypes.spiral:
-				tool = $scope.shelfTools.spiral;
-				break;
-
-			case $scope.toolTypes.splitter:
-				tool = $scope.shelfTools.splitter;
-				break;
-
-			case $scope.toolTypes.singleMotor:
-				tool = $scope.shelfTools.singleMotor;
-				break;
-
-			case $scope.toolTypes.doubleMotor:
-				tool = $scope.shelfTools.doubleMotor;
-				break;
-
-			case $scope.toolTypes.ski:
-				tool = $scope.shelfTools.ski;
-		}
+		angular.forEach($scope.allTools, function(_tool) {
+			if(_tool.type == toolType) {
+				tool = _tool;
+			}
+		});
 
 		return tool;
 	}
@@ -531,7 +519,19 @@ var ConfiguratorCtrl = function($scope) {
 
 	function restoreSpiral(spiral) {
 		if(spiral.ski) {
-			$scope.shelfTools.ski.count++;
+			$scope.allTools.ski.count++;
 		}
+	}
+
+	function setMode(mode) {
+		var newTools = {};
+		$scope.mode = mode;
+		angular.forEach($scope.allTools, function(tool, toolName) {
+			if(tool.mode == $scope.mode) {
+				newTools[toolName] = tool;
+			}
+		});
+
+		$scope.tools = newTools;
 	}
 };
