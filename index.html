@@ -30,6 +30,9 @@
 					ng-mouseup="onToolMouseUp(tool)">
 						<div></div>
 					</div>
+					<div class="tool-container {{tool.toolClass}}" ng-show="tool.mouseOver && !itemOver">
+						<div></div>
+					</div>
 				</li>
 			</ul>
 		</div>

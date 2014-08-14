@@ -130,6 +130,7 @@ var ConfiguratorCtrl = function($scope) {
 	};
 
 //- РАБОЧИЕ ПЕРЕМЕННЫЕ ---------------------------------
+	$scope.itemOver = false;
 	setMode($scope.modes.machine);
 	$scope.holes = [
 		{id: 0},
@@ -387,7 +388,6 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается при нажатии на инструмент или элемент
 	$scope.onToolMouseDown = function(tool, index) {
-		console.log(tool);
 		var curTool = getTool(tool.type);
 
 		curTool.mouseOver = true;
@@ -404,6 +404,7 @@ var ConfiguratorCtrl = function($scope) {
 
 		if(index !== undefined) {
 			$scope.toStorage = "to-storage";
+			$scope.itemOver = true;
 		}
 	};
 
@@ -415,6 +416,7 @@ var ConfiguratorCtrl = function($scope) {
 			removeClassesFromPlaces();
 		}
 		$scope.toStorage = "";
+		$scope.itemOver = false;
 	};
 
 	function showFreePlaces(tool, index, collision, places) {
