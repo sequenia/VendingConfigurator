@@ -461,6 +461,7 @@ font-size: 14px;
 }
 
 .single-spiral-detector.tool-mouse-over.can-drop .detector-rail,
+.single-spiral-detector.can-drop .spiral,
 .motor-detector.tool-mouse-over.can-drop,
 .motor-detector.tool-mouse-over.can-not-drop-but-show,
 .hole.tool-mouse-over .circle {
@@ -468,6 +469,7 @@ font-size: 14px;
 }
 
 .single-spiral-detector.drag-enter.can-drop,
+.single-spiral-detector.drag-enter.can-drop .spiral,
 .motor-detector.drag-enter.can-drop,
 .hole.drag-enter {
 	background-color: #83FF7C;

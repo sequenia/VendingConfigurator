@@ -102,9 +102,7 @@
 						ng-drag-data="spiralPlace.item"
 						ng-drag-success="onItemDragComplete($data, $event, $index)"
 						ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
-						ng-mouseup="onToolMouseUp(spiralPlace.item, $index)"
-						ng-drop="true"
-						ng-drop-success="onSpiralDropComplete($data, $event, $index)">
+						ng-mouseup="onToolMouseUp(spiralPlace.item, $index)">
 							<div class="{{spiralPlace.item.ski.objectClass}}"></div>
 						</div>
 						<div class="detector-rail"></div>

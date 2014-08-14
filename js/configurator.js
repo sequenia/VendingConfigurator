@@ -154,14 +154,29 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается, когда на место в полке падает инструмент
 	$scope.onSpiralPlaceDropComplete = function($data, $event, index) {
-		if($data.type == $scope.toolTypes.spiral || $data.type == $scope.toolTypes.splitter) {
-			if(canInsertItemToPlace($data, index, $scope.currentShelf.spiralCollision)) {
-				insertItemToPlace($data, index);
-			} else {
-				getTool($data.type).count++;
+		while(true) {
+			if($data.type == $scope.toolTypes.spiral || $data.type == $scope.toolTypes.splitter) {
+				if(canInsertItemToPlace($data, index, $scope.currentShelf.spiralCollision)) {
+					insertItemToPlace($data, index);
+				} else {
+					getTool($data.type).count++;
+				}
+
+				break;
 			}
-		} else {
+
+			if($data.type == $scope.toolTypes.ski) {
+				if(canInsertSki(index)) {
+					$scope.currentShelf.spiralPlaces[index].item.ski = $data;
+				} else {
+					getTool($data.type).count++;
+				}
+
+				break;
+			}
+
 			getTool($data.type).count++;
+			break;
 		}
 	};
 
@@ -169,19 +184,6 @@ var ConfiguratorCtrl = function($scope) {
 		if($data.type == $scope.toolTypes.singleMotor || $data.type == $scope.toolTypes.doubleMotor) {
 			if(canInsertItemToPlace($data, index, $scope.currentShelf.motorCollision)) {
 				insertItemToPlace($data, index);
-			} else {
-				getTool($data.type).count++;
-			}
-		} else {
-			getTool($data.type).count++;
-		}
-	};
-
-	// Вызывается, когда на место в полке падает инструмент
-	$scope.onSpiralDropComplete = function($data, $event, index) {
-		if($data.type == $scope.toolTypes.ski) {
-			if(canInsertSki(index)) {
-				$scope.currentShelf.spiralPlaces[index].item.ski = $data;
 			} else {
 				getTool($data.type).count++;
 			}
@@ -366,6 +368,9 @@ var ConfiguratorCtrl = function($scope) {
 		if(tool.type == $scope.toolTypes.singleMotor || tool.type == $scope.toolTypes.doubleMotor) {
 			showFreePlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
 		}
+		if(tool.type == $scope.toolTypes.ski) {
+			showFreeSpirals();
+		}
 		$scope.currentTool = curTool;
 
 		if(index !== undefined) {
@@ -395,6 +400,16 @@ var ConfiguratorCtrl = function($scope) {
 
 		angular.forEach(places, function(place, idx) {
 			if(canInsertItemToPlace(tool, idx, collisionWithoutItem || collision)) {
+				place.class = $scope.classes.canDrop;
+			} else {
+				place.class = $scope.classes.canNotDrop;
+			}
+		});
+	}
+
+	function showFreeSpirals() {
+		angular.forEach($scope.currentShelf.spiralPlaces, function(place, idx) {
+			if(canInsertSki(idx)) {
 				place.class = $scope.classes.canDrop;
 			} else {
 				place.class = $scope.classes.canNotDrop;
