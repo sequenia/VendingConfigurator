@@ -79,7 +79,12 @@ var ConfiguratorCtrl = function($scope) {
 			leftOffset: 1,
 			rightOffset: 1,
 			count: 15,
-			mode: $scope.modes.shelf
+			mode: $scope.modes.shelf,
+			indicators: {
+				direction: {
+					class: "direction-left"
+				}
+			}
 		},
 
 		splitter: {
