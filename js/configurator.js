@@ -1,8 +1,10 @@
-angular.module('ConfiguratorApp', ['ngDraggable']);
+var app = angular.module('ConfiguratorApp', ['ngDraggable']);
 
 var ConfiguratorCtrl = function($scope) {
 //- ПЕРЕЧИСЛЕНИЯ И КОНСТАНТЫ ---------------------------------
 	$scope.placesOnShelf = 12; // Количество мест в полке
+	$scope.spiralPlaces = createPlaces($scope.placesOnShelf);
+	$scope.directive = 'singlemotor';
 
 	// Режимы показа
 	$scope.modes = {
@@ -56,8 +58,7 @@ var ConfiguratorCtrl = function($scope) {
 	 * }
 	 ******************/
 
-	$scope.allTools = {
-		shelf: {
+	$scope.allTools = [{
 			type: $scope.toolTypes.shelf,
 			name: "Полка",
 			toolClass: "shelf-tool",
@@ -68,11 +69,9 @@ var ConfiguratorCtrl = function($scope) {
 			motorCollision: createCollision($scope.placesOnShelf),
 			count: 5,
 			mode: $scope.modes.machine
-		},
-
-		spiral: {
+		},{
 			type: $scope.toolTypes.spiral,
-			name: "Спираль",
+			name: "Спираль левая",
 			toolClass: "spiral-tool",
 			objectClass: "spiral",
 			machineClass: "machine-spiral",
@@ -81,13 +80,22 @@ var ConfiguratorCtrl = function($scope) {
 			count: 15,
 			mode: $scope.modes.shelf,
 			indicators: {
-				direction: {
-					class: "direction-left"
-				}
+				direction: ["direction-left"]
 			}
-		},
-
-		splitter: {
+		},{
+			type: $scope.toolTypes.spiral,
+			name: "Спираль правая",
+			toolClass: "spiral-tool",
+			objectClass: "spiral",
+			machineClass: "machine-spiral",
+			leftOffset: 1,
+			rightOffset: 1,
+			count: 15,
+			mode: $scope.modes.shelf,
+			indicators: {
+				direction: ["direction-right"]
+			}
+		},{
 			type: $scope.toolTypes.splitter,
 			name: "Разделитель",
 			toolClass: "splitter-tool",
@@ -97,33 +105,85 @@ var ConfiguratorCtrl = function($scope) {
 			rightOffset: 0,
 			count: 25,
 			mode: $scope.modes.shelf
-		},
-
-		singleMotor: {
+		},{
 			type: $scope.toolTypes.singleMotor,
-			name: "Мотор",
+			name: "Мотор левый",
 			toolClass: "single-motor-tool",
 			objectClass: "single-motor",
 			machineClass: "machine-single-motor",
 			leftOffset: 1,
 			rightOffset: 1,
 			count: 14,
-			mode: $scope.modes.shelf
-		},
-
-		doubleMotor: {
+			mode: $scope.modes.shelf,
+			indicators: {
+				direction: ["direction-left"]
+			}
+		},{
+			type: $scope.toolTypes.singleMotor,
+			name: "Мотор правый",
+			toolClass: "single-motor-tool",
+			objectClass: "single-motor",
+			machineClass: "machine-single-motor",
+			leftOffset: 1,
+			rightOffset: 1,
+			count: 20,
+			mode: $scope.modes.shelf,
+			indicators: {
+				direction: ["direction-right"]
+			}
+		},{
 			type: $scope.toolTypes.doubleMotor,
-			name: "Двойной мотор",
+			name: "Двойной мотор 1",
 			toolClass: "double-motor-tool",
 			objectClass: "double-motor",
 			machineClass: "machine-double-motor",
 			leftOffset: 3,
 			rightOffset: 3,
 			count: 6,
-			mode: $scope.modes.shelf
-		},
-
-		ski: {
+			mode: $scope.modes.shelf,
+			indicators: {
+				direction: ["direction-left", "direction-right"]
+			}
+		},{
+			type: $scope.toolTypes.doubleMotor,
+			name: "Двойной мотор 2",
+			toolClass: "double-motor-tool",
+			objectClass: "double-motor",
+			machineClass: "machine-double-motor",
+			leftOffset: 3,
+			rightOffset: 3,
+			count: 8,
+			mode: $scope.modes.shelf,
+			indicators: {
+				direction: ["direction-right", "direction-left"]
+			}
+		},{
+			type: $scope.toolTypes.doubleMotor,
+			name: "Двойной мотор 3",
+			toolClass: "double-motor-tool",
+			objectClass: "double-motor",
+			machineClass: "machine-double-motor",
+			leftOffset: 3,
+			rightOffset: 3,
+			count: 7,
+			mode: $scope.modes.shelf,
+			indicators: {
+				direction: ["direction-left", "direction-left"]
+			}
+		},{
+			type: $scope.toolTypes.doubleMotor,
+			name: "Двойной мотор 4",
+			toolClass: "double-motor-tool",
+			objectClass: "double-motor",
+			machineClass: "machine-double-motor",
+			leftOffset: 3,
+			rightOffset: 3,
+			count: 4,
+			mode: $scope.modes.shelf,
+			indicators: {
+				direction: ["direction-right", "direction-right"]
+			}
+		},{
 			type: $scope.toolTypes.ski,
 			name: "Лыжа",
 			toolClass: "ski-tool",
@@ -132,7 +192,7 @@ var ConfiguratorCtrl = function($scope) {
 			count: 15,
 			mode: $scope.modes.shelf
 		}
-	};
+	];
 
 //- РАБОЧИЕ ПЕРЕМЕННЫЕ ---------------------------------
 	$scope.itemOver = false;
@@ -393,35 +453,39 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается при нажатии на инструмент или элемент
 	$scope.onToolMouseDown = function(tool, index) {
-		var curTool = getTool(tool.type);
+		if(tool) {
+			var curTool = $scope.getTool(tool.name);
 
-		curTool.mouseOver = true;
-		if(typeIsInGroup(tool.type, $scope.spiralToolTypes)) {
-			showFreePlaces(tool, index, $scope.currentShelf.spiralCollision, $scope.currentShelf.spiralPlaces);
-		}
-		if(typeIsInGroup(tool.type, $scope.motorToolTypes)) {
-			showFreePlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
-		}
-		if(tool.type == $scope.toolTypes.ski) {
-			showFreeSpirals();
-		}
-		$scope.currentTool = curTool;
+			curTool.mouseOver = true;
+			if(typeIsInGroup(tool.type, $scope.spiralToolTypes)) {
+				showFreePlaces(tool, index, $scope.currentShelf.spiralCollision, $scope.currentShelf.spiralPlaces);
+			}
+			if(typeIsInGroup(tool.type, $scope.motorToolTypes)) {
+				showFreePlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
+			}
+			if(tool.type == $scope.toolTypes.ski) {
+				showFreeSpirals();
+			}
+			$scope.currentTool = curTool;
 
-		if(index !== undefined) {
-			$scope.toStorage = "to-storage";
-			$scope.itemOver = true;
+			if(index !== undefined) {
+				$scope.toStorage = "to-storage";
+				$scope.itemOver = true;
+			}
 		}
 	};
 
 	// Вызывается, когда инструмент отпускается
 	$scope.onToolMouseUp = function(tool) {
-		var curTool = getTool(tool.type);
-		curTool.mouseOver = false;
-		if(tool.type != $scope.toolTypes.shelf) {
-			removeClassesFromPlaces();
+		if(tool) {
+			var curTool = $scope.getTool(tool.name);
+			curTool.mouseOver = false;
+			if(tool.type != $scope.toolTypes.shelf) {
+				removeClassesFromPlaces();
+			}
+			$scope.toStorage = "";
+			$scope.itemOver = false;
 		}
-		$scope.toStorage = "";
-		$scope.itemOver = false;
 	};
 
 	function showFreePlaces(tool, index, collision, places) {
@@ -475,6 +539,74 @@ var ConfiguratorCtrl = function($scope) {
 		setMode($scope.modes.machine);
 	};
 
+	$scope.getTool = function(toolName) {
+		var tool;
+
+		angular.forEach($scope.allTools, function(_tool) {
+			if(_tool.name == toolName) {
+				tool = _tool;
+			}
+		});
+
+		return tool;
+	};
+
+	function restoreTools(tool) {
+		$scope.getTool(tool.name).count++;
+
+		if(tool.type == $scope.toolTypes.shelf) {
+			restoreShelf(tool);
+		}
+
+		if(tool.type == $scope.toolTypes.spiral) {
+			restoreSpiral(tool);
+		}
+	}
+
+	function restoreShelf(shelf) {
+		angular.forEach(shelf.spiralPlaces, function(place) {
+				if(place.item) {
+					$scope.getTool(place.item.name).count++;
+					if(place.item.type == $scope.toolTypes.spiral) {
+						restoreSpiral(place.item);
+					}
+				}
+			});
+
+		angular.forEach(shelf.motorPlaces, function(place) {
+			if(place.item) {
+				$scope.getTool(place.item.name).count++;
+			}
+		});
+	}
+
+	function restoreSpiral(spiral) {
+		if(spiral.ski) {
+			$scope.getTool(spiral.ski.name).count++;
+		}
+	}
+
+	function setMode(mode) {
+		var newTools = [];
+		$scope.mode = mode;
+		angular.forEach($scope.allTools, function(tool) {
+			if(tool.mode == $scope.mode) {
+				newTools.push(tool);
+			}
+		});
+
+		$scope.tools = newTools;
+	}
+
+	function typeIsInGroup(type, group) {
+		for(var i = 0; i < group.length; i++) {
+			if(group[i] == type) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	function createPlaces(count) {
 		var places = [];
 		for(var i = 0; i < count; i++) {
@@ -489,73 +621,5 @@ var ConfiguratorCtrl = function($scope) {
 			collision.push(false);
 		}
 		return collision;
-	}
-
-	function getTool(toolType) {
-		var tool;
-
-		angular.forEach($scope.allTools, function(_tool) {
-			if(_tool.type == toolType) {
-				tool = _tool;
-			}
-		});
-
-		return tool;
-	}
-
-	function restoreTools(tool) {
-		getTool(tool.type).count++;
-
-		if(tool.type == $scope.toolTypes.shelf) {
-			restoreShelf(tool);
-		}
-
-		if(tool.type == $scope.toolTypes.spiral) {
-			restoreSpiral(tool);
-		}
-	}
-
-	function restoreShelf(shelf) {
-		angular.forEach(shelf.spiralPlaces, function(place) {
-				if(place.item) {
-					getTool(place.item.type).count++;
-					if(place.item.type == $scope.toolTypes.spiral) {
-						restoreSpiral(place.item);
-					}
-				}
-			});
-
-		angular.forEach(shelf.motorPlaces, function(place) {
-			if(place.item) {
-				getTool(place.item.type).count++;
-			}
-		});
-	}
-
-	function restoreSpiral(spiral) {
-		if(spiral.ski) {
-			$scope.allTools.ski.count++;
-		}
-	}
-
-	function setMode(mode) {
-		var newTools = {};
-		$scope.mode = mode;
-		angular.forEach($scope.allTools, function(tool, toolName) {
-			if(tool.mode == $scope.mode) {
-				newTools[toolName] = tool;
-			}
-		});
-
-		$scope.tools = newTools;
-	}
-
-	function typeIsInGroup(type, group) {
-		for(var i = 0; i < group.length; i++) {
-			if(group[i] == type) {
-				return true;
-			}
-		}
-		return false;
 	}
 };

@@ -7,6 +7,7 @@
 	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
 	<script type="text/javascript" src="js/angular.min.js"></script>
 	<script type="text/javascript" src="js/configurator.js"></script>
+	<script type="text/javascript" src="js/directives.js"></script>
 	<script type="text/javascript" src="js/ngDraggable.js"></script>
 </head>
 <body>
@@ -25,10 +26,18 @@
 						 ng-drag-success="onToolDragComplete($data, $event)"
 						 ng-mousedown="onToolMouseDown(tool)"
 						 ng-mouseup="onToolMouseUp(tool)">
-						<div></div>
+						 <div>
+							<div indicators
+								 ng-repeat="(name, indicator) in tool.indicators"
+								 tool-name="{{tool.name}}"
+								 indicator-name="{{name}}"></div>
+						 </div>
 					</div>
 					<div class="tool-container {{tool.toolClass}}" ng-show="tool.mouseOver && !itemOver">
-						<div></div>
+						<div indicators
+							 ng-repeat="(name, indicator) in tool.indicators"
+							 tool-name="{{tool.name}}"
+							 indicator-name="{{name}}"></div>
 					</div>
 				</li>
 			</ul>
@@ -39,7 +48,7 @@
 		<div class="machine" ng-show="mode == modes.machine">
 			<div>
 				<div class="machine-place-offset"></div>
-				<div class="machine-place" ng-repeat="place in allTools.shelf.spiralPlaces"></div>
+				<div class="machine-place" ng-repeat="place in spiralPlaces"></div>
 				<div class="machine-place-offset"></div>
 			</div>
 			<div class="hole"
@@ -60,8 +69,8 @@
 					 ng-drag="true"
 					 ng-drag-data="hole.shelf"
 					 ng-drag-success="onShelfDragComplete($data, $event, hole)"
-					 ng-mousedown="onToolMouseDown(tools.shelf, $index)"
-					 ng-mouseup="onToolMouseUp(tools.shelf, $index)">
+					 ng-mousedown="onToolMouseDown(hole.shelf, $index)"
+					 ng-mouseup="onToolMouseUp(hole.shelf, $index)">
 					<!-- МОТОРЫ -->
 					<div class="machine-items">
 						<div class="machine-place-offset"></div>
@@ -114,10 +123,14 @@
 							 ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
 							 ng-mouseup="onToolMouseUp(spiralPlace.item, $index)">
 							<div class="{{spiralPlace.item.ski.objectClass}}"></div>
-							<div class="shelf-spiral-indicators">
-								<div ng-repeat="indicator in spiralPlace.item.indicators"
-									 class="shelf-spiral-indicator {{indicator.class}}">
-								</div>
+							<div class="shelf-indicators">
+								<!--<div ng-repeat="indicator in spiralPlace.item.indicators"
+									 class="shelf-indicator {{indicator.class}}">
+								</div>-->
+								<div indicators
+								 ng-repeat="(name, indicator) in spiralPlace.item.indicators"
+								 tool-name="{{spiralPlace.item.name}}"
+								 indicator-name="{{name}}"></div>
 							</div>
 						</div>
 						<div class="detector-rail"></div>
@@ -136,7 +149,17 @@
 							 ng-drag-data="motorPlace.item"
 							 ng-drag-success="onItemDragComplete($data, $event, $index)"
 							 ng-mousedown="onToolMouseDown(motorPlace.item, $index)"
-							 ng-mouseup="onToolMouseUp(motorPlace.item, $index)"></div>
+							 ng-mouseup="onToolMouseUp(motorPlace.item, $index)">
+							<div class="shelf-indicators">
+								<!--<div ng-repeat="indicator in motorPlace.item.indicators"
+									 class="shelf-indicator {{indicator.class}}">
+								</div>-->
+								<div indicators
+								 ng-repeat="(name, indicator) in motorPlace.item.indicators"
+								 tool-name="{{motorPlace.item.name}}"
+								 indicator-name="{{name}}"></div>
+							</div>
+						</div>
 					</div>
 					<div class="motor-offset"></div>
 				</div>

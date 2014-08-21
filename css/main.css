@@ -42,11 +42,11 @@ font-size: 14px;
 
 .circle,
 .shelf,
-.shelf-tool div,
-.splitter-tool div,
+.shelf-tool > div,
+.splitter-tool > div,
 .splitter,
-.single-motor-tool div,
-.double-motor-tool div,
+.single-motor-tool > div,
+.double-motor-tool > div,
 .double-motor,
 .single-motor,
 .machine-single-motor,
@@ -63,12 +63,12 @@ font-size: 14px;
 }
 
 .shelf,
-.shelf-tool div,
-.splitter-tool div,
+.shelf-tool > div,
+.splitter-tool > div,
 .splitter,
-.single-motor-tool div,
+.single-motor-tool > div,
 .single-motor,
-.double-motor-tool div,
+.double-motor-tool > div,
 .double-motor,
 .ski,
 .machine-ski,
@@ -122,43 +122,43 @@ font-size: 14px;
 }
 
 /* ----------------- ИНСТРУМЕНТЫ ------------------------------ */
-.shelf-tool div {
+.shelf-tool > div {
 	width: 150px;
 	height: 5px;
 }
 
-.spiral-tool div {
-	width: 7px;
+.spiral-tool > div {
+	width: 20px;
 	height: 50px;
 	margin-top: -8px;
 
 	background: #eeeeee; /* Old browsers */
-	background: -moz-repeating-linear-gradient(45deg, #eeeeee 0%, #aaaaaa 30%); /* FF3.6+ */
-	background: -webkit-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* Chrome10+,Safari5.1+ */
-	background: -o-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* Opera 11.10+ */
-	background: -ms-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* IE10+ */
-	background: repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 30%); /* W3C */
+	background: -moz-repeating-linear-gradient(45deg, #cccccc 0%, #0e0e0e 30%); /* FF3.6+ */
+	background: -webkit-repeating-linear-gradient(45deg, #cccccc 0%,#0e0e0e 30%); /* Chrome10+,Safari5.1+ */
+	background: -o-repeating-linear-gradient(45deg, #cccccc 0%,#0e0e0e 30%); /* Opera 11.10+ */
+	background: -ms-repeating-linear-gradient(45deg, #cccccc 0%,#0e0e0e 30%); /* IE10+ */
+	background: repeating-linear-gradient(45deg, #cccccc 0%,#0e0e0e 30%); /* W3C */
 }
 
-.ski-tool div {
+.ski-tool > div {
 	width: 7px;
 	height: 50px;
 	margin-top: -8px;
 }
 
-.splitter-tool div {
+.splitter-tool > div {
 	width: 7px;
 	height: 50px;
 	margin-top: -8px;
 }
 
-.single-motor-tool div {
+.single-motor-tool > div {
 	width: 40px;
 	height: 20px;
 	margin-top: -8px;
 }
 
-.double-motor-tool div {
+.double-motor-tool > div {
 	width: 100px;
 	height: 20px;
 	margin-top: -8px;
@@ -186,11 +186,11 @@ font-size: 14px;
 	border-bottom-right-left: : 4px;
 
 	background: #eeeeee; /* Old browsers */
-	background: -moz-repeating-linear-gradient(45deg, #eeeeee 0%, #aaaaaa 10%); /* FF3.6+ */
-	background: -webkit-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* Chrome10+,Safari5.1+ */
-	background: -o-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* Opera 11.10+ */
-	background: -ms-repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* IE10+ */
-	background: repeating-linear-gradient(45deg, #eeeeee 0%,#0e0e0e 10%); /* W3C */
+	background: -moz-repeating-linear-gradient(45deg, #cccccc 0%, #0e0e0e 10%); /* FF3.6+ */
+	background: -webkit-repeating-linear-gradient(45deg, #cccccc 0%,#0e0e0e 10%); /* Chrome10+,Safari5.1+ */
+	background: -o-repeating-linear-gradient(45deg, #cccccc 0%,#0e0e0e 10%); /* Opera 11.10+ */
+	background: -ms-repeating-linear-gradient(45deg, #cccccc 0%,#0e0e0e 10%); /* IE10+ */
+	background: repeating-linear-gradient(45deg, #cccccc 0%,#0e0e0e 10%); /* W3C */
 }
 
 .spiral:hover {
@@ -209,11 +209,11 @@ font-size: 14px;
 }
 
 .single-motor {
-	width: 40px;
+	width: 41px;
 	height: 20px;
 	position: absolute;
 	left: -7px;
-	top: 10px;
+	top: 9px;
 }
 
 .single-motor:hover {
@@ -221,11 +221,11 @@ font-size: 14px;
 }
 
 .double-motor {
-	width: 100px;
+	width: 101px;
 	height: 20px;
 	position: absolute;
 	left: -37px;
-	top: 10px;
+	top: 9px;
 	z-index: 10;
 }
 
@@ -486,19 +486,35 @@ font-size: 14px;
 }
 
 /* --------- ИНДИКАТОРЫ ------------------------------- */
-.shelf-spiral-indicators {
+.shelf-indicators {
 	position: absolute;
 	top: 0;
+	width: 100%;
 }
 
-.shelf-spiral-indicator {
-	width: 40px;
-	height: 40px;
+.shelf-indicator {
+	margin: 1px;
+	width: 24px;
+	height: 24px;
 	background-size: cover;
+}
+
+.tool-indicator {
+	margin: 1px;
+	width: 18px;
+	height: 18px;
+	background-size: cover;
+	display: block;
 }
 
 .direction-left {
 	background-image: url(../images/arrows.png);
 	background-repeat: no-repeat;
 	background-position: 0 0;
+}
+
+.direction-right {
+	background-image: url(../images/arrows.png);
+	background-repeat: no-repeat;
+	background-position: 100% 0;
 }
