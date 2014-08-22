@@ -1,7 +1,6 @@
 function Indicators() {
 	return {
 		link: function($scope, element, attrs) {
-			console.log(attrs.toolName + " " + attrs.indicatorName);
 			if(attrs.toolName === undefined || attrs.toolName === "" ||
 				attrs.indicatorName === undefined || attrs.indicatorName === "") return;
 
@@ -41,49 +40,6 @@ function Indicators() {
 						$(element).append(rightDirection);
 				}
 			}
-
-			/*$(element).css({position: 'relative'});
-			var tool = $scope.getTool(attrs.name);
-
-			switch(tool.type) {
-				case $scope.toolTypes.spiral:
-					var direction = $('<div class="tool-indicator"></div>');
-					direction.addClass(tool.indicators.direction[0]);
-					direction.css({
-						position: 'absolute',
-						left: '50%',
-						'margin-left': '-9px'
-					});
-					$(element).append(direction);
-					break;
-
-				case $scope.toolTypes.singleMotor:
-					var direction = $('<div class="tool-indicator"></div>');
-					direction.addClass(tool.indicators.direction[0]);
-					direction.css({
-						position: 'absolute',
-						left: '50%',
-						'margin-left': '-9px'
-					});
-					$(element).append(direction);
-					break;
-
-				case $scope.toolTypes.doubleMotor:
-					var leftDirection  = $('<div class="tool-indicator"></div>');
-					var rightDirection = $('<div class="tool-indicator"></div>');
-
-					leftDirection.addClass(tool.indicators.direction[0]);
-					rightDirection.addClass(tool.indicators.direction[1]);
-
-					leftDirection.css({float: 'left'});
-					rightDirection.css({float: 'right'});
-
-					$(element).append(leftDirection);
-					$(element).append(rightDirection);
-					break;
-				default:
-					break;
-			}*/
 		}
 	};
 }

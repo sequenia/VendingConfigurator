@@ -47,9 +47,9 @@
 		<!-- ГЕНЕРАТОР АВТОМАТА -->
 		<div class="machine" ng-show="mode == modes.machine">
 			<div>
-				<div class="machine-place-offset"></div>
-				<div class="machine-place" ng-repeat="place in spiralPlaces"></div>
-				<div class="machine-place-offset"></div>
+				<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+				<div class="machine-place" ng-style="settings.machinePlace" ng-repeat="place in spiralPlaces"></div>
+				<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 			</div>
 			<div class="hole"
 				 ng-repeat="hole in holes"
@@ -73,22 +73,29 @@
 					 ng-mouseup="onToolMouseUp(hole.shelf, $index)">
 					<!-- МОТОРЫ -->
 					<div class="machine-items">
-						<div class="machine-place-offset"></div>
-						<div class="machine-place" ng-repeat="motorPlace in hole.shelf.motorPlaces">
-							<div class="{{motorPlace.item.machineClass}}"></div>
+						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+						<div class="machine-place"
+							 ng-style="settings.machinePlace"
+							 ng-repeat="motorPlace in hole.shelf.motorPlaces">
+							<div class="{{motorPlace.item.machineClass}}"
+								 style="{{settings[motorPlace.item.machineClass]}}"></div>
 						</div>
-						<div class="machine-place-offset"></div>
+						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 					</div>
 					<!-- /МОТОРЫ -->
 					<!-- СПИРАЛИ -->
 					<div class="machine-items">
-						<div class="machine-place-offset"></div>
-						<div class="machine-place" ng-repeat="spiralPlace in hole.shelf.spiralPlaces">
-							<div class="{{spiralPlace.item.machineClass}}">
-								<div class="{{spiralPlace.item.ski.machineClass}}"></div>
+						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+						<div class="machine-place"
+							 ng-style="settings.machinePlace"
+							 ng-repeat="spiralPlace in hole.shelf.spiralPlaces">
+							<div class="{{spiralPlace.item.machineClass}}"
+								 style="{{settings[spiralPlace.item.machineClass]}}">
+								<div class="{{spiralPlace.item.ski.machineClass}}"
+									 style="{{settings[spiralPlace.item.ski.machineClass]}}"></div>
 							</div>
 						</div>
-						<div class="machine-place-offset"></div>
+						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 					</div>
 					<!-- /СПИРАЛИ -->
 				</div>
@@ -99,61 +106,62 @@
 
 		<!-- ГЕНЕРАТОР ПОЛКИ -->
 		<div class="shelf-generator" ng-show="mode == modes.shelf">
-			<div class="shelf-model">
-				<div class="motor-place"></div>
-				<div class="spiral-places">
-					<div class="place-offset"></div>
-					<div class="spiral-place" ng-repeat="spiralPlace in currentShelf.spiralPlaces">
+			<div class="shelf-model" ng-style="settings.shelfModel">
+				<div class="motor-place" ng-style="settings.motorPlace"></div>
+				<div class="spiral-places" ng-style="settings.spiralPlaces">
+					<div class="place-offset" ng-style="settings.placeOffset"></div>
+					<div class="spiral-place"
+						 ng-style="settings.spiralPlace"
+						 ng-repeat="spiralPlace in currentShelf.spiralPlaces">
 						<div class="spiral-hole"></div>
-						<div class="rail"></div>
+						<div class="rail" ng-style="settings.rail"></div>
 					</div>
-					<div class="place-offset"></div>
+					<div class="place-offset" ng-style="settings.placeOffset"></div>
 				</div>
-				<div class="single-spiral-detectors">
-					<div class="place-offset"></div>
+				<div class="single-spiral-detectors" ng-style="settings.singleSpiralDetectors">
+					<div class="place-offset" ng-style="settings.placeOffset"></div>
 					<div class="single-spiral-detector {{spiralPlace.class}}"
 						 ng-class="{'tool-mouse-over': currentTool.mouseOver}"
+						 ng-style="settings.singleSpiralDetector"
 						 ng-repeat="spiralPlace in currentShelf.spiralPlaces"
 						 ng-drop="true"
 						 ng-drop-success="onSpiralPlaceDropComplete($data, $event, $index)">
 						<div class="{{spiralPlace.item.objectClass}}"
+							 style="{{settings[spiralPlace.item.objectClass]}}"
 							 ng-drag="true"
 							 ng-drag-data="spiralPlace.item"
 							 ng-drag-success="onItemDragComplete($data, $event, $index)"
 							 ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
 							 ng-mouseup="onToolMouseUp(spiralPlace.item, $index)">
-							<div class="{{spiralPlace.item.ski.objectClass}}"></div>
+							<div class="{{spiralPlace.item.ski.objectClass}}"
+								 style="{{settings[spiralPlace.item.ski.objectClass]}}"></div>
 							<div class="shelf-indicators">
-								<!--<div ng-repeat="indicator in spiralPlace.item.indicators"
-									 class="shelf-indicator {{indicator.class}}">
-								</div>-->
 								<div indicators
 								 ng-repeat="(name, indicator) in spiralPlace.item.indicators"
 								 tool-name="{{spiralPlace.item.name}}"
 								 indicator-name="{{name}}"></div>
 							</div>
 						</div>
-						<div class="detector-rail"></div>
+						<div class="detector-rail" ng-style="settings.rail"></div>
 					</div>
-					<div class="place-offset"></div>
+					<div class="place-offset" ng-style="settings.placeOffset"></div>
 				</div>
 				<div class="motor-detectors">
-					<div class="motor-offset"></div>
+					<div class="motor-offset" ng-style="settings.motorOffset"></div>
 					<div class="motor-detector {{motorPlace.class}}"
 						 ng-class="{'tool-mouse-over': currentTool.mouseOver}"
+						 ng-style="settings.motorDetector"
 						 ng-repeat="motorPlace in currentShelf.motorPlaces"
 						 ng-drop="true"
 						 ng-drop-success="onMotorPlaceDropComplete($data, $event, $index)">
 						<div class="{{motorPlace.item.objectClass}}"
+							 style="{{settings[motorPlace.item.objectClass]}}"
 							 ng-drag="true"
 							 ng-drag-data="motorPlace.item"
 							 ng-drag-success="onItemDragComplete($data, $event, $index)"
 							 ng-mousedown="onToolMouseDown(motorPlace.item, $index)"
 							 ng-mouseup="onToolMouseUp(motorPlace.item, $index)">
 							<div class="shelf-indicators">
-								<!--<div ng-repeat="indicator in motorPlace.item.indicators"
-									 class="shelf-indicator {{indicator.class}}">
-								</div>-->
 								<div indicators
 								 ng-repeat="(name, indicator) in motorPlace.item.indicators"
 								 tool-name="{{motorPlace.item.name}}"

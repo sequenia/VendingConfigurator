@@ -1,10 +1,115 @@
 var app = angular.module('ConfiguratorApp', ['ngDraggable']);
 
 var ConfiguratorCtrl = function($scope) {
-//- ПЕРЕЧИСЛЕНИЯ И КОНСТАНТЫ ---------------------------------
-	$scope.placesOnShelf = 12; // Количество мест в полке
-	$scope.spiralPlaces = createPlaces($scope.placesOnShelf);
-	$scope.directive = 'singlemotor';
+//- НАСТРОЙКИ ------------------------------------------------
+	$scope.shelfPlaceWidth    = 30;  // Ширина одного места на полке
+	$scope.shelfPlaceOffset   = 15;  // Ширина отступа слева и справа полки
+	$scope.spiralPlaceHeight  = 370; // Длина места для спирали
+	$scope.motorPlaceHeight   = 30;  // Длина места для мотора
+	$scope.placesOnShelf      = 12;  // Количество мест на полке
+	$scope.holesInMachine     = 12;  // Количество дырок в автомате
+	$scope.spiralWidth        = 41;  // Ширина спирали на полке
+	$scope.splitterWidth      = 8;   // Ширина разделителя
+	$scope.detectorMargin     = 2;   // Отступы детекторов
+	$scope.motorHeight        = 20;
+	$scope.machineSpiralWidth = 26;
+	$scope.machineSkiWidth    = 12;
+
+	$scope.setSettings = function() {
+		$scope.shelfLength      = $scope.motorPlaceHeight + $scope.spiralPlaceHeight;     // Длина полки
+		$scope.detectorWidth    = $scope.shelfPlaceWidth - 2 * $scope.detectorMargin;     // Ширина детектора без отступов
+		$scope.railHeight       = $scope.spiralPlaceHeight - 20;
+		$scope.skiHeight        = $scope.spiralPlaceHeight - 10;                          // Длина лыжи
+		$scope.spiralHeight     = $scope.spiralPlaceHeight - 10;                          // Длина спирали
+		$scope.splitterHeight   = $scope.spiralPlaceHeight - 5;                           // Длина разделителя
+		$scope.singleMotorWidth = parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
+		$scope.doubleMotorWidth = 3 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
+		$scope.spiralLeft       = ($scope.detectorWidth - $scope.spiralWidth) / 2.0;      // Отступ спирали на полке
+		$scope.splitterLeft     = ($scope.detectorWidth - $scope.splitterWidth) / 2.0;    // Отступ разделителя на полке
+		$scope.singleMotorLeft  = ($scope.detectorWidth - $scope.singleMotorWidth) / 2.0; // Отступ мотора на полке
+		$scope.doubleMotorLeft  = ($scope.detectorWidth - $scope.doubleMotorWidth) / 2.0; // Отступ двойного мотора на полке
+		$scope.machineSpiralLeft      = ($scope.shelfPlaceWidth - $scope.machineSpiralWidth - 4) / 2.0;
+		$scope.machineSplitterLeft    = ($scope.shelfPlaceWidth - $scope.splitterWidth) / 2.0;
+		$scope.machineSingleMotorLeft = ($scope.shelfPlaceWidth - $scope.singleMotorWidth) / 2.0;
+		$scope.machineDoubleMotorLeft = ($scope.shelfPlaceWidth - $scope.doubleMotorWidth) / 2.0;
+		$scope.machineSkiLeft         = ($scope.machineSpiralWidth - $scope.machineSkiWidth) / 2.0;
+		$scope.settings = {
+			spiralPlaces: {
+				top: $scope.motorPlaceHeight + 'px'
+			},
+			spiralPlace: {
+				height: $scope.spiralPlaceHeight + 'px',
+				width: $scope.shelfPlaceWidth + 'px'
+			},
+			machinePlace: {
+				width: $scope.shelfPlaceWidth + 'px',
+				height: '1px'
+			},
+			motorPlace: {
+				height: $scope.motorPlaceHeight + 'px'
+			},
+			machinePlaceOffset: {
+				width: $scope.shelfPlaceOffset + 'px',
+				height: '1px'
+			},
+			placeOffset: {
+				height: $scope.spiralPlaceHeight + 'px',
+				width: $scope.shelfPlaceOffset + 'px'
+			},
+			motorOffset: {
+				height: $scope.motorPlaceHeight + 'px',
+				width: $scope.shelfPlaceOffset + 'px'
+			},
+			singleSpiralDetectors: {
+				top: $scope.motorPlaceHeight + 'px'
+			},
+			singleSpiralDetector: {
+				height: $scope.spiralPlaceHeight + 'px',
+				width: $scope.detectorWidth + 'px',
+				'margin-left': $scope.detectorMargin + 'px',
+				'margin-right': $scope.detectorMargin + 'px'
+			},
+			motorDetector: {
+				height: $scope.motorPlaceHeight + 'px',
+				width: $scope.detectorWidth + 'px',
+				'margin-left': $scope.detectorMargin + 'px',
+				'margin-right': $scope.detectorMargin + 'px'
+			},
+			shelfModel: {
+				height: $scope.shelfLength + 'px'
+			},
+			rail: {
+				height: $scope.railHeight + 'px'
+			},
+			ski: 'height: ' + $scope.skiHeight + 'px',
+			spiral: 'height: ' + ($scope.spiralHeight) + 'px; ' +
+					'width: ' + ($scope.spiralWidth) + 'px; ' +
+					'left: ' + ($scope.spiralLeft) + 'px',
+			'machine-spiral': 'width: ' + ($scope.machineSpiralWidth) + 'px; ' +
+							'margin-left: ' + ($scope.machineSpiralLeft) + 'px',
+			splitter: 'height: ' + ($scope.splitterHeight) + 'px; ' +
+					'width: ' + ($scope.splitterWidth) + 'px; ' +
+					'left: ' + ($scope.splitterLeft) + 'px',
+			'machine-splitter': 'width: ' + ($scope.splitterWidth) + 'px; ' +
+								'margin-left: ' + ($scope.machineSplitterLeft) + 'px',
+			'single-motor': 'height: ' + ($scope.motorHeight) + 'px; ' +
+							'width: ' + ($scope.singleMotorWidth) + 'px; ' +
+							'left: ' + ($scope.singleMotorLeft) + 'px',
+			'machine-single-motor': 'width: ' + ($scope.singleMotorWidth) + 'px; ' +
+									'margin-left: ' + ($scope.machineSingleMotorLeft) + 'px',
+			'double-motor': 'height: ' + ($scope.motorHeight) + 'px; ' +
+							'width: ' + ($scope.doubleMotorWidth) + 'px; ' +
+							'left: ' + ($scope.doubleMotorLeft) + 'px',
+			'machine-double-motor': 'width: ' + ($scope.doubleMotorWidth) + 'px; ' +
+									'margin-left: ' + ($scope.machineDoubleMotorLeft) + 'px',
+			'machine-ski': 'width: ' + ($scope.machineSkiWidth) + 'px; ' +
+							'margin-left: ' + ($scope.machineSkiLeft) + 'px'
+		};
+	};
+
+	$scope.setSettings();
+
+	$scope.itemOver = false;
 
 	// Режимы показа
 	$scope.modes = {
@@ -21,6 +126,14 @@ var ConfiguratorCtrl = function($scope) {
 		ski: 5
 	};
 
+	$scope.classes = {
+		canDrop: "can-drop",
+		canNotDrop: "can-not-drop",
+		canNotDropButShow: "can-not-drop-but-show",
+		noClass: ""
+	};
+
+//- ИНСТРУМЕНТЫ ---------------------------------
 	$scope.spiralToolTypes = [
 		$scope.toolTypes.spiral,
 		$scope.toolTypes.splitter
@@ -31,14 +144,6 @@ var ConfiguratorCtrl = function($scope) {
 		$scope.toolTypes.doubleMotor
 	];
 
-	$scope.classes = {
-		canDrop: "can-drop",
-		canNotDrop: "can-not-drop",
-		canNotDropButShow: "can-not-drop-but-show",
-		noClass: ""
-	};
-
-//- ИНСТРУМЕНТЫ ---------------------------------
 	/*******************
 	 * Инструмент может иметь следующие поля: (могут варьироваться от инструмента и инструменту)
 	 * tool: {
@@ -57,7 +162,6 @@ var ConfiguratorCtrl = function($scope) {
 	 *     modes: [0, 1]               // Режимы, в которых доступен данный инструмент
 	 * }
 	 ******************/
-
 	$scope.allTools = [{
 			type: $scope.toolTypes.shelf,
 			name: "Полка",
@@ -195,21 +299,9 @@ var ConfiguratorCtrl = function($scope) {
 	];
 
 //- РАБОЧИЕ ПЕРЕМЕННЫЕ ---------------------------------
-	$scope.itemOver = false;
 	setMode($scope.modes.machine);
-	$scope.holes = [
-		{id: 0},
-		{id: 1},
-		{id: 2},
-		{id: 3},
-		{id: 4},
-		{id: 5},
-		{id: 6},
-		{id: 7},
-		{id: 8},
-		{id: 9},
-		{id: 10}
-	];
+	$scope.spiralPlaces = createPlaces($scope.placesOnShelf);
+	$scope.holes = createHoles($scope.holesInMachine);
 
 //- МЕТОДЫ ---------------------------------
 	// Вызывается при отпускании полки
@@ -613,6 +705,14 @@ var ConfiguratorCtrl = function($scope) {
 			places.push({item: undefined});
 		}
 		return places;
+	}
+
+	function createHoles(count) {
+		var holes = [];
+		for(var i = 0; i < count; i++) {
+			holes.push({id: i});
+		}
+		return holes;
 	}
 
 	function createCollision(count) {
