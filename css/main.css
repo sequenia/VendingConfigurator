@@ -34,7 +34,8 @@ font-size: 14px;
 .machine,
 .hole,
 .tools,
-.shelf-model {
+.shelf-model,
+.price-detectors {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
@@ -50,7 +51,8 @@ font-size: 14px;
 .double-motor,
 .single-motor,
 .machine-single-motor,
-.machine-double-motor {
+.machine-double-motor,
+.price-tool > div {
 	-moz-border-radius: 2.5px;
 	-webkit-border-radius: 2.5px;
 	border-radius: 2.5px;
@@ -78,7 +80,9 @@ font-size: 14px;
 
 .machine,
 .tools,
-.shelf-model {
+.shelf-model,
+.price-detectors,
+.price-tool > div {
 	border: 1px solid #818181;
 }
 
@@ -113,7 +117,13 @@ font-size: 14px;
 	padding-bottom: 5px;
 }
 
-.tool-container:hover {
+.tool-container:hover,
+.splitter:hover,
+.spiral:hover,
+.single-motor:hover,
+.double-motor:hover,
+.shelf:hover,
+.price:hover {
 	cursor: pointer;
 }
 
@@ -164,6 +174,11 @@ font-size: 14px;
 	margin-top: -8px;
 }
 
+.price-tool > div {
+	width: 40px;
+	height: 20px;
+}
+
 /* ----------------- "ЭЛЕМЕНТЫ НА ПОЛКЕ" ------------------------------ */
 .ski {
 	width: 10px;
@@ -189,16 +204,8 @@ font-size: 14px;
 	background: repeating-linear-gradient(45deg, #cccccc 0%,#0e0e0e 10%); /* W3C */
 }
 
-.spiral:hover {
-	cursor: pointer;
-}
-
 .splitter {
 	position: absolute;
-}
-
-.splitter:hover {
-	cursor: pointer;
 }
 
 .single-motor {
@@ -206,18 +213,10 @@ font-size: 14px;
 	bottom: 1px;
 }
 
-.single-motor:hover {
-	cursor: pointer;
-}
-
 .double-motor {
 	position: absolute;
 	bottom: 1px;
 	z-index: 10;
-}
-
-.double-motor:hover {
-	cursor: pointer;
 }
 
 .shelf-model {
@@ -237,6 +236,35 @@ font-size: 14px;
 
 .detector-rail {
 	margin: 4px auto 0px auto;
+}
+
+.price-label {
+	border-width: 0px;
+	margin-top: 4px;
+	text-align: center;
+}
+
+.price {
+	position: relative;
+	padding: 0px;
+	background: #989898;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	z-index: 10;
+}
+
+.price:after {
+	content: "";
+	position: absolute;
+	top: -15px;
+	left: 6px;
+	border-style: solid;
+	border-width: 0 9px 15px;
+	border-color: #989898 transparent;
+	display: block;
+	width: 0;
+	z-index: 1;
 }
 
 /* ----------------- "ЭЛЕМЕНТЫ НА АВТОМАТЕ" ------------------------------ */
@@ -273,10 +301,6 @@ font-size: 14px;
 
 .shelf {
 	height: 5px;
-}
-
-.shelf:hover {
-	cursor: pointer;
 }
 
 .configure-shelf {
@@ -366,9 +390,9 @@ font-size: 14px;
 }
 
 .single-spiral-detectors,
-.motor-detectors {
+.motor-detectors,
+.price-detectors {
 	width: 100%;
-	position: absolute;
 	position: absolute;
 }
 
@@ -377,7 +401,8 @@ font-size: 14px;
 }
 
 .single-spiral-detector,
-.motor-detector {
+.motor-detector,
+.price-detector {
 	float: left;
 	position: relative;
 }
@@ -392,6 +417,7 @@ font-size: 14px;
 }
 
 .single-spiral-detector.drag-enter.can-not-drop,
+.price-detector.drag-enter.can-not-drop,
 .motor-detector.drag-enter.can-not-drop-but-show,
 .hole.drag-enter.not-empty {
 	background-color: #FF6060;
@@ -403,6 +429,7 @@ font-size: 14px;
 
 .single-spiral-detector.tool-mouse-over.can-drop .detector-rail,
 .single-spiral-detector.can-drop .spiral,
+.price-detector.can-drop,
 .motor-detector.tool-mouse-over.can-drop,
 .motor-detector.tool-mouse-over.can-not-drop-but-show,
 .hole.tool-mouse-over .circle {
@@ -411,6 +438,7 @@ font-size: 14px;
 
 .single-spiral-detector.drag-enter.can-drop,
 .single-spiral-detector.drag-enter.can-drop .spiral,
+.price-detector.drag-enter.can-drop,
 .motor-detector.drag-enter.can-drop,
 .hole.drag-enter {
 	background-color: #83FF7C;

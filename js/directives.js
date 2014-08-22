@@ -44,4 +44,12 @@ function Indicators() {
 	};
 }
 
+function LabelInput() {
+	return {
+		link: function($scope, element, attrs) {
+		}
+	};
+}
+
+app.directive('label-input', [LabelInput]);
 app.directive('indicators', [Indicators]);
