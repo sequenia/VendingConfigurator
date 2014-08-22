@@ -15,6 +15,7 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.motorHeight         = 20;
 	$scope.machineSpiralWidth  = 26;
 	$scope.machineSkiWidth     = 12;
+	$scope.labelsLinesCount    = 3;
 
 	$scope.setSettings = function() {
 		$scope.shelfLength      = $scope.motorPlaceHeight + $scope.spiralPlaceHeight;     // Длина полки
@@ -73,6 +74,9 @@ var ConfiguratorCtrl = function($scope) {
 			},
 			priceDetectors: {
 				top: ($scope.shelfLength + 20) + 'px'
+			},
+			numberDetectors: {
+				top: ($scope.shelfLength + 20 + $scope.priceDetectorHeight + 15) + 'px'
 			},
 			singleSpiralDetector: {
 				height: $scope.spiralPlaceHeight + 'px',
@@ -196,7 +200,7 @@ var ConfiguratorCtrl = function($scope) {
 			objectClass: "shelf",
 			spiralPlaces: createPlaces($scope.placesOnShelf),
 			motorPlaces: createPlaces($scope.placesOnShelf),
-			pricePlaces: createPlaces($scope.placesOnShelf),
+			pricePlaces: createPlaces($scope.placesOnShelf * $scope.labelsLinesCount),
 			spiralCollision: createCollision($scope.placesOnShelf),
 			motorCollision: createCollision($scope.placesOnShelf),
 			count: 5,
@@ -325,7 +329,7 @@ var ConfiguratorCtrl = function($scope) {
 			mode: $scope.modes.shelf
 		},{
 			type: $scope.toolTypes.price,
-			name: "Цена",
+			name: "Надпись",
 			toolClass: "price-tool",
 			objectClass: "price",
 			mode: $scope.modes.shelf
@@ -801,5 +805,13 @@ var ConfiguratorCtrl = function($scope) {
 
 	$scope.preventDrag = function($event) {
 		$event.stopPropagation();
+	};
+
+	$scope.getTimes = function(count) {
+		var times = [];
+		for(var i = 0; i < count; i++) {
+			times.push(i);
+		}
+		return times;
 	};
 };

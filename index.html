@@ -34,10 +34,12 @@
 						 </div>
 					</div>
 					<div class="tool-container {{tool.toolClass}}" ng-show="tool.mouseOver && !itemOver">
+						<div>
 						<div indicators
 							 ng-repeat="(name, indicator) in tool.indicators"
 							 tool-name="{{tool.name}}"
 							 indicator-name="{{name}}"></div>
+						</div>
 					</div>
 				</li>
 			</ul>
@@ -172,28 +174,31 @@
 					</div>
 					<div class="motor-offset"></div>
 				</div>
-				<div class="price-detectors" ng-style="settings.priceDetectors">
-					<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-					<div ng-repeat="pricePlace in currentShelf.pricePlaces"
-						 class="price-detector {{pricePlace.class}}"
-						 ng-style="settings.priceDetector"
-						 ng-drop="true"
-						 ng-drop-success="onPricePlaceDropComplete($data, $event, $index)">
-						<div ng-show="pricePlace.item" class="{{pricePlace.item.objectClass}}"
-							 style="{{settings[pricePlace.item.objectClass]}}"
-							 ng-drag="true"
-							 ng-drag-data="pricePlace.item"
-							 ng-drag-success="onItemDragComplete($data, $event, $index)"
-							 ng-mousedown="onToolMouseDown(pricePlace.item, $index)"
-							 ng-mouseup="onToolMouseUp(pricePlace.item, $index)">
-							<input class="price-label"
-								   style="{{settings['price-label']}}"
-								   type="text"
-								   ng-model="pricePlace.item.value"
-								   ng-mousedown="preventDrag($event)">
+				<div class="price-detectors"
+					 ng-style="settings.priceDetectors">
+					<div ng-repeat="labelIdx in getTimes(labelsLinesCount)" style="display: inline-block; margin-top: 15px;">
+						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+						<div ng-repeat="pricePlace in currentShelf.pricePlaces.slice(labelIdx * placesOnShelf, (labelIdx + 1) * placesOnShelf)"
+							 class="price-detector {{pricePlace.class}}"
+							 ng-style="settings.priceDetector"
+							 ng-drop="true"
+							 ng-drop-success="onPricePlaceDropComplete($data, $event, $index + labelIdx * placesOnShelf)">
+							<div ng-show="pricePlace.item" class="{{pricePlace.item.objectClass}}"
+								 style="{{settings[pricePlace.item.objectClass]}}"
+								 ng-drag="true"
+								 ng-drag-data="pricePlace.item"
+								 ng-drag-success="onItemDragComplete($data, $event, $index + labelIdx * placesOnShelf)"
+								 ng-mousedown="onToolMouseDown(pricePlace.item, $index)"
+								 ng-mouseup="onToolMouseUp(pricePlace.item, $index)">
+								<input class="price-label"
+									   style="{{settings['price-label']}}"
+									   type="text"
+									   ng-model="pricePlace.item.value"
+									   ng-mousedown="preventDrag($event)">
+							</div>
 						</div>
+						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 					</div>
-					<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 				</div>
 			</div>
 			<div class="to-machine">
