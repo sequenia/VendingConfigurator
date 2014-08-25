@@ -73,10 +73,7 @@ var ConfiguratorCtrl = function($scope) {
 				top: $scope.motorPlaceHeight + 'px'
 			},
 			priceDetectors: {
-				top: ($scope.shelfLength + 20) + 'px'
-			},
-			numberDetectors: {
-				top: ($scope.shelfLength + 20 + $scope.priceDetectorHeight + 15) + 'px'
+				top: ($scope.shelfLength + 10) + 'px'
 			},
 			singleSpiralDetector: {
 				height: $scope.spiralPlaceHeight + 'px',

@@ -35,7 +35,7 @@ font-size: 14px;
 .hole,
 .tools,
 .shelf-model,
-.price-detectors {
+.price-container {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
@@ -81,7 +81,7 @@ font-size: 14px;
 .machine,
 .tools,
 .shelf-model,
-.price-detectors,
+.price-container,
 .price-tool > div {
 	border: 1px solid #818181;
 }
@@ -269,6 +269,11 @@ font-size: 14px;
 .price-detectors {
 	padding-top: 2px;
 	padding-bottom: 2px;
+}
+
+.price-container {
+	display: inline-block;
+	margin-top: 15px;
 }
 
 /* ----------------- "ЭЛЕМЕНТЫ НА АВТОМАТЕ" ------------------------------ */

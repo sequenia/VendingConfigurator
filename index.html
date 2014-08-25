@@ -176,7 +176,7 @@
 				</div>
 				<div class="price-detectors"
 					 ng-style="settings.priceDetectors">
-					<div ng-repeat="labelIdx in getTimes(labelsLinesCount)" style="display: inline-block; margin-top: 15px;">
+					<div ng-repeat="labelIdx in getTimes(labelsLinesCount)" class="price-container">
 						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 						<div ng-repeat="pricePlace in currentShelf.pricePlaces.slice(labelIdx * placesOnShelf, (labelIdx + 1) * placesOnShelf)"
 							 class="price-detector {{pricePlace.class}}"
