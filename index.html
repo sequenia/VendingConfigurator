@@ -190,8 +190,8 @@
 								 ng-drag-success="onItemDragComplete($data, $event, $index + labelIdx * placesOnShelf)"
 								 ng-mousedown="onToolMouseDown(pricePlace.item, $index)"
 								 ng-mouseup="onToolMouseUp(pricePlace.item, $index)">
-								<input class="price-label"
-									   style="{{settings['price-label']}}"
+								<input class="price-text"
+									   style="{{settings['price-text']}}"
 									   type="text"
 									   ng-model="pricePlace.item.value"
 									   ng-mousedown="preventDrag($event)">

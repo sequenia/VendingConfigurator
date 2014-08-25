@@ -25,7 +25,7 @@ var ConfiguratorCtrl = function($scope) {
 		$scope.skiHeight        = $scope.spiralPlaceHeight - 10;                          // Длина лыжи
 		$scope.spiralHeight     = $scope.spiralPlaceHeight - 10;                          // Длина спирали
 		$scope.splitterHeight   = $scope.spiralPlaceHeight - 5;                           // Длина разделителя
-		$scope.priceLabelWidth  = $scope.priceWidth - 4;
+		$scope.priceTextWidth  = $scope.priceWidth - 4;
 		$scope.singleMotorWidth = parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
 		$scope.doubleMotorWidth = 3 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
 
@@ -33,7 +33,7 @@ var ConfiguratorCtrl = function($scope) {
 		$scope.splitterLeft     = ($scope.detectorWidth - $scope.splitterWidth) / 2.0;    // Отступ разделителя на полке
 		$scope.singleMotorLeft  = ($scope.detectorWidth - $scope.singleMotorWidth) / 2.0; // Отступ мотора на полке
 		$scope.doubleMotorLeft  = ($scope.detectorWidth - $scope.doubleMotorWidth) / 2.0; // Отступ двойного мотора на полке
-		$scope.priceLabelLeft   = ($scope.priceWidth - $scope.priceLabelWidth) / 2.0;      // Отступ спирали на полке
+		$scope.priceTextLeft   = ($scope.priceWidth - $scope.priceTextWidth) / 2.0;      // Отступ спирали на полке
 
 		$scope.machineSpiralLeft      = ($scope.shelfPlaceWidth - $scope.machineSpiralWidth - 4) / 2.0;
 		$scope.machineSplitterLeft    = ($scope.shelfPlaceWidth - $scope.splitterWidth) / 2.0;
@@ -125,8 +125,8 @@ var ConfiguratorCtrl = function($scope) {
 							'margin-left: ' + ($scope.machineSkiLeft) + 'px',
 			'price': 'width: ' + ($scope.priceWidth) + 'px; ' + 
 					'height: ' + ($scope.priceDetectorHeight) + 'px',
-			'price-label': 'width: ' + ($scope.priceLabelWidth) + 'px; ' + 
-							'margin-left: ' + ($scope.priceLabelLeft) + 'px'
+			'price-text': 'width: ' + ($scope.priceTextWidth) + 'px; ' + 
+							'margin-left: ' + ($scope.priceTextLeft) + 'px'
 		};
 	};
 
