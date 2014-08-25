@@ -317,7 +317,7 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.holes = createHoles($scope.holesInMachine);
 	$scope.labels = [
 		{name: "Цены",        class: "price-label"},
-		{name: "Номера",      class: "number-label"},
+		{name: "Бирки",       class: "number-label"},
 		{name: "Комментарии", class: "comment-label"}
 	];
 
