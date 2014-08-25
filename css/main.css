@@ -32,6 +32,7 @@ font-size: 14px;
 }
 
 .machine,
+.sockets,
 .hole,
 .tools,
 .shelf-model,
@@ -59,6 +60,7 @@ font-size: 14px;
 }
 
 .machine,
+.sockets,
 .shelf-model,
 .spiral-hole {
 	background-color: #C7C7C7;
@@ -79,6 +81,7 @@ font-size: 14px;
 }
 
 .machine,
+.sockets,
 .tools,
 .shelf-model,
 .label-container {
@@ -177,6 +180,12 @@ font-size: 14px;
 	width: 40px;
 	height: 20px;
 	margin-top: 5px;
+}
+
+.socket-tool > div {
+	width: 20px;
+	height: 20px;
+	background-color: #404040;
 }
 
 /* ----------------- "ЭЛЕМЕНТЫ НА ПОЛКЕ" ------------------------------ */
@@ -309,7 +318,16 @@ font-size: 14px;
 	float: left;
 }
 
-.hole {
+.sockets {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	padding-top: 20px;
+	float: left;
+}
+
+.hole,
+.socket-hole {
 	position: relative;
 	width: 100%;
 	padding-top: 10px;
@@ -451,7 +469,7 @@ font-size: 14px;
 .single-spiral-detector.drag-enter.can-not-drop,
 .label-detector.drag-enter.can-not-drop,
 .motor-detector.drag-enter.can-not-drop-but-show,
-.hole.drag-enter.not-empty {
+.hole.drag-enter.can-not-drop {
 	background-color: #FF6060;
 }
 
@@ -464,7 +482,7 @@ font-size: 14px;
 .label-detector.can-drop,
 .motor-detector.tool-mouse-over.can-drop,
 .motor-detector.tool-mouse-over.can-not-drop-but-show,
-.hole.tool-mouse-over .circle {
+.hole.can-drop .circle {
 	background: #7076FF;
 }
 

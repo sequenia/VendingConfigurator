@@ -125,7 +125,8 @@ var ConfiguratorCtrl = function($scope) {
 		singleMotor: 3,
 		doubleMotor: 4,
 		ski: 5,
-		label: 6
+		label: 6,
+		socket: 7
 	};
 
 	$scope.classes = {
@@ -179,6 +180,13 @@ var ConfiguratorCtrl = function($scope) {
 			spiralCollision: createCollision($scope.placesOnShelf),
 			motorCollision: createCollision($scope.placesOnShelf),
 			count: 5,
+			mode: $scope.modes.machine
+		},{
+			type: $scope.toolTypes.socket,
+			name: "Сокета",
+			toolClass: "socket-tool",
+			objectClass: "socket",
+			count: 10,
 			mode: $scope.modes.machine
 		},{
 			type: $scope.toolTypes.spiral,
@@ -315,6 +323,7 @@ var ConfiguratorCtrl = function($scope) {
 	setMode($scope.modes.machine);
 	$scope.spiralPlaces = createPlaces($scope.placesOnShelf);
 	$scope.holes = createHoles($scope.holesInMachine);
+	$scope.sockets = createSockets($scope.holesInMachine);
 	$scope.labels = [
 		{name: "Цены",        class: "price-label"},
 		{name: "Бирки",       class: "number-label"},
@@ -484,6 +493,10 @@ var ConfiguratorCtrl = function($scope) {
 		return $scope.currentShelf.labelPlaces[index].item === undefined;
 	}
 
+	function canInsertShelf(index) {
+		return $scope.holes[index].shelf === undefined;
+	}
+
 	function checkOppositeCollision(item, index) {
 		var canInsert;
 
@@ -604,6 +617,9 @@ var ConfiguratorCtrl = function($scope) {
 			if(tool.type == $scope.toolTypes.label) {
 				showFreeLabels();
 			}
+			if(tool.type == $scope.toolTypes.shelf) {
+				showFreeHoles();
+			}
 			$scope.currentTool = curTool;
 
 			if(index !== undefined) {
@@ -618,9 +634,7 @@ var ConfiguratorCtrl = function($scope) {
 		if(tool) {
 			var curTool = $scope.getTool(tool.name);
 			curTool.mouseOver = false;
-			if(tool.type != $scope.toolTypes.shelf) {
-				removeClassesFromPlaces();
-			}
+			removeClassesFromPlaces();
 			$scope.toStorage = "";
 			$scope.itemOver = false;
 		}
@@ -665,19 +679,36 @@ var ConfiguratorCtrl = function($scope) {
 		});
 	}
 
+	function showFreeHoles() {
+		angular.forEach($scope.holes, function(hole, idx) {
+			if(canInsertShelf(idx)) {
+				hole.class = $scope.classes.canDrop;
+			} else {
+				hole.class = $scope.classes.canNotDrop;
+			}
+		});
+	}
+
 	// Очищает классы подсветки
 	function removeClassesFromPlaces() {
-		angular.forEach($scope.currentShelf.spiralPlaces, function(spiralPlace) {
-			spiralPlace.class = $scope.classes.noClass;
-		});
+		if($scope.mode == $scope.modes.shelf) {
+			angular.forEach($scope.currentShelf.spiralPlaces, function(spiralPlace) {
+				spiralPlace.class = $scope.classes.noClass;
+			});
 
-		angular.forEach($scope.currentShelf.motorPlaces, function(motorPlace) {
-			motorPlace.class = $scope.classes.noClass;
-		});
+			angular.forEach($scope.currentShelf.motorPlaces, function(motorPlace) {
+				motorPlace.class = $scope.classes.noClass;
+			});
 
-		angular.forEach($scope.currentShelf.labelPlaces, function(labelPlace) {
-			labelPlace.class = $scope.classes.noClass;
-		});
+			angular.forEach($scope.currentShelf.labelPlaces, function(labelPlace) {
+				labelPlace.class = $scope.classes.noClass;
+			});
+		}
+		if($scope.mode == $scope.modes.machine) {
+			angular.forEach($scope.holes, function(hole) {
+				hole.class = $scope.classes.noClass;
+			});
+		}
 	}
 
 	// Включает режим редактирования полки
@@ -773,6 +804,14 @@ var ConfiguratorCtrl = function($scope) {
 			holes.push({id: i});
 		}
 		return holes;
+	}
+
+	function createSockets(count) {
+		var sockets = [];
+		for(var i = 0; i < count; i++) {
+			sockets.push({id: i});
+		}
+		return sockets;
 	}
 
 	function createCollision(count) {

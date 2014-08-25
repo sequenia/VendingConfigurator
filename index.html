@@ -47,61 +47,67 @@
 		<!-- /ПАНЕЛЬ ИНСТРУМЕНТОВ -->
 
 		<!-- ГЕНЕРАТОР АВТОМАТА -->
-		<div class="machine" ng-show="mode == modes.machine">
-			<div>
-				<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-				<div class="machine-place" ng-style="settings.machinePlace" ng-repeat="place in spiralPlaces"></div>
-				<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-			</div>
-			<div class="hole"
-				 ng-repeat="hole in holes"
-				 ng-drop="true"
-				 ng-drop-success="onHoleDropComplete($data, $event, hole)"
-				 ng-class="{'not-empty': hole.shelf,
-							'tool-mouse-over': tools.shelf.mouseOver && !hole.shelf}">
-				<div class="circle left"></div>
-				<div class="circle right"></div>
-				<div class="hole-label">{{hole.id}}</div>
-				<div class="configure-shelf" ng-show="hole.shelf">
-					<button type="button" ng-click="configureShelf(hole.shelf)">Настроить</button>
+		<div class="machine-generator" ng-show="mode == modes.machine">
+			<div class="machine">
+				<div>
+					<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+					<div class="machine-place" ng-style="settings.machinePlace" ng-repeat="place in spiralPlaces"></div>
+					<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 				</div>
-				<!-- ПОЛКА АВТОМАТА -->
-				<div class="{{hole.shelf.objectClass}}"
-					 ng-show="hole.shelf"
-					 ng-drag="true"
-					 ng-drag-data="hole.shelf"
-					 ng-drag-success="onShelfDragComplete($data, $event, hole)"
-					 ng-mousedown="onToolMouseDown(hole.shelf, $index)"
-					 ng-mouseup="onToolMouseUp(hole.shelf, $index)">
-					<!-- МОТОРЫ -->
-					<div class="machine-items">
-						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-						<div class="machine-place"
-							 ng-style="settings.machinePlace"
-							 ng-repeat="motorPlace in hole.shelf.motorPlaces">
-							<div class="{{motorPlace.item.machineClass}}"
-								 style="{{settings[motorPlace.item.machineClass]}}"></div>
-						</div>
-						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+				<div class="hole {{hole.class}}"
+					 ng-repeat="hole in holes"
+					 ng-drop="true"
+					 ng-drop-success="onHoleDropComplete($data, $event, hole)">
+					<div class="circle left"></div>
+					<div class="circle right"></div>
+					<div class="hole-label">{{hole.id}}</div>
+					<div class="configure-shelf" ng-show="hole.shelf">
+						<button type="button" ng-click="configureShelf(hole.shelf)">Настроить</button>
 					</div>
-					<!-- /МОТОРЫ -->
-					<!-- СПИРАЛИ -->
-					<div class="machine-items">
-						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-						<div class="machine-place"
-							 ng-style="settings.machinePlace"
-							 ng-repeat="spiralPlace in hole.shelf.spiralPlaces">
-							<div class="{{spiralPlace.item.machineClass}}"
-								 style="{{settings[spiralPlace.item.machineClass]}}">
-								<div class="{{spiralPlace.item.ski.machineClass}}"
-									 style="{{settings[spiralPlace.item.ski.machineClass]}}"></div>
+					<!-- ПОЛКА АВТОМАТА -->
+					<div class="{{hole.shelf.objectClass}}"
+						 ng-show="hole.shelf"
+						 ng-drag="true"
+						 ng-drag-data="hole.shelf"
+						 ng-drag-success="onShelfDragComplete($data, $event, hole)"
+						 ng-mousedown="onToolMouseDown(hole.shelf, $index)"
+						 ng-mouseup="onToolMouseUp(hole.shelf, $index)">
+						<!-- МОТОРЫ -->
+						<div class="machine-items">
+							<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+							<div class="machine-place"
+								 ng-style="settings.machinePlace"
+								 ng-repeat="motorPlace in hole.shelf.motorPlaces">
+								<div class="{{motorPlace.item.machineClass}}"
+									 style="{{settings[motorPlace.item.machineClass]}}"></div>
 							</div>
+							<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 						</div>
-						<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+						<!-- /МОТОРЫ -->
+						<!-- СПИРАЛИ -->
+						<div class="machine-items">
+							<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+							<div class="machine-place"
+								 ng-style="settings.machinePlace"
+								 ng-repeat="spiralPlace in hole.shelf.spiralPlaces">
+								<div class="{{spiralPlace.item.machineClass}}"
+									 style="{{settings[spiralPlace.item.machineClass]}}">
+									<div class="{{spiralPlace.item.ski.machineClass}}"
+										 style="{{settings[spiralPlace.item.ski.machineClass]}}"></div>
+								</div>
+							</div>
+							<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+						</div>
+						<!-- /СПИРАЛИ -->
 					</div>
-					<!-- /СПИРАЛИ -->
+					<!-- /ПОЛКА АВТОМАТА -->
 				</div>
-				<!-- /ПОЛКА АВТОМАТА -->
+			</div>
+			<div class="sockets">
+				<div class="socket-hole"
+					 ng-repeat="socket in sockets">
+					<div class="circle"></div>
+				</div>
 			</div>
 		</div>
 		<!-- /ГЕНЕРАТОР АВТОМАТА -->
