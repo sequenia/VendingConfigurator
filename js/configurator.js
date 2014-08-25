@@ -383,17 +383,6 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	};
 
-	function insertSocketToPlace(data, socket) {
-		socket.item = $.extend(true, {}, data);
-		var label = 1;
-		for(var i = 0; i < $scope.sockets.length; i++) {
-			if($scope.sockets[i].item) {
-				$scope.sockets[i].item.label = label;
-				label++;
-			}
-		}
-	}
-
 	// Вызывается при падении чего-либо на место спирали
 	$scope.onSpiralPlaceDropComplete = function($data, $event, index) {
 		while(true) {
@@ -441,6 +430,8 @@ var ConfiguratorCtrl = function($scope) {
 			if(canInsertLabel(index)) {
 				$scope.currentShelf.labelPlaces[index].item = $.extend(true, {}, $data);
 			}
+		} else {
+			restoreTools($data);
 		}
 	};
 
@@ -615,6 +606,17 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	}
 
+	function insertSocketToPlace(data, socket) {
+		socket.item = $.extend(true, {}, data);
+		var label = 1;
+		for(var i = 0; i < $scope.sockets.length; i++) {
+			if($scope.sockets[i].item) {
+				$scope.sockets[i].item.label = label;
+				label++;
+			}
+		}
+	}
+
 	function fillItemCollision(item, index, collision) {
 		var collisionCount = collision.length;
 		var collisionIndex = index * 2 + 1;
@@ -702,27 +704,20 @@ var ConfiguratorCtrl = function($scope) {
 	// Очищает классы подсветки
 	function removeClassesFromPlaces() {
 		if($scope.mode == $scope.modes.shelf) {
-			angular.forEach($scope.currentShelf.spiralPlaces, function(spiralPlace) {
-				spiralPlace.class = $scope.classes.noClass;
-			});
-
-			angular.forEach($scope.currentShelf.motorPlaces, function(motorPlace) {
-				motorPlace.class = $scope.classes.noClass;
-			});
-
-			angular.forEach($scope.currentShelf.labelPlaces, function(labelPlace) {
-				labelPlace.class = $scope.classes.noClass;
-			});
+			removeClasses($scope.currentShelf.spiralPlaces);
+			removeClasses($scope.currentShelf.motorPlaces);
+			removeClasses($scope.currentShelf.labelPlaces);
 		}
 		if($scope.mode == $scope.modes.machine) {
-			angular.forEach($scope.holes, function(hole) {
-				hole.class = $scope.classes.noClass;
-			});
-
-			angular.forEach($scope.sockets, function(socket) {
-				socket.class = $scope.classes.noClass;
-			});
+			removeClasses($scope.holes);
+			removeClasses($scope.sockets);
 		}
+	}
+
+	function removeClasses(array) {
+		angular.forEach(array, function(item, index) {
+			item.class = $scope.classes.noClass;
+		});
 	}
 
 	// Включает режим редактирования полки
