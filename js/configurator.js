@@ -331,11 +331,6 @@ var ConfiguratorCtrl = function($scope) {
 	];
 
 //- МЕТОДЫ ---------------------------------
-	// Вызывается при отпускании полки
-	$scope.onShelfDragComplete = function($data, $event, hole) {
-		hole.shelf = undefined;
-	};
-
 	// Вызывается при отпускании инструмента
 	$scope.onToolDragComplete = function($data, $event) {
 		$data.count--;
@@ -353,23 +348,51 @@ var ConfiguratorCtrl = function($scope) {
 			if($data.type == $scope.toolTypes.label) {
 				deleteLabel(index);
 			}
+			if($data.type == $scope.toolTypes.shelf) {
+				$scope.holes[index].shelf = undefined;
+			}
+			if($data.type == $scope.toolTypes.socket) {
+				$scope.sockets[index].item = undefined;
+			}
 		}
 	};
 
 	// Вызывается при падении чего-либо на дырку
 	$scope.onHoleDropComplete = function($data, $event, hole){
-		var dataType = $data.type;
-
-		switch(dataType) {
-			case $scope.toolTypes.shelf:
-				if(hole.shelf === undefined) {
-					hole.shelf = $.extend(true, {}, $data);
-				} else {
-					restoreTools($data);
-				}
-				break;
+		if($data.type == $scope.toolTypes.shelf) {
+			if(hole.shelf === undefined) {
+				hole.shelf = $.extend(true, {}, $data);
+			} else {
+				restoreTools($data);
+			}
+		} else {
+			restoreTools($data);
 		}
 	};
+
+	// Вызывается при падении чего-либо на дырку
+	$scope.onSocketDropComplete = function($data, $event, socket){
+		if($data.type == $scope.toolTypes.socket) {
+			if(socket.item === undefined) {
+				insertSocketToPlace($data, socket);
+			} else {
+				restoreTools($data);
+			}
+		} else {
+			restoreTools($data);
+		}
+	};
+
+	function insertSocketToPlace(data, socket) {
+		socket.item = $.extend(true, {}, data);
+		var label = 1;
+		for(var i = 0; i < $scope.sockets.length; i++) {
+			if($scope.sockets[i].item) {
+				$scope.sockets[i].item.label = label;
+				label++;
+			}
+		}
+	}
 
 	// Вызывается при падении чего-либо на место спирали
 	$scope.onSpiralPlaceDropComplete = function($data, $event, index) {
@@ -497,6 +520,10 @@ var ConfiguratorCtrl = function($scope) {
 		return $scope.holes[index].shelf === undefined;
 	}
 
+	function canInsertSocket(index) {
+		return $scope.sockets[index].item === undefined;
+	}
+
 	function checkOppositeCollision(item, index) {
 		var canInsert;
 
@@ -606,19 +633,22 @@ var ConfiguratorCtrl = function($scope) {
 
 			curTool.mouseOver = true;
 			if(typeIsInGroup(tool.type, $scope.spiralToolTypes)) {
-				showFreePlaces(tool, index, $scope.currentShelf.spiralCollision, $scope.currentShelf.spiralPlaces);
+				showFreeCollisionPlaces(tool, index, $scope.currentShelf.spiralCollision, $scope.currentShelf.spiralPlaces);
 			}
 			if(typeIsInGroup(tool.type, $scope.motorToolTypes)) {
-				showFreePlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
+				showFreeCollisionPlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
 			}
 			if(tool.type == $scope.toolTypes.ski) {
-				showFreeSpirals();
+				showFreePlaces($scope.currentShelf.spiralPlaces, canInsertSki);
 			}
 			if(tool.type == $scope.toolTypes.label) {
-				showFreeLabels();
+				showFreePlaces($scope.currentShelf.labelPlaces, canInsertLabel);
 			}
 			if(tool.type == $scope.toolTypes.shelf) {
-				showFreeHoles();
+				showFreePlaces($scope.holes, canInsertShelf);
+			}
+			if(tool.type == $scope.toolTypes.socket) {
+				showFreePlaces($scope.sockets, canInsertSocket);
 			}
 			$scope.currentTool = curTool;
 
@@ -640,7 +670,7 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	};
 
-	function showFreePlaces(tool, index, collision, places) {
+	function showFreeCollisionPlaces(tool, index, collision, places) {
 		var collisionWithoutItem;
 		if(index !== undefined) {
 			collisionWithoutItem = [];
@@ -659,32 +689,12 @@ var ConfiguratorCtrl = function($scope) {
 		});
 	}
 
-	function showFreeSpirals() {
-		angular.forEach($scope.currentShelf.spiralPlaces, function(place, idx) {
-			if(canInsertSki(idx)) {
+	function showFreePlaces(array, checkMethod) {
+		angular.forEach(array, function(place, idx) {
+			if(checkMethod(idx)) {
 				place.class = $scope.classes.canDrop;
 			} else {
 				place.class = $scope.classes.canNotDrop;
-			}
-		});
-	}
-
-	function showFreeLabels() {
-		angular.forEach($scope.currentShelf.labelPlaces, function(place, idx) {
-			if(canInsertLabel(idx)) {
-				place.class = $scope.classes.canDrop;
-			} else {
-				place.class = $scope.classes.canNotDrop;
-			}
-		});
-	}
-
-	function showFreeHoles() {
-		angular.forEach($scope.holes, function(hole, idx) {
-			if(canInsertShelf(idx)) {
-				hole.class = $scope.classes.canDrop;
-			} else {
-				hole.class = $scope.classes.canNotDrop;
 			}
 		});
 	}
@@ -707,6 +717,10 @@ var ConfiguratorCtrl = function($scope) {
 		if($scope.mode == $scope.modes.machine) {
 			angular.forEach($scope.holes, function(hole) {
 				hole.class = $scope.classes.noClass;
+			});
+
+			angular.forEach($scope.sockets, function(socket) {
+				socket.class = $scope.classes.noClass;
 			});
 		}
 	}
@@ -809,7 +823,7 @@ var ConfiguratorCtrl = function($scope) {
 	function createSockets(count) {
 		var sockets = [];
 		for(var i = 0; i < count; i++) {
-			sockets.push({id: i});
+			sockets.push({item: undefined});
 		}
 		return sockets;
 	}

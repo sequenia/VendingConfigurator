@@ -98,6 +98,10 @@ font-size: 14px;
 	right: 0;
 }
 
+.center {
+	margin: 0 auto;
+}
+
 .tools {
 	width: 150px;
 	padding: 5px;
@@ -125,7 +129,8 @@ font-size: 14px;
 .single-motor:hover,
 .double-motor:hover,
 .shelf:hover,
-.label:hover {
+.label:hover,
+.socket:hover {
 	cursor: pointer;
 }
 
@@ -337,6 +342,10 @@ font-size: 14px;
 	margin-bottom: 10px;
 }
 
+.socket-hole {
+	width: 20px;
+}
+
 .hole-label {
 	position: absolute;
 	left: -24px;
@@ -355,7 +364,7 @@ font-size: 14px;
 
 .configure-shelf {
 	position: absolute;
-	right: -80px;
+	right: -130px;
 	top: 0px;
 }
 
@@ -404,6 +413,17 @@ font-size: 14px;
 
 .to-machine {
 	display: inline-block;
+}
+
+.socket {
+	width: 20px;
+	height: 20px;
+	background-color: #404040;
+	position: absolute;
+	margin-top: -7px;
+	color: #FFFFFF;
+	text-align: center;
+	padding-top: 2px;
 }
 
 /* -------------- ДЕТЕКТОРЫ И МЕСТА ДЛЯ ЭЛЕМЕНТОВ ------------------ */
@@ -468,6 +488,7 @@ font-size: 14px;
 
 .single-spiral-detector.drag-enter.can-not-drop,
 .label-detector.drag-enter.can-not-drop,
+.socket-hole.drag-enter.can-not-drop,
 .motor-detector.drag-enter.can-not-drop-but-show,
 .hole.drag-enter.can-not-drop {
 	background-color: #FF6060;
@@ -480,6 +501,7 @@ font-size: 14px;
 .single-spiral-detector.tool-mouse-over.can-drop .detector-rail,
 .single-spiral-detector.can-drop .spiral,
 .label-detector.can-drop,
+.socket-hole.can-drop,
 .motor-detector.tool-mouse-over.can-drop,
 .motor-detector.tool-mouse-over.can-not-drop-but-show,
 .hole.can-drop .circle {
@@ -490,7 +512,8 @@ font-size: 14px;
 .single-spiral-detector.drag-enter.can-drop .spiral,
 .label-detector.drag-enter.can-drop,
 .motor-detector.drag-enter.can-drop,
-.hole.drag-enter {
+.socket-hole.drag-enter.can-drop,
+.hole.drag-enter.can-drop {
 	background-color: #83FF7C;
 }
 

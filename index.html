@@ -69,7 +69,7 @@
 						 ng-show="hole.shelf"
 						 ng-drag="true"
 						 ng-drag-data="hole.shelf"
-						 ng-drag-success="onShelfDragComplete($data, $event, hole)"
+						 ng-drag-success="onItemDragComplete($data, $event, $index)"
 						 ng-mousedown="onToolMouseDown(hole.shelf, $index)"
 						 ng-mouseup="onToolMouseUp(hole.shelf, $index)">
 						<!-- МОТОРЫ -->
@@ -104,9 +104,19 @@
 				</div>
 			</div>
 			<div class="sockets">
-				<div class="socket-hole"
-					 ng-repeat="socket in sockets">
-					<div class="circle"></div>
+				<div class="socket-hole {{socket.class}}"
+					 ng-repeat="socket in sockets"
+					 ng-drop="true"
+					 ng-drop-success="onSocketDropComplete($data, $event, socket)">
+					<div class="{{socket.item.objectClass}}"
+						 ng-drag="true"
+						 ng-drag-data="socket.item"
+						 ng-drag-success="onItemDragComplete($data, $event, $index)"
+						 ng-mousedown="onToolMouseDown(socket.item, $index)"
+						 ng-mouseup="onToolMouseUp(socket.item, $index)">
+						{{socket.item.label}}
+					</div>
+					<div class="circle center"></div>
 				</div>
 			</div>
 		</div>
