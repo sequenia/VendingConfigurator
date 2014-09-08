@@ -99,6 +99,25 @@
 							<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 						</div>
 						<!-- /СПИРАЛИ -->
+
+						<!-- ЦЕННИКИ И БИРКИ -->
+						<div class="label-detectors">
+							<div ng-repeat="labelIdx in getTimes(labelsLinesCount)" class="label-container-mini">						
+								<div ng-repeat="labelPlace in hole.shelf.labelPlaces.slice(labelIdx * placesOnShelf, (labelIdx + 1) * placesOnShelf)"
+							 	class="label-detector {{labelPlace.class}}"
+							 	ng-style="settings.labelDetectorMini">
+									<div ng-show="labelPlace.item"
+								 	class="{{labelPlace.item.anyClass}}"
+								 	style="{{settings[labelPlace.item.objectClass]}}">
+									<input class="label-text-mini"
+									   style="{{settings['label-text-mini']}}"
+									   type="text"
+									   ng-model="labelPlace.item.value">
+									</div>
+								</div>												
+							</div>
+						</div>
+						<!-- /ЦЕННИКИ И БИРКИ -->
 					</div>
 					<!-- /ПОЛКА АВТОМАТА -->
 				</div>

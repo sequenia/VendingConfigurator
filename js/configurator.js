@@ -75,6 +75,12 @@ var ConfiguratorCtrl = function($scope) {
 				'margin-left': $scope.detectorMargin + 'px',
 				'margin-right': $scope.detectorMargin + 'px'
 			},
+			labelDetectorMini: {
+				height: $scope.labelDetectorHeight/4 + 'px',
+				width: $scope.detectorWidth + 'px',
+				'margin-left': $scope.detectorMargin + 'px',
+				'margin-right': $scope.detectorMargin + 'px'
+			},
 
 			shelfModel: { height: $scope.shelfLength + 'px' },
 			rail: { height: $scope.railHeight + 'px' },
@@ -104,7 +110,11 @@ var ConfiguratorCtrl = function($scope) {
 			'label':    'width: '  + ($scope.labelWidth) + 'px; ' + 
 						'height: ' + ($scope.labelDetectorHeight) + 'px',
 			'label-text':   'width: '       + ($scope.labelTextWidth) + 'px; ' + 
-							'margin-left: ' + ($scope.labelTextLeft) + 'px'
+							'margin-left: ' + ($scope.labelTextLeft) + 'px',
+			'label-text-mini':'width: '       + ($scope.labelTextWidth) + 'px; ' + 
+							'margin-left: ' + ($scope.labelTextLeft) + 'px; '+
+							'font-size:7px'							
+
 		};
 	};
 
@@ -315,6 +325,7 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Надпись",
 			toolClass: "label-tool",
 			objectClass: "label",
+			anyClass:"label-mini",
 			mode: $scope.modes.shelf
 		}
 	];
@@ -325,8 +336,8 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.holes = createHoles($scope.holesInMachine);
 	$scope.sockets = createSockets($scope.holesInMachine);
 	$scope.labels = [
-		{name: "Цены",        class: "price-label"},
-		{name: "Бирки",       class: "number-label"},
+		{name: "Код товара",       class: "number-label"},
+		{name: "Цены",        class: "price-label"},		
 		{name: "Комментарии", class: "comment-label"}
 	];
 

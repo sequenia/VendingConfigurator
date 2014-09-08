@@ -42,6 +42,12 @@ font-size: 14px;
 	border-radius: 5px;
 }
 
+.label-container-mini {
+	-moz-border-radius: 1px;
+	-webkit-border-radius: 1px;
+	border-radius: 1px;
+}
+
 .circle,
 .shelf,
 .shelf-tool > div,
@@ -86,6 +92,9 @@ font-size: 14px;
 .shelf-model,
 .label-container {
 	border: 1px solid #818181;
+}
+.label-container-mini {
+	border: 0px solid #818181;
 }
 
 .left {
@@ -258,6 +267,12 @@ font-size: 14px;
 	text-align: center;
 }
 
+.label-text-mini {
+	border-width: 0px;
+	margin-top: 0px;
+	text-align: center;
+}
+
 .label,
 .label-tool > div {
 	position: relative;
@@ -283,6 +298,17 @@ font-size: 14px;
 	z-index: 1;
 }
 
+.label-mini:after {
+	content: "";
+	position: absolute;
+	top: -15px;
+	left: 6px;
+	border-style: none;		
+	display: block;
+	width: 0;
+	z-index: 1;
+}
+
 .label-detectors {
 	padding-top: 2px;
 	padding-bottom: 2px;
@@ -291,6 +317,11 @@ font-size: 14px;
 .label-container {
 	display: inline-block;
 	margin-bottom: 15px;
+}
+
+.label-container-mini {
+	display: inline-block;
+	margin-bottom: 5px;
 }
 
 .label-name {
