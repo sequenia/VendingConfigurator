@@ -18,6 +18,7 @@ time, mark, audio, video {
 html {
 	position: relative;
 	min-height: 100%;
+	font-family: Helvetica, Tahoma, Sans-serif
 }
 
 body {	
@@ -269,7 +270,8 @@ font-size: 14px;
 
 .label-text-mini {
 	border-width: 0px;
-	margin-top: 0px;
+	margin: 0px;
+	padding: 0px;
 	text-align: center;
 }
 
@@ -303,6 +305,7 @@ font-size: 14px;
 	position: absolute;
 	top: -15px;
 	left: 6px;
+	font-size: 3px;
 	border-style: none;		
 	display: block;
 	width: 0;
@@ -321,7 +324,7 @@ font-size: 14px;
 
 .label-container-mini {
 	display: inline-block;
-	margin-bottom: 5px;
+	margin-bottom: 12px;
 }
 
 .label-name {
@@ -480,6 +483,7 @@ font-size: 14px;
 
 .place-offset,
 .motor-offset,
+.hsocket-offset,
 .machine-place-offset {
 	float: left;
 }
@@ -497,8 +501,12 @@ font-size: 14px;
 	position: absolute;
 }
 
+.hsocket-detectors {
+	top: 0px;
+}
+
 .motor-detectors {
-	top: 0;
+	top: 20px;
 }
 
 .single-spiral-detector,
