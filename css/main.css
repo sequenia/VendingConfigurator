@@ -496,6 +496,7 @@ font-size: 14px;
 
 .single-spiral-detectors,
 .motor-detectors,
+.hsocket-detectors,
 .label-detectors {
 	width: 100%;
 	position: absolute;
@@ -503,6 +504,7 @@ font-size: 14px;
 
 .hsocket-detectors {
 	top: 0px;
+
 }
 
 .motor-detectors {
@@ -511,6 +513,7 @@ font-size: 14px;
 
 .single-spiral-detector,
 .motor-detector,
+.hsocket-detector,
 .label-detector {
 	float: left;
 	position: relative;

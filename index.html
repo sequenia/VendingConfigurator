@@ -11,7 +11,11 @@
 	<script type="text/javascript" src="js/ngDraggable.js"></script>
 </head>
 <body>
+	
+									
 	<div class="configurator" ng-controller="ConfiguratorCtrl">
+		<label for="zoom">Zoom</label>
+		<input id="zoom" ng-model="shelfPlaceWidth" label="Зум" ng-change="setSettings()">
 		<!-- ПАНЕЛЬ ИНСТРУМЕНТОВ -->
 		<div class="tools {{toStorage}}"
 			 ng-drop="true"
@@ -215,20 +219,20 @@
 					<div class="hsocket-detector {{Place.class}}"
 						 ng-class="{'tool-mouse-over': currentTool.mouseOver}"
 						 ng-style="settings.hsocketDetector"
-						 ng-repeat="hsocketPlace in currentShelf.socketPlaces"
+						 ng-repeat="hsocketPlace in currentShelf.hsocketPlaces"
 						 ng-drop="true"
-						 ng-drop-success="onMotorPlaceDropComplete($data, $event, $index)">
+						 ng-drop-success="onHsocketPlaceDropComplete($data, $event, $index)">
 						<div class="{{hsocketPlace.item.objectClass}}"
 							 style="{{settings[hsocketPlace.item.objectClass]}}"
 							 ng-drag="true"
 							 ng-drag-data="hsocketPlace.item"
 							 ng-drag-success="onItemDragComplete($data, $event, $index)"
-							 ng-mousedown="onToolMouseDown(motorPlace.item, $index)"
-							 ng-mouseup="onToolMouseUp(motorPlace.item, $index)">
+							 ng-mousedown="onToolMouseDown(hsocketPlace.item, $index)"
+							 ng-mouseup="onToolMouseUp(hsocketPlace.item, $index)">
 							<div class="shelf-indicators">
 								<div indicators
 								 ng-repeat="(name, indicator) in hsocketPlace.item.indicators"
-								 tool-name="{{socketPlace.item.name}}"
+								 tool-name="{{hsocketPlace.item.name}}"
 								 indicator-name="{{name}}">
 								</div>
 							</div>

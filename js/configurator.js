@@ -2,7 +2,7 @@ var app = angular.module('ConfiguratorApp', ['ngDraggable']);
 
 var ConfiguratorCtrl = function($scope) {
 //- НАСТРОЙКИ ------------------------------------------------
-	$scope.shelfPlaceWidth     = 55;  // Ширина одного места на полке
+	$scope.shelfPlaceWidth     = 45;  // Ширина одного места на полке
 	$scope.splitterWidth       = 8;   // Ширина разделителя
 	$scope.spiralWidth         = 41;  // Ширина спирали на полке
 	$scope.machineSpiralWidth  = 26;  // Ширина спирали на автомате
@@ -172,6 +172,10 @@ var ConfiguratorCtrl = function($scope) {
 		$scope.toolTypes.label
 	];
 
+	$scope.hsocketToolTypes = [
+		$scope.toolTypes.hsocket
+	];
+
 	/*******************
 	 * Инструмент может иметь следующие поля: (могут варьироваться от инструмента и инструменту)
 	 * tool: {
@@ -201,7 +205,7 @@ var ConfiguratorCtrl = function($scope) {
 			hsocketPlaces: createPlaces($scope.placesOnShelf),
 			labelPlaces: createPlaces($scope.placesOnShelf * $scope.labelsLinesCount),
 			spiralCollision: createCollision($scope.placesOnShelf),
-			motorCollision: createCollision($scope.placesOnShelf),
+			motorCollision: createCollision($scope.placesOnShelf),			
 			count: 5,
 			mode: $scope.modes.machine
 		},{
@@ -401,7 +405,7 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	};
 
-	// Вызывается при падении чего-либо на дырку
+	// Вызывается при падении чего-либо на сокету
 	$scope.onSocketDropComplete = function($data, $event, socket){
 		if($data.type == $scope.toolTypes.socket) {
 			if(socket.item === undefined) {
@@ -449,6 +453,17 @@ var ConfiguratorCtrl = function($scope) {
 				insertItemToPlace($data, index);
 			} else {
 				restoreTools($data);
+			}
+		} else {
+			restoreTools($data);
+		}
+	};
+
+	// Вызывается при падении чего-либо на место сокеты полки
+	$scope.onHsocketPlaceDropComplete = function($data, $event, index) {
+		if($data.type == $scope.toolTypes.hsocket) {
+			if(canInsertHsocket(index)) {
+				$scope.currentShelf.hsocketPlaces[index].item = $.extend(true, {}, $data);
 			}
 		} else {
 			restoreTools($data);
@@ -538,6 +553,10 @@ var ConfiguratorCtrl = function($scope) {
 		return $scope.currentShelf.labelPlaces[index].item === undefined;
 	}
 
+	function canInsertHsocket(index) {
+		return $scope.currentShelf.hsocketPlaces[index].item === undefined;
+	}
+
 	function canInsertShelf(index) {
 		return $scope.holes[index].shelf === undefined;
 	}
@@ -616,6 +635,10 @@ var ConfiguratorCtrl = function($scope) {
 			item = $scope.currentShelf.labelPlaces[index].item;
 		}
 
+		if(typeIsInGroup(type, $scope.hsocketToolTypes)) {
+			item = $scope.currentShelf.hsocketPlaces[index].item;
+		}
+
 		var _isItem = false;
 
 		if(item !== undefined) {
@@ -671,6 +694,10 @@ var ConfiguratorCtrl = function($scope) {
 			if(typeIsInGroup(tool.type, $scope.motorToolTypes)) {
 				showFreeCollisionPlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
 			}
+			if(typeIsInGroup(tool.type, $scope.hsocketToolTypes)) {					
+				showFreePlaces($scope.currentShelf.hsocketPlaces, canInsertHsocket);				
+				alert("asd")
+			}			
 			if(tool.type == $scope.toolTypes.ski) {
 				showFreePlaces($scope.currentShelf.spiralPlaces, canInsertSki);
 			}
@@ -725,6 +752,7 @@ var ConfiguratorCtrl = function($scope) {
 	function showFreePlaces(array, checkMethod) {
 		angular.forEach(array, function(place, idx) {
 			if(checkMethod(idx)) {
+
 				place.class = $scope.classes.canDrop;
 			} else {
 				place.class = $scope.classes.canNotDrop;
