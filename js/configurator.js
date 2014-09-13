@@ -695,8 +695,7 @@ var ConfiguratorCtrl = function($scope) {
 				showFreeCollisionPlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
 			}
 			if(typeIsInGroup(tool.type, $scope.hsocketToolTypes)) {					
-				showFreePlaces($scope.currentShelf.hsocketPlaces, canInsertHsocket);				
-				alert("asd")
+				showFreePlaces($scope.currentShelf.hsocketPlaces, canInsertHsocket);								
 			}			
 			if(tool.type == $scope.toolTypes.ski) {
 				showFreePlaces($scope.currentShelf.spiralPlaces, canInsertSki);
