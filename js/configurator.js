@@ -10,7 +10,7 @@ var ConfiguratorCtrl = function($scope) {
 
 	$scope.spiralPlaceHeight   = 370; // Длина места для спирали
 	$scope.motorPlaceHeight    = 30;  // Длина места для мотора
-	$scope.hsocketPlaceHeight  = 30; // Длина места для горизонтального сокета
+	$scope.hsocketPlaceHeight  = 30;  // Длина места для горизонтального сокета
 	$scope.labelDetectorHeight = 25;  // Высота подписи
 	$scope.motorHeight         = 20;  // Высота мотора
 	$scope.hsocketHeight       = 20;  // Высота горизонтального сокета
@@ -74,7 +74,7 @@ var ConfiguratorCtrl = function($scope) {
 				'margin-right': $scope.detectorMargin + 'px'
 			},
 			hsocketDetector: {
-				height: $scope.hsocketPlaceHeight + 'px',
+				height: ($scope.hsocketPlaceHeight - 4) + 'px',
 				width: $scope.detectorWidth + 'px',
 				'margin-left': $scope.detectorMargin + 'px',
 				'margin-right': $scope.detectorMargin + 'px'
@@ -360,8 +360,8 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.holes = createHoles($scope.holesInMachine);
 	$scope.sockets = createSockets($scope.holesInMachine);
 	$scope.labels = [
-		{name: "Код товара",       class: "number-label"},
-		{name: "Цены",        class: "price-label"},		
+		{name: "Код товара",  class: "number-label"},
+		{name: "Цены",        class: "price-label"},
 		{name: "Комментарии", class: "comment-label"}
 	];
 
@@ -382,6 +382,9 @@ var ConfiguratorCtrl = function($scope) {
 			}
 			if($data.type == $scope.toolTypes.label) {
 				deleteLabel(index);
+			}
+			if($data.type == $scope.toolTypes.hsocket) {
+				deleteHsocket(index);
 			}
 			if($data.type == $scope.toolTypes.shelf) {
 				$scope.holes[index].shelf = undefined;
@@ -409,7 +412,7 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.onSocketDropComplete = function($data, $event, socket){
 		if($data.type == $scope.toolTypes.socket) {
 			if(socket.item === undefined) {
-				insertSocketToPlace($data, socket);
+				insertSocketToPlace($data, socket, $scope.sockets);
 			} else {
 				restoreTools($data);
 			}
@@ -463,7 +466,7 @@ var ConfiguratorCtrl = function($scope) {
 	$scope.onHsocketPlaceDropComplete = function($data, $event, index) {
 		if($data.type == $scope.toolTypes.hsocket) {
 			if(canInsertHsocket(index)) {
-				$scope.currentShelf.hsocketPlaces[index].item = $.extend(true, {}, $data);
+				insertSocketToPlace($data, $scope.currentShelf.hsocketPlaces[index], $scope.currentShelf.hsocketPlaces);
 			}
 		} else {
 			restoreTools($data);
@@ -498,6 +501,10 @@ var ConfiguratorCtrl = function($scope) {
 
 	function deleteLabel(index) {
 		$scope.currentShelf.labelPlaces[index].item = undefined;
+	}
+
+	function deleteHsocket(index) {
+		$scope.currentShelf.hsocketPlaces[index].item = undefined;
 	}
 
 	// Очищает массив коллизий по заданному индексу для конкретного типа элемента
@@ -660,12 +667,12 @@ var ConfiguratorCtrl = function($scope) {
 		}
 	}
 
-	function insertSocketToPlace(data, socket) {
+	function insertSocketToPlace(data, socket, sockets) {
 		socket.item = $.extend(true, {}, data);
 		var label = 1;
-		for(var i = 0; i < $scope.sockets.length; i++) {
-			if($scope.sockets[i].item) {
-				$scope.sockets[i].item.label = label;
+		for(var i = 0; i < sockets.length; i++) {
+			if(sockets[i].item) {
+				sockets[i].item.label = label;
 				label++;
 			}
 		}
@@ -694,9 +701,9 @@ var ConfiguratorCtrl = function($scope) {
 			if(typeIsInGroup(tool.type, $scope.motorToolTypes)) {
 				showFreeCollisionPlaces(tool, index, $scope.currentShelf.motorCollision, $scope.currentShelf.motorPlaces);
 			}
-			if(typeIsInGroup(tool.type, $scope.hsocketToolTypes)) {					
-				showFreePlaces($scope.currentShelf.hsocketPlaces, canInsertHsocket);								
-			}			
+			if(typeIsInGroup(tool.type, $scope.hsocketToolTypes)) {
+				showFreePlaces($scope.currentShelf.hsocketPlaces, canInsertHsocket);
+			}
 			if(tool.type == $scope.toolTypes.ski) {
 				showFreePlaces($scope.currentShelf.spiralPlaces, canInsertSki);
 			}
@@ -751,7 +758,6 @@ var ConfiguratorCtrl = function($scope) {
 	function showFreePlaces(array, checkMethod) {
 		angular.forEach(array, function(place, idx) {
 			if(checkMethod(idx)) {
-
 				place.class = $scope.classes.canDrop;
 			} else {
 				place.class = $scope.classes.canNotDrop;
@@ -765,6 +771,7 @@ var ConfiguratorCtrl = function($scope) {
 			removeClasses($scope.currentShelf.spiralPlaces);
 			removeClasses($scope.currentShelf.motorPlaces);
 			removeClasses($scope.currentShelf.labelPlaces);
+			removeClasses($scope.currentShelf.hsocketPlaces);
 		}
 		if($scope.mode == $scope.modes.machine) {
 			removeClasses($scope.holes);

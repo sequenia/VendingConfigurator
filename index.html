@@ -118,7 +118,7 @@
 									   type="text"
 									   ng-model="labelPlace.item.value">
 									</div>
-								</div>												
+								</div>
 							</div>
 						</div>
 						<!-- /ЦЕННИКИ И БИРКИ -->
@@ -147,9 +147,9 @@
 
 		<!-- ГЕНЕРАТОР ПОЛКИ -->
 		<div class="shelf-generator" ng-show="mode == modes.shelf">
-			<div class="shelf-model" ng-style="settings.shelfModel">		
-				<div class="hsocket-place" ng-style="settings.hsocketPlace"></div>		
-				<div class="motor-place" ng-style="settings.motorPlace"></div>				
+			<div class="shelf-model" ng-style="settings.shelfModel">
+				<div class="hsocket-place" ng-style="settings.hsocketPlace"></div>
+				<div class="motor-place" ng-style="settings.motorPlace"></div>
 				<div class="spiral-places" ng-style="settings.spiralPlaces">
 					<div class="place-offset" ng-style="settings.placeOffset"></div>
 					<div class="spiral-place"
@@ -216,7 +216,7 @@
 				</div>
 				<div class="hsocket-detectors">
 					<div class="hsocket-offset" ng-style="settings.hsocketOffset"></div>
-					<div class="hsocket-detector {{Place.class}}"
+					<div class="hsocket-detector {{hsocketPlace.class}}"
 						 ng-class="{'tool-mouse-over': currentTool.mouseOver}"
 						 ng-style="settings.hsocketDetector"
 						 ng-repeat="hsocketPlace in currentShelf.hsocketPlaces"
@@ -229,17 +229,11 @@
 							 ng-drag-success="onItemDragComplete($data, $event, $index)"
 							 ng-mousedown="onToolMouseDown(hsocketPlace.item, $index)"
 							 ng-mouseup="onToolMouseUp(hsocketPlace.item, $index)">
-							<div class="shelf-indicators">
-								<div indicators
-								 ng-repeat="(name, indicator) in hsocketPlace.item.indicators"
-								 tool-name="{{hsocketPlace.item.name}}"
-								 indicator-name="{{name}}">
-								</div>
-							</div>
+							 {{hsocketPlace.item.label}}
 						</div>
 					</div>
 					<div class="hsocket-offset"></div>
-				</div>				
+				</div>
 
 				<div class="label-detectors"
 					 ng-style="settings.labelDetectors">
