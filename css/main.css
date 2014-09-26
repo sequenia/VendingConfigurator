@@ -25,7 +25,7 @@ body {
 	width: 100%;
 	height: 100%;
 	min-width: 800px;
-font-size: 14px;
+	font-size: 14px;
 }
 
 .configurator {
@@ -41,12 +41,6 @@ font-size: 14px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
-}
-
-.label-container-mini {
-	-moz-border-radius: 1px;
-	-webkit-border-radius: 1px;
-	border-radius: 1px;
 }
 
 .circle,
@@ -93,9 +87,6 @@ font-size: 14px;
 .shelf-model,
 .label-container {
 	border: 1px solid #818181;
-}
-.label-container-mini {
-	border: 0px solid #818181;
 }
 
 .left {
@@ -268,13 +259,6 @@ font-size: 14px;
 	text-align: center;
 }
 
-.label-text-mini {
-	border-width: 0px;
-	margin: 0px;
-	padding: 0px;
-	text-align: center;
-}
-
 .label,
 .label-tool > div {
 	position: relative;
@@ -300,18 +284,6 @@ font-size: 14px;
 	z-index: 1;
 }
 
-.label-mini:after {
-	content: "";
-	position: absolute;
-	top: -15px;
-	left: 6px;
-	font-size: 3px;
-	border-style: none;		
-	display: block;
-	width: 0;
-	z-index: 1;
-}
-
 .label-detectors {
 	padding-top: 2px;
 	padding-bottom: 2px;
@@ -324,7 +296,6 @@ font-size: 14px;
 
 .label-container-mini {
 	display: inline-block;
-	margin-bottom: 12px;
 }
 
 .label-name {
@@ -505,9 +476,19 @@ font-size: 14px;
 .single-spiral-detectors,
 .motor-detectors,
 .hsocket-detectors,
-.label-detectors {
+.label-detectors,
+.labels-mini {
 	width: 100%;
 	position: absolute;
+}
+
+.labels-mini {
+	text-align: center;
+	z-index: 999;
+	font-size: 9px;
+	font-weight: bold;
+	margin-top: -3px;
+	color: #FFFFFF;
 }
 
 .hsocket-detectors {
@@ -522,9 +503,14 @@ font-size: 14px;
 .single-spiral-detector,
 .motor-detector,
 .hsocket-detector,
-.label-detector {
+.label-detector,
+.label-mini {
 	float: left;
 	position: relative;
+}
+
+.label-mini {
+	white-space: nowrap;
 }
 
 /* ------------ ПОДСВЕТКИ ------------------------------------- */

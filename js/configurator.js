@@ -85,12 +85,6 @@ var ConfiguratorCtrl = function($scope) {
 				'margin-left': $scope.detectorMargin + 'px',
 				'margin-right': $scope.detectorMargin + 'px'
 			},
-			labelDetectorMini: {
-				height: $scope.labelDetectorHeight/40 + 'px',
-				width: $scope.detectorWidth + 'px',
-				'margin-left': $scope.detectorMargin + 'px',
-				'margin-right': $scope.detectorMargin + 'px'
-			},
 
 			shelfModel: { height: $scope.shelfLength + 'px' },
 			rail: { height: $scope.railHeight + 'px' },
@@ -120,10 +114,7 @@ var ConfiguratorCtrl = function($scope) {
 			'label':    'width: '  + ($scope.labelWidth) + 'px; ' + 
 						'height: ' + ($scope.labelDetectorHeight) + 'px',
 			'label-text':   'width: '       + ($scope.labelTextWidth) + 'px; ' + 
-							'margin-left: ' + ($scope.labelTextLeft) + 'px',
-			'label-text-mini':'width: '       + ($scope.labelTextWidth) + 'px; ' + 
-							'margin-left: ' + ($scope.labelTextLeft) + 'px; '+
-							'font-size:7px'							
+							'margin-left: ' + ($scope.labelTextLeft) + 'px'
 
 		};
 	};
