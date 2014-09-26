@@ -58,6 +58,7 @@ var ConfiguratorCtrl = function($scope) {
 			placeOffset:        { height: $scope.spiralPlaceHeight + 'px', width: $scope.shelfPlaceOffset + 'px' },
 			motorOffset:        { height: $scope.motorPlaceHeight  + 'px', width: $scope.shelfPlaceOffset + 'px' },
 			hsocketOffset:      { height: $scope.hsocketPlaceHeight  + 'px', width: $scope.shelfPlaceOffset + 'px' },
+			motorCircle:        { margin: ($scope.motorPlaceHeight + 1) + 'px auto 0px auto' },
 
 			singleSpiralDetectors: { top: ($scope.motorPlaceHeight + $scope.hsocketPlaceHeight)     + 'px' },
 			labelDetectors:        { top: ($scope.shelfLength + 20) + 'px' },
@@ -138,7 +139,8 @@ var ConfiguratorCtrl = function($scope) {
 		ski: 5,
 		label: 6,
 		socket: 7,
-		hsocket: 8
+		hsocket: 8,
+		socketBinding: 9
 	};
 
 	$scope.classes = {
@@ -340,8 +342,10 @@ var ConfiguratorCtrl = function($scope) {
 			name: "Надпись",
 			toolClass: "label-tool",
 			objectClass: "label",
-			anyClass:"label-mini",
 			mode: $scope.modes.shelf
+		},{
+			type: $scope.toolTypes.socketBinding,
+			name: "Привязка к сокете"
 		}
 	];
 
@@ -458,6 +462,8 @@ var ConfiguratorCtrl = function($scope) {
 		if($data.type == $scope.toolTypes.hsocket) {
 			if(canInsertHsocket(index)) {
 				insertSocketToPlace($data, $scope.currentShelf.hsocketPlaces[index], $scope.currentShelf.hsocketPlaces);
+			} else {
+				restoreTools($data);
 			}
 		} else {
 			restoreTools($data);
@@ -553,6 +559,10 @@ var ConfiguratorCtrl = function($scope) {
 
 	function canInsertHsocket(index) {
 		return $scope.currentShelf.hsocketPlaces[index].item === undefined;
+	}
+
+	function canInsertSocketBinding(index) {
+		return $scope.currentShelf.hsocketPlaces[index].item !== undefined;
 	}
 
 	function canInsertShelf(index) {
@@ -655,6 +665,7 @@ var ConfiguratorCtrl = function($scope) {
 		} else {
 			fillItemCollision(item, index, $scope.currentShelf.motorCollision);
 			$scope.currentShelf.motorPlaces[index].item = $.extend(true, {}, item);
+			$scope.currentShelf.motorPlaces[index].item.socketBinding = $.extend(true, {}, $scope.getTool("Привязка к сокете"));
 		}
 	}
 
@@ -707,9 +718,12 @@ var ConfiguratorCtrl = function($scope) {
 			if(tool.type == $scope.toolTypes.socket) {
 				showFreePlaces($scope.sockets, canInsertSocket);
 			}
+			if(tool.type == $scope.toolTypes.socketBinding) {
+				showFreePlaces($scope.currentShelf.hsocketPlaces, canInsertSocketBinding);
+			}
 			$scope.currentTool = curTool;
 
-			if(index !== undefined) {
+			if(index !== undefined && tool.type != $scope.toolTypes.socketBinding) {
 				$scope.toStorage = "to-storage";
 				$scope.itemOver = true;
 			}

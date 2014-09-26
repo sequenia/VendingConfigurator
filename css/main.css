@@ -131,7 +131,8 @@ body {
 .double-motor:hover,
 .shelf:hover,
 .label:hover,
-.socket:hover {
+.socket:hover,
+.motor-circle:hover {
 	cursor: pointer;
 }
 
@@ -361,6 +362,13 @@ body {
 	width: 5px;
 	height: 5px;
 	background: #FFFFFF;
+}
+
+.motor-circle {
+	position: relative;
+}
+.motor-circle.dragging {
+	margin: 0 !important;
 }
 
 .shelf {
