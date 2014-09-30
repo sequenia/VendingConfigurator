@@ -459,14 +459,24 @@ var ConfiguratorCtrl = function($scope) {
 
 	// Вызывается при падении чего-либо на место сокеты полки
 	$scope.onHsocketPlaceDropComplete = function($data, $event, index) {
-		if($data.type == $scope.toolTypes.hsocket) {
-			if(canInsertHsocket(index)) {
-				insertSocketToPlace($data, $scope.currentShelf.hsocketPlaces[index], $scope.currentShelf.hsocketPlaces);
-			} else {
-				restoreTools($data);
+		while(true) {
+			if($data.type == $scope.toolTypes.hsocket) {
+				if(canInsertHsocket(index)) {
+					insertSocketToPlace($data, $scope.currentShelf.hsocketPlaces[index], $scope.currentShelf.hsocketPlaces);
+				} else {
+					restoreTools($data);
+				}
+				break;
 			}
-		} else {
+
+			if($data.type == $scope.toolTypes.socketBinding) {
+				if(canInsertSocketBinding(index)) {
+					insertSocketBinding($data, $scope.currentShelf.hsocketPlaces[index]);
+				}
+			}
+
 			restoreTools($data);
+			break;
 		}
 	};
 
@@ -664,13 +674,13 @@ var ConfiguratorCtrl = function($scope) {
 			$scope.currentShelf.spiralPlaces[index].item = $.extend(true, {}, item);
 		} else {
 			fillItemCollision(item, index, $scope.currentShelf.motorCollision);
-			$scope.currentShelf.motorPlaces[index].item = $.extend(true, {}, item);
-			$scope.currentShelf.motorPlaces[index].item.socketBinding = $.extend(true, {}, $scope.getTool("Привязка к сокете"));
+			$scope.currentShelf.motorPlaces[index].item = copyIfTool(item); //$.extend(true, {}, item);
+			$scope.currentShelf.motorPlaces[index].item.socketBinding = $.extend(true, {motorIndex: index}, $scope.getTool("Привязка к сокете"));
 		}
 	}
 
 	function insertSocketToPlace(data, socket, sockets) {
-		socket.item = $.extend(true, {}, data);
+		socket.item = copyIfTool(data); //$.extend(true, {}, data);
 		var label = 1;
 		for(var i = 0; i < sockets.length; i++) {
 			if(sockets[i].item) {
@@ -678,6 +688,11 @@ var ConfiguratorCtrl = function($scope) {
 				label++;
 			}
 		}
+	}
+
+	function insertSocketBinding(data, socket) {
+		var motor = $scope.currentShelf.motorPlaces[data.motorIndex].item;
+		motor.socket = socket.item;
 	}
 
 	function fillItemCollision(item, index, collision) {
@@ -899,6 +914,17 @@ var ConfiguratorCtrl = function($scope) {
 			collision.push(false);
 		}
 		return collision;
+	}
+
+	function copyIfTool(data) {
+		var copy;
+		if(data.notTool) {
+			copy = data;
+		} else {
+			copy = $.extend(true, {}, data);
+			copy.notTool = true;
+		}
+		return copy;
 	}
 
 	$scope.preventDrag = function($event) {

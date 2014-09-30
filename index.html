@@ -205,6 +205,9 @@
 								 indicator-name="{{name}}">
 								</div>
 							</div>
+							<span ng-show="motorPlace.item.socket" style="color: white;">
+								{{motorPlace.item.socket.label}}
+							</span>
 						</div>
 						<div class="circle motor-circle"
 							 ng-style="settings.motorCircle"
