@@ -227,12 +227,21 @@ body {
 .single-motor {
 	position: absolute;
 	bottom: 1px;
+	z-index: 10;
 }
 
 .double-motor {
 	position: absolute;
 	bottom: 1px;
 	z-index: 10;
+}
+
+.motor-hsocket-label {
+	color: #FFFFFF;
+}
+
+.motor-hsocket-binding {
+	position: absolute;
 }
 
 .shelf-model {
@@ -485,6 +494,7 @@ body {
 .motor-detectors,
 .hsocket-detectors,
 .label-detectors,
+.hsocket-bindings,
 .labels-mini {
 	width: 100%;
 	position: absolute;
@@ -511,6 +521,7 @@ body {
 .single-spiral-detector,
 .motor-detector,
 .hsocket-detector,
+.hsocket-binding,
 .label-detector,
 .label-mini {
 	float: left;

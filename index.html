@@ -205,9 +205,13 @@
 								 indicator-name="{{name}}">
 								</div>
 							</div>
-							<span ng-show="motorPlace.item.socket" style="color: white;">
+							<span ng-show="motorPlace.item.socket" class="motor-hsocket-label">
 								{{motorPlace.item.socket.label}}
 							</span>
+						</div>
+						<div ng-show="motorPlace.item.socketBindingStyle"
+							 class="motor-hsocket-binding"
+							 ng-style="motorPlace.item.socketBindingStyle">
 						</div>
 						<div class="circle motor-circle"
 							 ng-style="settings.motorCircle"
@@ -271,6 +275,13 @@
 						</div>
 					</div>
 				</div>
+
+				<!--<div class="hsocket-bindings">
+					<div ng-repeat="hsocketBinding in currentShelf.hsocketBindings"
+						 class="hsocket-binding"
+						 ng-style="hsocketBinding">
+					</div>
+				</div>-->
 			</div>
 			<div class="to-machine">
 				<button type="button" ng-click="configureMachine()">К автомату</button>
