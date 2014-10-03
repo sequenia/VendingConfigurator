@@ -319,13 +319,22 @@ body {
 .price-label {
 	background: #FF8080 !important;
 }
+.price-span {
+	color: #FF8080;
+}
 
 .number-label {
 	background: #40FF40 !important;
 }
+.number-span {
+	color: #40FF40;
+}
 
 .comment-label {
 	background: #4040FF !important;
+}
+.comment-span {
+	color: #4040FF;
 }
 
 /* ----------------- "ЭЛЕМЕНТЫ НА АВТОМАТЕ" ------------------------------ */
@@ -363,7 +372,7 @@ body {
 
 .hole-label {
 	position: absolute;
-	left: -24px;
+	left: -35px;
 	top: 5px;
 }
 
@@ -505,8 +514,8 @@ body {
 	z-index: 999;
 	font-size: 9px;
 	font-weight: bold;
-	margin-top: -3px;
 	color: #FFFFFF;
+	top: 0;
 }
 
 .hsocket-detectors {
@@ -530,6 +539,9 @@ body {
 
 .label-mini {
 	white-space: nowrap;
+}
+.label-mini span {
+	background-color: #FFFFFF;
 }
 
 /* ------------ ПОДСВЕТКИ ------------------------------------- */

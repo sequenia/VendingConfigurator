@@ -106,7 +106,18 @@
 
 						<!-- ЦЕННИКИ И БИРКИ -->
 						<div class="labels-mini">
-							<div ng-repeat="labelIdx in getTimes(labelsLinesCount)" class="label-container-mini">
+							<div class="label-container-mini">
+								<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+								<div ng-repeat="labelPlace in hole.shelf.labelPlaces.slice(0, placesOnShelf)"
+									 class="label-mini"
+									 ng-style="settings.machinePlace">
+									<span class="number-span">{{labelPlace.item.value}}</span>
+									<span class="price-span">{{hole.shelf.labelPlaces[$index + placesOnShelf].item.value}}</span>
+									<span class="comment-span">{{hole.shelf.labelPlaces[$index + placesOnShelf * 2].item.value}}</span>
+								</div>
+								<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+							</div>
+							<!--<div ng-repeat="labelIdx in getTimes(labelsLinesCount)" class="label-container-mini">
 								<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
 								<div ng-repeat="labelPlace in hole.shelf.labelPlaces.slice(labelIdx * placesOnShelf, (labelIdx + 1) * placesOnShelf)"
 									 class="label-mini"
@@ -114,7 +125,7 @@
 									{{labelPlace.item.value}}
 								</div>
 								<div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-							</div>
+							</div>-->
 						</div>
 						<!-- /ЦЕННИКИ И БИРКИ -->
 					</div>

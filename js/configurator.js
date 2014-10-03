@@ -921,7 +921,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	function createHoles(count) {
 		var holes = [];
 		for(var i = 0; i < count; i++) {
-			holes.push({id: i});
+			holes.push({id: (i + 1) * 20});
 		}
 		return holes;
 	}
