@@ -454,8 +454,9 @@ body {
 }
 
 .socket {
-	width: 20px;
-	height: 20px;
+	width: 17px;
+	margin-left: 1px;
+	height: 17px;
 	background-color: #404040;
 	position: absolute;
 	margin-top: -7px;
@@ -477,6 +478,12 @@ body {
 	width: 10px; height: 10px;
 	background: #8F8F8F;
 	border: 1px solid #000000;
+}
+
+.machine-binding-circle {
+	position: absolute;
+	right: -12px;
+	background-color: #000000;
 }
 
 /* -------------- ДЕТЕКТОРЫ И МЕСТА ДЛЯ ЭЛЕМЕНТОВ ------------------ */

@@ -408,6 +408,10 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			case $scope.toolTypes.shelf:
 				if(canInsertShelf($index)) {
 					$scope.holes[$index].shelf = $.extend(true, {}, $data);
+					$scope.holes[$index].shelf.socketBinding = $.extend(true, {shelfIndex: $index}, $scope.getTool("Привязка к сокете"));
+					if($scope.holes[$index].shelf.socket) {
+						$scope.holes[$index].shelf.socket.shelfIndex = $index;
+					}
 				} else {
 					restoreTools($data);
 				}
@@ -437,15 +441,27 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	};
 
 	// Вызывается при падении чего-либо на сокету
-	$scope.onSocketDropComplete = function($data, $event, socket){
-		if($data.type == $scope.toolTypes.socket) {
-			if(socket.item === undefined) {
-				insertSocketToPlace($data, socket, $scope.sockets);
-			} else {
+	$scope.onSocketDropComplete = function($data, $event, $index){
+
+		switch($data.type) {
+			case $scope.toolTypes.socket:
+				if($scope.sockets[$index].item === undefined) {
+					insertSocketToPlace($data, $scope.sockets[$index], $scope.sockets);
+				} else {
+					restoreTools($data);
+				}
+				break;
+
+			case $scope.toolTypes.socketBinding:
+				if(canInsertSocketBinding($index)) {
+					insertSocketBinding($data, $scope.sockets[$index]);
+					drawBindings();
+				}
+				break;
+
+			default:
 				restoreTools($data);
-			}
-		} else {
-			restoreTools($data);
+				break;
 		}
 	};
 
@@ -621,11 +637,21 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 	function canInsertSocketBinding(index) {
 		var result = true;
-		if($scope.currentShelf.hsocketPlaces[index].item === undefined) {
-			result = false;
-		} else {
-			if($scope.currentShelf.hsocketPlaces[index].item.motorIndex !== undefined) {
+		if($scope.mode == $scope.modes.shelf) {
+			if($scope.currentShelf.hsocketPlaces[index].item === undefined) {
 				result = false;
+			} else {
+				if($scope.currentShelf.hsocketPlaces[index].item.motorIndex !== undefined) {
+					result = false;
+				}
+			}
+		} else {
+			if($scope.sockets[index].item === undefined) {
+				result = false;
+			} else {
+				if($scope.sockets[index].item.shelfIndex !== undefined) {
+					result = false;
+				}
 			}
 		}
 		return result;
@@ -752,9 +778,16 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function insertSocketBinding(data, socket) {
-		var motor = $scope.currentShelf.motorPlaces[data.motorIndex].item;
-		motor.socket = socket.item;
-		socket.item.motorIndex = data.motorIndex;
+		if($scope.mode == $scope.modes.shelf) {
+			var motor = $scope.currentShelf.motorPlaces[data.motorIndex].item;
+			motor.socket = socket.item;
+			socket.item.motorIndex = data.motorIndex;
+		} else {
+			var shelf = $scope.holes[data.shelfIndex].shelf;
+			shelf.socket = socket.item;
+			socket.item.shelfIndex = data.shelfIndex;
+			console.log(shelf);
+		}
 	}
 
 	function fillItemCollision(item, index, collision) {
@@ -799,7 +832,11 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 				showFreePlaces($scope.sockets, canInsertSocket);
 			}
 			if(tool.type == $scope.toolTypes.socketBinding) {
-				showFreePlaces($scope.currentShelf.hsocketPlaces, canInsertSocketBinding);
+				if($scope.mode == $scope.modes.shelf) {
+					showFreePlaces($scope.currentShelf.hsocketPlaces, canInsertSocketBinding);
+				} else {
+					showFreePlaces($scope.sockets, canInsertSocketBinding);
+				}
 			}
 			$scope.currentTool = curTool;
 
@@ -1017,46 +1054,50 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 	function drawBindings() {
 		$timeout(function() {
-			var motors = $('.motor-detectors').find('.single-motor, .double-motor');
-			var hsockets = $('.hsocket-detectors').find('.socket');
-			var motorIndex = 0;
-			angular.forEach($scope.currentShelf.motorPlaces, function(motorPlace, index) {
-				if(motorPlace.item !== undefined) {
-					var motor = motors[motorIndex];
-					var socketIndex = parseInt($(motor).find('.motor-hsocket-label').first().text());
-					if(socketIndex) {
-						var hsocket = hsockets[socketIndex - 1];
-						var motorOffset = $(motor).parent().offset();
-						var hsocketOffset = $(hsocket).offset();
-						var x = hsocketOffset.left - motorOffset.left;
-						var distanceToCenter = $(motor).width() / 2.0 - $(hsocket).width() / 2.0;
-						var y = motorOffset.top - hsocketOffset.top;
-						var width = Math.sqrt(x * x + y * y);
-						var angle = - 57.325 * Math.asin(y / width);
-						var xPosition = 0;
-						if(x < 0) {
-							angle = - angle;
-							xPosition = x;
+			if($scope.mode == $scope.modes.shelf) {
+				var motors = $('.motor-detectors').find('.single-motor, .double-motor');
+				var hsockets = $('.hsocket-detectors').find('.socket');
+				var motorIndex = 0;
+				angular.forEach($scope.currentShelf.motorPlaces, function(motorPlace, index) {
+					if(motorPlace.item !== undefined) {
+						var motor = motors[motorIndex];
+						var socketIndex = parseInt($(motor).find('.motor-hsocket-label').first().text());
+						if(socketIndex) {
+							var hsocket = hsockets[socketIndex - 1];
+							var motorOffset = $(motor).parent().offset();
+							var hsocketOffset = $(hsocket).offset();
+							var x = hsocketOffset.left - motorOffset.left;
+							var distanceToCenter = $(motor).width() / 2.0 - $(hsocket).width() / 2.0;
+							var y = motorOffset.top - hsocketOffset.top;
+							var width = Math.sqrt(x * x + y * y);
+							var angle = - 57.325 * Math.asin(y / width);
+							var xPosition = 0;
+							if(x < 0) {
+								angle = - angle;
+								xPosition = x;
+							}
+
+							motorPlace.item.socketBindingStyle = {
+								width: width,
+								height: '2px',
+								'background-color': "#FFFFFF",
+								position: 'absolute',
+								'z-index': 0,
+								'margin-left': xPosition + 'px',
+
+								'-moz-transform': 'rotate(' + angle + 'deg)',
+								'-webkit-transform': 'rotate(' + angle + 'deg)',
+								'-o-transform': 'rotate(' + angle + 'deg)',
+								'-ms-transform': 'rotate(' + angle + 'deg)',
+								'transform':' rotate(' + angle + 'deg)'
+							};
 						}
-
-						motorPlace.item.socketBindingStyle = {
-							width: width,
-							height: '2px',
-							'background-color': "#FFFFFF",
-							position: 'absolute',
-							'z-index': 0,
-							'margin-left': xPosition + 'px',
-
-							'-moz-transform': 'rotate(' + angle + 'deg)',
-							'-webkit-transform': 'rotate(' + angle + 'deg)',
-							'-o-transform': 'rotate(' + angle + 'deg)',
-							'-ms-transform': 'rotate(' + angle + 'deg)',
-							'transform':' rotate(' + angle + 'deg)'
-						};
+						motorIndex++;
 					}
-					motorIndex++;
-				}
-			});
+				});
+			} else {
+				console.log("Рисую");
+			}
 		});
 	}
 
