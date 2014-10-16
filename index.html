@@ -70,6 +70,14 @@
                              ng-mouseup="onToolMouseUp(hole.hole, $index)"></div>
                     </div>
                     <div class="circle right">
+                        <div class="hole-object"
+                             style="right: 0;"
+                             ng-show="hole.hole"
+                             ng-drag="true"
+                             ng-drag-data="hole.hole"
+                             ng-drag-success="onItemDragComplete($data, $event, $index)"
+                             ng-mousedown="onToolMouseDown(hole.hole, $index)"
+                             ng-mouseup="onToolMouseUp(hole.hole, $index)"></div>
                     </div>
                     <div class="hole-label">{{hole.id}}</div>
                     <div class="configure-shelf" ng-show="hole.shelf">

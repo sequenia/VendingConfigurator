@@ -587,7 +587,8 @@ body {
 .hsocket-detector.can-drop,
 .motor-detector.tool-mouse-over.can-drop,
 .motor-detector.tool-mouse-over.can-not-drop-but-show,
-.hole.can-drop .circle {
+.hole.can-drop .circle,
+.hole.can-drop .circle .hole-object {
 	background: #7076FF;
 }
 
