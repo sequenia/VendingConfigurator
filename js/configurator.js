@@ -140,7 +140,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		label: 6,
 		socket: 7,
 		hsocket: 8,
-		socketBinding: 9
+		socketBinding: 9,
+		hole: 10
 	};
 
 	$scope.classes = {
@@ -347,6 +348,13 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		},{
 			type: $scope.toolTypes.socketBinding,
 			name: "Привязка к сокете"
+		},{
+			type: $scope.toolTypes.hole,
+			name: "Дырка",
+			toolClass: "hole-tool",
+			objectClass: "hole-object",
+			mode: $scope.modes.machine,
+			count: 15
 		}
 	];
 
@@ -388,19 +396,43 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			if($data.type == $scope.toolTypes.socket) {
 				$scope.sockets[index].item = undefined;
 			}
+			if($data.type == $scope.toolTypes.hole) {
+				$scope.holes[index].hole = undefined;
+			}
 		}
 	};
 
 	// Вызывается при падении чего-либо на дырку
-	$scope.onHoleDropComplete = function($data, $event, hole){
-		if($data.type == $scope.toolTypes.shelf) {
-			if(hole.shelf === undefined) {
-				hole.shelf = $.extend(true, {}, $data);
-			} else {
+	$scope.onHoleDropComplete = function($data, $event, $index){
+		switch($data.type) {
+			case $scope.toolTypes.shelf:
+				if(canInsertShelf($index)) {
+					$scope.holes[$index].shelf = $.extend(true, {}, $data);
+				} else {
+					restoreTools($data);
+				}
+				break;
+
+			case $scope.toolTypes.hole:
+				if(canInsertHole($index)) {
+					$scope.holes[$index].hole = $.extend(true, {}, $data);
+					var hole = $scope.holes[$index].hole;
+
+					if(hole.index !== undefined) {
+						var shelf = $scope.holes[hole.index].shelf;
+						$scope.holes[hole.index].shelf = undefined;
+						$scope.holes[$index].shelf = shelf;
+					}
+
+					hole.index = $index;
+				} else {
+					restoreTools($data);
+				}
+				break;
+
+			default:
 				restoreTools($data);
-			}
-		} else {
-			restoreTools($data);
+				break;
 		}
 	};
 
@@ -600,7 +632,11 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function canInsertShelf(index) {
-		return $scope.holes[index].shelf === undefined;
+		return $scope.holes[index].shelf === undefined && $scope.holes[index].hole !== undefined;
+	}
+
+	function canInsertHole(index) {
+		return $scope.holes[index].hole === undefined;
 	}
 
 	function canInsertSocket(index) {
@@ -756,6 +792,9 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			if(tool.type == $scope.toolTypes.shelf) {
 				showFreePlaces($scope.holes, canInsertShelf);
 			}
+			if(tool.type == $scope.toolTypes.hole) {
+				showFreePlaces($scope.holes, canInsertHole);
+			}
 			if(tool.type == $scope.toolTypes.socket) {
 				showFreePlaces($scope.sockets, canInsertSocket);
 			}
@@ -864,6 +903,10 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		if(tool.type == $scope.toolTypes.spiral) {
 			restoreSpiral(tool);
 		}
+
+		if(tool.type == $scope.toolTypes.hole) {
+			restoreHole(tool);
+		}
 	}
 
 	function restoreShelf(shelf) {
@@ -881,6 +924,15 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 				$scope.getTool(place.item.name).count++;
 			}
 		});
+	}
+
+	function restoreHole(hole) {
+		if($scope.holes[hole.index].shelf !== undefined) {
+			var shelf = $scope.holes[hole.index].shelf;
+			$scope.getTool(shelf.name).count++;
+			restoreShelf(shelf);
+			$scope.holes[hole.index].shelf = undefined;
+		}
 	}
 
 	function restoreSpiral(spiral) {

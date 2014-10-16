@@ -195,6 +195,13 @@ body {
 	background-color: #404040;
 }
 
+.hole-tool > div {
+	width: 10px;
+	height: 10px;
+	background: #8F8F8F;
+	border: 1px solid #000000;
+}
+
 /* ----------------- "ЭЛЕМЕНТЫ НА ПОЛКЕ" ------------------------------ */
 .ski {
 	width: 10px;
@@ -463,6 +470,13 @@ body {
 }
 .hsocket-detector .socket.dragging {
 	margin: 0;
+}
+
+.hole-object {
+	position: absolute;
+	width: 10px; height: 10px;
+	background: #8F8F8F;
+	border: 1px solid #000000;
 }
 
 /* -------------- ДЕТЕКТОРЫ И МЕСТА ДЛЯ ЭЛЕМЕНТОВ ------------------ */
