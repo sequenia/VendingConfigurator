@@ -327,7 +327,14 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function deleteSocket(index) {
-		$scope.sockets[index].item = undefined;
+		var socketPlaces = $scope.sockets;
+		if(socketPlaces[index].item.shelfIndex !== undefined) {
+			var shelfPlace = $scope.holes[socketPlaces[index].item.shelfIndex];
+			shelfPlace.shelf.socket = undefined;
+			shelfPlace.shelf.socketBindingStyle = undefined;
+		}
+		socketPlaces[index].item = undefined;
+		renumberSockets(socketPlaces);
 	}
 
 	function deleteHole(index) {
@@ -471,7 +478,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function insertShelf($data, $index) {
-		$scope.holes[$index].shelf = copyIfTool($data); //$.extend(true, {}, $data);
+		$scope.holes[$index].shelf = copyIfTool($data);
 		$scope.holes[$index].shelf.socketBinding = $.extend(true, {shelfIndex: $index}, $scope.getTool("Привязка к сокете"));
 		if($scope.holes[$index].shelf.socket) {
 			$scope.holes[$index].shelf.socket.shelfIndex = $index;
@@ -485,11 +492,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		if(hole.index !== undefined) {
 			var shelf = $scope.holes[hole.index].shelf;
 			$scope.holes[hole.index].shelf = undefined;
-			$scope.holes[$index].shelf = shelf;
-
-			if(shelf.socket !== undefined) {
-				shelf.socket.shelfIndex = $index;
-			}
+			if(shelf !== undefined) insertShelf(shelf, $index);
 		}
 
 		hole.index = $index;
@@ -809,18 +812,20 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	};
 
 	function restoreTools(tool) {
-		$scope.getTool(tool.name).count++;
+		if(tool.type != $scope.toolTypes.label && tool.type != $scope.toolTypes.socketBinding) {
+			$scope.getTool(tool.name).count++;
 
-		if(tool.type == $scope.toolTypes.shelf) {
-			restoreShelf(tool);
-		}
+			if(tool.type == $scope.toolTypes.shelf) {
+				restoreShelf(tool);
+			}
 
-		if(tool.type == $scope.toolTypes.spiral) {
-			restoreSpiral(tool);
-		}
+			if(tool.type == $scope.toolTypes.spiral) {
+				restoreSpiral(tool);
+			}
 
-		if(tool.type == $scope.toolTypes.hole) {
-			restoreHole(tool);
+			if(tool.type == $scope.toolTypes.hole) {
+				restoreHole(tool);
+			}
 		}
 	}
 
@@ -842,11 +847,13 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function restoreHole(hole) {
-		if($scope.holes[hole.index].shelf !== undefined) {
-			var shelf = $scope.holes[hole.index].shelf;
-			$scope.getTool(shelf.name).count++;
-			restoreShelf(shelf);
-			$scope.holes[hole.index].shelf = undefined;
+		if(hole.index !== undefined) {
+			if($scope.holes[hole.index].shelf !== undefined) {
+				var shelf = $scope.holes[hole.index].shelf;
+				$scope.getTool(shelf.name).count++;
+				restoreShelf(shelf);
+				$scope.holes[hole.index].shelf = undefined;
+			}
 		}
 	}
 

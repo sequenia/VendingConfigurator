@@ -160,6 +160,10 @@
                          ng-mouseup="onToolMouseUp(socket.item, $index)">
                         {{socket.item.label}}
                     </div>
+                    <div ng-show="sockets[$index].item"
+                         class="socket-height">
+                        {{($index + 1) * 20}}
+                    </div>
                     <div class="circle center"></div>
                 </div>
             </div>

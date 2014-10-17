@@ -132,7 +132,9 @@ body {
 .shelf:hover,
 .label:hover,
 .socket:hover,
-.motor-circle:hover {
+.motor-circle:hover,
+.machine-binding-circle:hover,
+.hole-object:hover {
 	cursor: pointer;
 }
 
@@ -402,7 +404,7 @@ body {
 
 .configure-shelf {
 	position: absolute;
-	right: -130px;
+	right: -170px;
 	top: 0px;
 }
 
@@ -486,6 +488,13 @@ body {
 	background-color: #000000;
 }
 
+.socket-height {
+	position: absolute;
+	color: black;
+	right: -30px;
+	top: 5px;
+}
+
 /* -------------- ДЕТЕКТОРЫ И МЕСТА ДЛЯ ЭЛЕМЕНТОВ ------------------ */
 .spiral-places {
 	width: 100%;
@@ -566,10 +575,6 @@ body {
 }
 
 /* ------------ ПОДСВЕТКИ ------------------------------------- */
-.drag-enter .circle {
-	background-color: #FFFFFF !important;
-}
-
 .single-spiral-detector.drag-enter .detector-rail {
 	background-color: #7A7A7A !important;
 }
