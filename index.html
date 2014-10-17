@@ -79,6 +79,9 @@
                              ng-mousedown="onToolMouseDown(hole.hole, $index)"
                              ng-mouseup="onToolMouseUp(hole.hole, $index)"></div>
                     </div>
+                    <div ng-show="hole.shelf.socketBindingStyle"
+                         class="motor-hsocket-binding"
+                         ng-style="hole.shelf.socketBindingStyle"></div>
                     <div class="circle machine-binding-circle"
                          ng-drag="true"
                          ng-show="hole.shelf"
