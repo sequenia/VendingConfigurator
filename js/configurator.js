@@ -1,130 +1,10 @@
 var app = angular.module('ConfiguratorApp', ['ngDraggable']);
 
 var ConfiguratorCtrl = function($scope, $timeout) {
-//- НАСТРОЙКИ ------------------------------------------------
-	$scope.shelfPlaceWidth     = 45;  // Ширина одного места на полке
-	$scope.splitterWidth       = 8;   // Ширина разделителя
-	$scope.spiralWidth         = 41;  // Ширина спирали на полке
-	$scope.machineSpiralWidth  = 26;  // Ширина спирали на автомате
-	$scope.machineSkiWidth     = 12;  // Ширина лыжи на автомате
-
-	$scope.spiralPlaceHeight   = 370; // Длина места для спирали
-	$scope.motorPlaceHeight    = 30;  // Длина места для мотора
-	$scope.hsocketPlaceHeight  = 30;  // Длина места для горизонтального сокета
-	$scope.labelDetectorHeight = 25;  // Высота подписи
-	$scope.motorHeight         = 20;  // Высота мотора
-	$scope.hsocketHeight       = 20;  // Высота горизонтального сокета
-
-	$scope.holesInMachine      = 22;  // Количество дырок в автомате
-	$scope.labelsLinesCount    = 3;   // Количество линий надписей
-	$scope.placesOnShelf       = 12;  // Количество мест на полке
-
-	$scope.detectorMargin      = 2;   // Отступы детекторов
-	$scope.shelfPlaceOffset    = 15;  // Ширина отступа слева и справа полки
-
-	$scope.setSettings = function() {
-		$scope.detectorWidth    = $scope.shelfPlaceWidth - 2 * $scope.detectorMargin;     // Ширина детектора без отступов
-		$scope.labelWidth       = $scope.detectorWidth * 1.5;
-		$scope.labelTextWidth   = $scope.labelWidth - 4;
-		$scope.singleMotorWidth = 1 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
-		$scope.doubleMotorWidth = 3 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
-		$scope.singleHsocketWidth= $scope.singleMotorWidth;
-		$scope.shelfLength      = $scope.motorPlaceHeight +  $scope.hsocketPlaceHeight + $scope.spiralPlaceHeight;     // Длина полки
-		
-		$scope.railHeight       = $scope.spiralPlaceHeight - 20;
-		$scope.skiHeight        = $scope.spiralPlaceHeight - 10;                          // Длина лыжи
-		$scope.spiralHeight     = $scope.spiralPlaceHeight - 10;                          // Длина спирали
-		$scope.splitterHeight   = $scope.spiralPlaceHeight - 5;                           // Длина разделителя
-
-		$scope.spiralLeft       = ($scope.detectorWidth - $scope.spiralWidth)      / 2.0; // Отступ спирали на полке
-		$scope.splitterLeft     = ($scope.detectorWidth - $scope.splitterWidth)    / 2.0; // Отступ разделителя на полке
-		$scope.singleMotorLeft  = ($scope.detectorWidth - $scope.singleMotorWidth) / 2.0; // Отступ мотора на полке
-		$scope.doubleMotorLeft  = ($scope.detectorWidth - $scope.doubleMotorWidth) / 2.0; // Отступ двойного мотора на полке
-		$scope.labelTextLeft    = ($scope.labelWidth    - $scope.labelTextWidth)   / 2.0; // Отступ спирали на полке
-
-		$scope.machineSpiralLeft      = ($scope.shelfPlaceWidth - $scope.machineSpiralWidth - 4) / 2.0;
-		$scope.machineSplitterLeft    = ($scope.shelfPlaceWidth - $scope.splitterWidth) / 2.0;
-		$scope.machineSingleMotorLeft = ($scope.shelfPlaceWidth - $scope.singleMotorWidth) / 2.0;
-		$scope.machineDoubleMotorLeft = ($scope.shelfPlaceWidth - $scope.doubleMotorWidth) / 2.0;
-		$scope.machineSkiLeft         = ($scope.machineSpiralWidth - $scope.machineSkiWidth) / 2.0;
-
-		$scope.settings = {
-			spiralPlaces:       { top:    $scope.motorPlaceHeight  + 'px' },
-			spiralPlace:        { height: $scope.spiralPlaceHeight + 'px', width: $scope.shelfPlaceWidth  + 'px' },
-			machinePlace:       { width:  $scope.shelfPlaceWidth   + 'px', height: '1px' },
-			motorPlace:         { height: $scope.motorPlaceHeight  + 'px' },
-			hsocketPlace:       { height: $scope.hsocketPlaceHeight  + 'px' },
-			machinePlaceOffset: { width:  $scope.shelfPlaceOffset  + 'px', height: '1px' },
-			placeOffset:        { height: $scope.spiralPlaceHeight + 'px', width: $scope.shelfPlaceOffset + 'px' },
-			motorOffset:        { height: $scope.motorPlaceHeight  + 'px', width: $scope.shelfPlaceOffset + 'px' },
-			hsocketOffset:      { height: $scope.hsocketPlaceHeight  + 'px', width: $scope.shelfPlaceOffset + 'px' },
-			motorCircle:        { margin: ($scope.motorPlaceHeight + 1) + 'px auto 0px auto' },
-
-			singleSpiralDetectors: { top: ($scope.motorPlaceHeight + $scope.hsocketPlaceHeight)     + 'px' },
-			labelDetectors:        { top: ($scope.shelfLength + 20) + 'px' },
-			singleSpiralDetector:  {
-				height: $scope.spiralPlaceHeight + 'px',
-				width: $scope.detectorWidth + 'px',
-				'margin-left': $scope.detectorMargin + 'px',
-				'margin-right': $scope.detectorMargin + 'px'
-			},
-			motorDetector: {
-				height: $scope.motorPlaceHeight + 'px',
-				width: $scope.detectorWidth + 'px',
-				'margin-left': $scope.detectorMargin + 'px',
-				'margin-right': $scope.detectorMargin + 'px'
-			},
-			hsocketDetector: {
-				height: ($scope.hsocketPlaceHeight - 4) + 'px',
-				width: $scope.detectorWidth + 'px',
-				'margin-left': $scope.detectorMargin + 'px',
-				'margin-right': $scope.detectorMargin + 'px'
-			},
-			labelDetector: {
-				height: $scope.labelDetectorHeight + 'px',
-				width: $scope.detectorWidth + 'px',
-				'margin-left': $scope.detectorMargin + 'px',
-				'margin-right': $scope.detectorMargin + 'px'
-			},
-
-			shelfModel: { height: $scope.shelfLength + 'px' },
-			rail: { height: $scope.railHeight + 'px' },
-			ski: 'height: ' + $scope.skiHeight + 'px',
-			spiral: 'height: ' + ($scope.spiralHeight) + 'px; ' +
-					'width: '  + ($scope.spiralWidth) + 'px; ' +
-					'left: '   + ($scope.spiralLeft) + 'px',
-			'machine-spiral':   'width: '       + ($scope.machineSpiralWidth) + 'px; ' +
-								'margin-left: ' + ($scope.machineSpiralLeft) + 'px',
-			splitter:   'height: ' + ($scope.splitterHeight) + 'px; ' +
-						'width: '  + ($scope.splitterWidth) + 'px; ' +
-						'left: '   + ($scope.splitterLeft) + 'px',
-			'machine-splitter': 'width: '       + ($scope.splitterWidth) + 'px; ' +
-								'margin-left: ' + ($scope.machineSplitterLeft) + 'px',
-			'single-motor': 'height: ' + ($scope.motorHeight) + 'px; ' +
-							'width: '  + ($scope.singleMotorWidth) + 'px; ' +
-							'left: '   + ($scope.singleMotorLeft) + 'px',
-			'machine-single-motor': 'width: '       + ($scope.singleMotorWidth) + 'px; ' +
-									'margin-left: ' + ($scope.machineSingleMotorLeft) + 'px',
-			'double-motor': 'height: ' + ($scope.motorHeight) + 'px; ' +
-							'width: '  + ($scope.doubleMotorWidth) + 'px; ' +
-							'left: '   + ($scope.doubleMotorLeft) + 'px',
-			'machine-double-motor': 'width: '       + ($scope.doubleMotorWidth) + 'px; ' +
-									'margin-left: ' + ($scope.machineDoubleMotorLeft) + 'px',
-			'machine-ski':  'width: ' + ($scope.machineSkiWidth) + 'px; ' +
-							'margin-left: ' + ($scope.machineSkiLeft) + 'px',
-			'label':    'width: '  + ($scope.labelWidth) + 'px; ' + 
-						'height: ' + ($scope.labelDetectorHeight) + 'px',
-			'label-text':   'width: '       + ($scope.labelTextWidth) + 'px; ' + 
-							'margin-left: ' + ($scope.labelTextLeft) + 'px'
-
-		};
-	};
-
-	$scope.setSettings();
+	initSettings();
 
 	$scope.itemOver = false;
 
-	// Режимы показа
 	$scope.modes = {
 		machine: 0,
 		shelf: 1
@@ -151,7 +31,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		noClass: ""
 	};
 
-//- ИНСТРУМЕНТЫ ---------------------------------
 	$scope.spiralToolTypes = [
 		$scope.toolTypes.spiral,
 		$scope.toolTypes.splitter
@@ -358,8 +237,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		}
 	];
 
-//- РАБОЧИЕ ПЕРЕМЕННЫЕ ---------------------------------
-	setMode($scope.modes.machine);
 	$scope.spiralPlaces = createPlaces($scope.placesOnShelf);
 	$scope.holes = createHoles($scope.holesInMachine);
 	$scope.sockets = createSockets($scope.holesInMachine);
@@ -369,7 +246,79 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		{name: "Комментарии", class: "comment-label"}
 	];
 
-//- МЕТОДЫ ---------------------------------
+	$scope.deleteActions = {
+		shelf: deleteShelf,
+		spiral: deleteSpiral,
+		splitter: deleteSpiral,
+		singleMotor: deleteMotor,
+		doubleMotor: deleteMotor,
+		ski: function() {},
+		label: deleteLabel,
+		socket: deleteSocket,
+		hsocket: deleteHsocket,
+		socketBinding: function() {},
+		hole: deleteHole
+	};
+
+	$scope.validateActions = {
+		shelf: canInsertShelf,
+		spiral: canInsertItemToPlace,
+		splitter: canInsertItemToPlace,
+		singleMotor: canInsertItemToPlace,
+		doubleMotor: canInsertItemToPlace,
+		ski: canInsertSki,
+		label: canInsertLabel,
+		socket: canInsertSocket,
+		hsocket: canInsertHsocket,
+		socketBinding: canInsertSocketBinding,
+		hole: canInsertHole
+	};
+
+	setMode($scope.modes.machine);
+	restructActions("deleteActions");
+	restructActions("validateActions");
+
+	function deleteSpiral(index) {
+		clearCollision(index, $scope.currentShelf.spiralPlaces[index].item, $scope.currentShelf.spiralCollision);
+		$scope.currentShelf.spiralPlaces[index].item = undefined;
+	}
+
+	function deleteMotor(index) {
+		var motorPlace = $scope.currentShelf.motorPlaces[index];
+		clearCollision(index, motorPlace.item, $scope.currentShelf.motorCollision);
+		if(motorPlace.item.socket) {
+			motorPlace.item.socket.motorIndex = undefined;
+		}
+		motorPlace.item = undefined;
+	}
+
+	function deleteHsocket (index) {
+		var hsocketPlaces = $scope.currentShelf.hsocketPlaces;
+		if(hsocketPlaces[index].item.motorIndex !== undefined) {
+			var motorPlace = $scope.currentShelf.motorPlaces[hsocketPlaces[index].item.motorIndex];
+			motorPlace.item.socket = undefined;
+			motorPlace.item.socketBindingStyle = undefined;
+		}
+		hsocketPlaces[index].item = undefined;
+		renumberSockets(hsocketPlaces);
+	}
+
+	function deleteLabel (index) {
+		$scope.currentShelf.labelPlaces[index].item = undefined;
+	}
+
+	function deleteShelf(index) {
+		$scope.holes[index].shelf = undefined;
+	}
+
+	function deleteSocket(index) {
+		$scope.sockets[index].item = undefined;
+	}
+
+	function deleteHole(index) {
+		$scope.holes[index].hole = undefined;
+	}
+
 	// Вызывается при отпускании инструмента
 	$scope.onToolDragComplete = function($data, $event) {
 		$data.count--;
@@ -377,29 +326,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 	// Вызывается при отпускании элемента в конфигураторе полок
 	$scope.onItemDragComplete = function($data, $event, index) {
-		if($data) {
-			if(typeIsInGroup($data.type, $scope.spiralToolTypes)) {
-				deleteSpiralFromShelf(index);
-			}
-			if(typeIsInGroup($data.type, $scope.motorToolTypes)) {
-				deleteMotorFromShelf(index);
-			}
-			if($data.type == $scope.toolTypes.label) {
-				deleteLabel(index);
-			}
-			if($data.type == $scope.toolTypes.hsocket) {
-				deleteHsocket(index);
-			}
-			if($data.type == $scope.toolTypes.shelf) {
-				$scope.holes[index].shelf = undefined;
-			}
-			if($data.type == $scope.toolTypes.socket) {
-				$scope.sockets[index].item = undefined;
-			}
-			if($data.type == $scope.toolTypes.hole) {
-				$scope.holes[index].hole = undefined;
-			}
-		}
+		if($data) $scope.deleteActions[$data.type](index);
 	};
 
 	// Вызывается при падении чего-либо на дырку
@@ -538,35 +465,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	$scope.onGarbageDropComplete = function($data, $event, hole) {
 		restoreTools($data);
 	};
-
-	function deleteSpiralFromShelf(index) {
-		clearCollision(index, $scope.currentShelf.spiralPlaces[index].item, $scope.currentShelf.spiralCollision);
-		$scope.currentShelf.spiralPlaces[index].item = undefined;
-	}
-
-	function deleteMotorFromShelf(index) {
-		var motorPlace = $scope.currentShelf.motorPlaces[index];
-		clearCollision(index, motorPlace.item, $scope.currentShelf.motorCollision);
-		if(motorPlace.item.socket) {
-			motorPlace.item.socket.motorIndex = undefined;
-		}
-		motorPlace.item = undefined;
-	}
-
-	function deleteLabel(index) {
-		$scope.currentShelf.labelPlaces[index].item = undefined;
-	}
-
-	function deleteHsocket(index) {
-		var hsocketPlaces = $scope.currentShelf.hsocketPlaces;
-		if(hsocketPlaces[index].item.motorIndex !== undefined) {
-			var motorPlace = $scope.currentShelf.motorPlaces[hsocketPlaces[index].item.motorIndex];
-			motorPlace.item.socket = undefined;
-			motorPlace.item.socketBindingStyle = undefined;
-		}
-		hsocketPlaces[index].item = undefined;
-		renumberSockets(hsocketPlaces);
-	}
 
 	// Очищает массив коллизий по заданному индексу для конкретного типа элемента
 	function clearCollision(index, item, collision) {
@@ -1166,4 +1064,134 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		}
 		return times;
 	};
+
+	function restructActions(actionsName) {
+		var actions = {};
+		angular.forEach($scope[actionsName], function(action, key) {
+			actions[$scope.toolTypes[key]] = action;
+		});
+		$scope[actionsName] = actions;
+	}
+
+	function initSettings() {
+		$scope.shelfPlaceWidth     = 45;  // Ширина одного места на полке
+		$scope.splitterWidth       = 8;   // Ширина разделителя
+		$scope.spiralWidth         = 41;  // Ширина спирали на полке
+		$scope.machineSpiralWidth  = 26;  // Ширина спирали на автомате
+		$scope.machineSkiWidth     = 12;  // Ширина лыжи на автомате
+
+		$scope.spiralPlaceHeight   = 370; // Длина места для спирали
+		$scope.motorPlaceHeight    = 30;  // Длина места для мотора
+		$scope.hsocketPlaceHeight  = 30;  // Длина места для горизонтального сокета
+		$scope.labelDetectorHeight = 25;  // Высота подписи
+		$scope.motorHeight         = 20;  // Высота мотора
+		$scope.hsocketHeight       = 20;  // Высота горизонтального сокета
+
+		$scope.holesInMachine      = 22;  // Количество дырок в автомате
+		$scope.labelsLinesCount    = 3;   // Количество линий надписей
+		$scope.placesOnShelf       = 12;  // Количество мест на полке
+
+		$scope.detectorMargin      = 2;   // Отступы детекторов
+		$scope.shelfPlaceOffset    = 15;  // Ширина отступа слева и справа полки
+
+		$scope.setSettings = function() {
+			$scope.detectorWidth    = $scope.shelfPlaceWidth - 2 * $scope.detectorMargin;     // Ширина детектора без отступов
+			$scope.labelWidth       = $scope.detectorWidth * 1.5;
+			$scope.labelTextWidth   = $scope.labelWidth - 4;
+			$scope.singleMotorWidth = 1 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
+			$scope.doubleMotorWidth = 3 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
+			$scope.singleHsocketWidth= $scope.singleMotorWidth;
+			$scope.shelfLength      = $scope.motorPlaceHeight +  $scope.hsocketPlaceHeight + $scope.spiralPlaceHeight;     // Длина полки
+			
+			$scope.railHeight       = $scope.spiralPlaceHeight - 20;
+			$scope.skiHeight        = $scope.spiralPlaceHeight - 10;                          // Длина лыжи
+			$scope.spiralHeight     = $scope.spiralPlaceHeight - 10;                          // Длина спирали
+			$scope.splitterHeight   = $scope.spiralPlaceHeight - 5;                           // Длина разделителя
+
+			$scope.spiralLeft       = ($scope.detectorWidth - $scope.spiralWidth)      / 2.0; // Отступ спирали на полке
+			$scope.splitterLeft     = ($scope.detectorWidth - $scope.splitterWidth)    / 2.0; // Отступ разделителя на полке
+			$scope.singleMotorLeft  = ($scope.detectorWidth - $scope.singleMotorWidth) / 2.0; // Отступ мотора на полке
+			$scope.doubleMotorLeft  = ($scope.detectorWidth - $scope.doubleMotorWidth) / 2.0; // Отступ двойного мотора на полке
+			$scope.labelTextLeft    = ($scope.labelWidth    - $scope.labelTextWidth)   / 2.0; // Отступ спирали на полке
+
+			$scope.machineSpiralLeft      = ($scope.shelfPlaceWidth - $scope.machineSpiralWidth - 4) / 2.0;
+			$scope.machineSplitterLeft    = ($scope.shelfPlaceWidth - $scope.splitterWidth) / 2.0;
+			$scope.machineSingleMotorLeft = ($scope.shelfPlaceWidth - $scope.singleMotorWidth) / 2.0;
+			$scope.machineDoubleMotorLeft = ($scope.shelfPlaceWidth - $scope.doubleMotorWidth) / 2.0;
+			$scope.machineSkiLeft         = ($scope.machineSpiralWidth - $scope.machineSkiWidth) / 2.0;
+
+			$scope.settings = {
+				spiralPlaces:       { top:    $scope.motorPlaceHeight  + 'px' },
+				spiralPlace:        { height: $scope.spiralPlaceHeight + 'px', width: $scope.shelfPlaceWidth  + 'px' },
+				machinePlace:       { width:  $scope.shelfPlaceWidth   + 'px', height: '1px' },
+				motorPlace:         { height: $scope.motorPlaceHeight  + 'px' },
+				hsocketPlace:       { height: $scope.hsocketPlaceHeight  + 'px' },
+				machinePlaceOffset: { width:  $scope.shelfPlaceOffset  + 'px', height: '1px' },
+				placeOffset:        { height: $scope.spiralPlaceHeight + 'px', width: $scope.shelfPlaceOffset + 'px' },
+				motorOffset:        { height: $scope.motorPlaceHeight  + 'px', width: $scope.shelfPlaceOffset + 'px' },
+				hsocketOffset:      { height: $scope.hsocketPlaceHeight  + 'px', width: $scope.shelfPlaceOffset + 'px' },
+				motorCircle:        { margin: ($scope.motorPlaceHeight + 1) + 'px auto 0px auto' },
+
+				singleSpiralDetectors: { top: ($scope.motorPlaceHeight + $scope.hsocketPlaceHeight)     + 'px' },
+				labelDetectors:        { top: ($scope.shelfLength + 20) + 'px' },
+				singleSpiralDetector:  {
+					height: $scope.spiralPlaceHeight + 'px',
+					width: $scope.detectorWidth + 'px',
+					'margin-left': $scope.detectorMargin + 'px',
+					'margin-right': $scope.detectorMargin + 'px'
+				},
+				motorDetector: {
+					height: $scope.motorPlaceHeight + 'px',
+					width: $scope.detectorWidth + 'px',
+					'margin-left': $scope.detectorMargin + 'px',
+					'margin-right': $scope.detectorMargin + 'px'
+				},
+				hsocketDetector: {
+					height: ($scope.hsocketPlaceHeight - 4) + 'px',
+					width: $scope.detectorWidth + 'px',
+					'margin-left': $scope.detectorMargin + 'px',
+					'margin-right': $scope.detectorMargin + 'px'
+				},
+				labelDetector: {
+					height: $scope.labelDetectorHeight + 'px',
+					width: $scope.detectorWidth + 'px',
+					'margin-left': $scope.detectorMargin + 'px',
+					'margin-right': $scope.detectorMargin + 'px'
+				},
+
+				shelfModel: { height: $scope.shelfLength + 'px' },
+				rail: { height: $scope.railHeight + 'px' },
+				ski: 'height: ' + $scope.skiHeight + 'px',
+				spiral: 'height: ' + ($scope.spiralHeight) + 'px; ' +
+						'width: '  + ($scope.spiralWidth) + 'px; ' +
+						'left: '   + ($scope.spiralLeft) + 'px',
+				'machine-spiral':   'width: '       + ($scope.machineSpiralWidth) + 'px; ' +
+									'margin-left: ' + ($scope.machineSpiralLeft) + 'px',
+				splitter:   'height: ' + ($scope.splitterHeight) + 'px; ' +
+							'width: '  + ($scope.splitterWidth) + 'px; ' +
+							'left: '   + ($scope.splitterLeft) + 'px',
+				'machine-splitter': 'width: '       + ($scope.splitterWidth) + 'px; ' +
+									'margin-left: ' + ($scope.machineSplitterLeft) + 'px',
+				'single-motor': 'height: ' + ($scope.motorHeight) + 'px; ' +
+								'width: '  + ($scope.singleMotorWidth) + 'px; ' +
+								'left: '   + ($scope.singleMotorLeft) + 'px',
+				'machine-single-motor': 'width: '       + ($scope.singleMotorWidth) + 'px; ' +
+										'margin-left: ' + ($scope.machineSingleMotorLeft) + 'px',
+				'double-motor': 'height: ' + ($scope.motorHeight) + 'px; ' +
+								'width: '  + ($scope.doubleMotorWidth) + 'px; ' +
+								'left: '   + ($scope.doubleMotorLeft) + 'px',
+				'machine-double-motor': 'width: '       + ($scope.doubleMotorWidth) + 'px; ' +
+										'margin-left: ' + ($scope.machineDoubleMotorLeft) + 'px',
+				'machine-ski':  'width: ' + ($scope.machineSkiWidth) + 'px; ' +
+								'margin-left: ' + ($scope.machineSkiLeft) + 'px',
+				'label':    'width: '  + ($scope.labelWidth) + 'px; ' + 
+							'height: ' + ($scope.labelDetectorHeight) + 'px',
+				'label-text':   'width: '       + ($scope.labelTextWidth) + 'px; ' + 
+								'margin-left: ' + ($scope.labelTextLeft) + 'px'
+
+			};
+		};
+
+		$scope.setSettings();
+	}
 };
