@@ -262,10 +262,10 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 	$scope.validateActions = {
 		shelf: canInsertShelf,
-		spiral: canInsertItemToPlace,
-		splitter: canInsertItemToPlace,
-		singleMotor: canInsertItemToPlace,
-		doubleMotor: canInsertItemToPlace,
+		spiral: canInsertSpiral,
+		splitter: canInsertSpiral,
+		singleMotor: canInsertMotor,
+		doubleMotor: canInsertMotor,
 		ski: canInsertSki,
 		label: canInsertLabel,
 		socket: canInsertSocket,
@@ -274,9 +274,24 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		hole: canInsertHole
 	};
 
+	$scope.insertActions = {
+		shelf: insertShelf,
+		spiral: insertItemToPlace,
+		splitter: insertItemToPlace,
+		singleMotor: insertItemToPlace,
+		doubleMotor: insertItemToPlace,
+		ski: insertSki,
+		label: insertLabel,
+		socket: insertSocket,
+		hsocket: insertSocket,
+		socketBinding: insertSocketBinding,
+		hole: insertHole
+	};
+
 	setMode($scope.modes.machine);
 	restructActions("deleteActions");
 	restructActions("validateActions");
+	restructActions("insertActions");
 
 	function deleteSpiral(index) {
 		clearCollision(index, $scope.currentShelf.spiralPlaces[index].item, $scope.currentShelf.spiralCollision);
@@ -319,189 +334,16 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		$scope.holes[index].hole = undefined;
 	}
 
-	// Вызывается при отпускании инструмента
-	$scope.onToolDragComplete = function($data, $event) {
-		$data.count--;
-	};
-
-	// Вызывается при отпускании элемента в конфигураторе полок
-	$scope.onItemDragComplete = function($data, $event, index) {
-		if($data) $scope.deleteActions[$data.type](index);
-	};
-
-	// Вызывается при падении чего-либо на дырку
-	$scope.onHoleDropComplete = function($data, $event, $index){
-		switch($data.type) {
-			case $scope.toolTypes.shelf:
-				if(canInsertShelf($index)) {
-					insertShelf($index, $data);
-				} else {
-					restoreTools($data);
-				}
-				drawBindings();
-				break;
-
-			case $scope.toolTypes.hole:
-				if(canInsertHole($index)) {
-					insertHole($index, $data);
-				} else {
-					restoreTools($data);
-				}
-				drawBindings();
-				break;
-
-			default:
-				restoreTools($data);
-				break;
-		}
-	};
-
-	// Вызывается при падении чего-либо на сокету
-	$scope.onSocketDropComplete = function($data, $event, $index){
-
-		switch($data.type) {
-			case $scope.toolTypes.socket:
-				if($scope.sockets[$index].item === undefined) {
-					insertSocketToPlace($data, $scope.sockets[$index], $scope.sockets);
-				} else {
-					restoreTools($data);
-				}
-				drawBindings();
-				break;
-
-			case $scope.toolTypes.socketBinding:
-				if(canInsertSocketBinding($index)) {
-					insertSocketBinding($data, $scope.sockets[$index]);
-					drawBindings();
-				}
-				break;
-
-			default:
-				restoreTools($data);
-				break;
-		}
-	};
-
-	// Вызывается при падении чего-либо на место спирали
-	$scope.onSpiralPlaceDropComplete = function($data, $event, index) {
-		while(true) {
-			if(typeIsInGroup($data.type, $scope.spiralToolTypes)) {
-				if(canInsertItemToPlace($data, index, $scope.currentShelf.spiralCollision)) {
-					insertItemToPlace($data, index);
-				} else {
-					restoreTools($data);
-				}
-
-				break;
-			}
-
-			if($data.type == $scope.toolTypes.ski) {
-				if(canInsertSki(index)) {
-					$scope.currentShelf.spiralPlaces[index].item.ski = $.extend(true, {}, $data);
-				} else {
-					restoreTools($data);
-				}
-
-				break;
-			}
-
-			restoreTools($data);
-			break;
-		}
-	};
-
-	// Вызывается при падении чего-либо на место моторов
-	$scope.onMotorPlaceDropComplete = function($data, $event, index) {
-		if(typeIsInGroup($data.type, $scope.motorToolTypes)) {
-			if(canInsertItemToPlace($data, index, $scope.currentShelf.motorCollision)) {
-				insertItemToPlace($data, index);
-			} else {
-				restoreTools($data);
-			}
-			drawBindings();
-		} else {
-			restoreTools($data);
-		}
-	};
-
-	// Вызывается при падении чего-либо на место сокеты полки
-	$scope.onHsocketPlaceDropComplete = function($data, $event, index) {
-		while(true) {
-			if($data.type == $scope.toolTypes.hsocket) {
-				if(canInsertHsocket(index)) {
-					insertSocketToPlace($data, $scope.currentShelf.hsocketPlaces[index], $scope.currentShelf.hsocketPlaces);
-				} else {
-					restoreTools($data);
-				}
-				drawBindings();
-				break;
-			}
-
-			if($data.type == $scope.toolTypes.socketBinding) {
-				if(canInsertSocketBinding(index)) {
-					insertSocketBinding($data, $scope.currentShelf.hsocketPlaces[index]);
-					drawBindings();
-				}
-				break;
-			}
-
-			restoreTools($data);
-			break;
-		}
-	};
-
-	// Вызывается при падении чего-либо на место цены
-	$scope.onLabelPlaceDropComplete = function($data, $event, index) {
-		if($data.type == $scope.toolTypes.label) {
-			if(canInsertLabel(index)) {
-				$scope.currentShelf.labelPlaces[index].item = $.extend(true, {}, $data);
-			}
-		} else {
-			restoreTools($data);
-		}
-	};
-
-	// Вызывается, когда что-то падает на склад
-	$scope.onGarbageDropComplete = function($data, $event, hole) {
-		restoreTools($data);
-	};
-
-	// Очищает массив коллизий по заданному индексу для конкретного типа элемента
-	function clearCollision(index, item, collision) {
-		var collisionCount = collision.length;
-		var collisionIndex = index * 2 + 1;
-
-		for(var i = collisionIndex - item.leftOffset; i <= collisionIndex + item.rightOffset; i++) {
-			if(i >= 0 && i < collisionCount) {
-				collision[i] = false;
-			}
-		}
+	function canInsertShelf(index) {
+		return $scope.holes[index].shelf === undefined && $scope.holes[index].hole !== undefined;
 	}
 
-	function canInsertItemToPlace(item, index, collision) {
-		var collisionCount = collision.length;
-		var collisionIndex = index * 2 + 1;
+	function canInsertHole(index) {
+		return $scope.holes[index].hole === undefined;
+	}
 
-		// Проверяем свои коллизии
-		var canInsert = true;
-		for(var i = collisionIndex - item.leftOffset; i <= collisionIndex + item.rightOffset; i++) {
-			if(i >= 0 && i < collisionCount) {
-				if(collision[i]) {
-					canInsert = false;
-					break;
-				}
-			} else {
-				canInsert = false;
-				break;
-			}
-		}
-
-		// Проверяем чужие коллизии
-		if(canInsert) {
-			canInsert = checkOppositeCollision(item, index);
-		}
-
-		return canInsert;
+	function canInsertSocket(index) {
+		return $scope.sockets[index].item === undefined;
 	}
 
 	function canInsertSki(index) {
@@ -545,16 +387,200 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		return result;
 	}
 
-	function canInsertShelf(index) {
-		return $scope.holes[index].shelf === undefined && $scope.holes[index].hole !== undefined;
+	function canInsertSpiral(index, data) {
+		return canInsertItemToPlace(data, index, $scope.currentShelf.spiralCollision);
 	}
 
-	function canInsertHole(index) {
-		return $scope.holes[index].hole === undefined;
+	function canInsertMotor(index, data) {
+		return canInsertItemToPlace(data, index, $scope.currentShelf.motorCollision);
 	}
 
-	function canInsertSocket(index) {
-		return $scope.sockets[index].item === undefined;
+	function canInsertItemToPlace(item, index, collision) {
+		var collisionCount = collision.length;
+		var collisionIndex = index * 2 + 1;
+
+		// Проверяем свои коллизии
+		var canInsert = true;
+		for(var i = collisionIndex - item.leftOffset; i <= collisionIndex + item.rightOffset; i++) {
+			if(i >= 0 && i < collisionCount) {
+				if(collision[i]) {
+					canInsert = false;
+					break;
+				}
+			} else {
+				canInsert = false;
+				break;
+			}
+		}
+
+		// Проверяем чужие коллизии
+		if(canInsert) {
+			canInsert = checkOppositeCollision(item, index);
+		}
+
+		return canInsert;
+	}
+
+	function insertItemToPlace(item, index) {
+		if(typeIsInGroup(item.type, $scope.spiralToolTypes)) {
+			fillItemCollision(item, index, $scope.currentShelf.spiralCollision);
+			$scope.currentShelf.spiralPlaces[index].item = $.extend(true, {}, item);
+		} else {
+			fillItemCollision(item, index, $scope.currentShelf.motorCollision);
+			var motorPlace = $scope.currentShelf.motorPlaces[index];
+			motorPlace.item = copyIfTool(item);
+			motorPlace.item.socketBinding = $.extend(true, {motorIndex: index}, $scope.getTool("Привязка к сокете"));
+			if(motorPlace.item.socket) {
+				motorPlace.item.socket.motorIndex = index;
+			}
+		}
+	}
+
+	function insertSocketToPlace(data, socket, sockets) {
+		socket.item = copyIfTool(data);
+		if(socket.item.motorIndex !== undefined) {
+			$scope.currentShelf.motorPlaces[socket.item.motorIndex].item.socket = socket.item;
+		}
+		if(socket.item.shelfIndex !== undefined) {
+			$scope.holes[socket.item.shelfIndex].shelf.socket = socket.item;
+		}
+		renumberSockets(sockets);
+	}
+
+	function insertSocketBinding(data, index) {
+		var socket;
+		if($scope.mode == $scope.modes.shelf) {
+			socket = $scope.currentShelf.hsocketPlaces[index];
+			var motor = $scope.currentShelf.motorPlaces[data.motorIndex].item;
+			motor.socket = socket.item;
+			socket.item.motorIndex = data.motorIndex;
+		} else {
+			socket = $scope.sockets[index];
+			var shelf = $scope.holes[data.shelfIndex].shelf;
+			shelf.socket = socket.item;
+			socket.item.shelfIndex = data.shelfIndex;
+		}
+	}
+
+	function insertSocket($data, $index) {
+		if($scope.mode == $scope.modes.machine) {
+			insertSocketToPlace($data, $scope.sockets[$index], $scope.sockets);
+		} else {
+			insertSocketToPlace($data, $scope.currentShelf.hsocketPlaces[$index], $scope.currentShelf.hsocketPlaces);
+		}
+	}
+
+	function insertShelf($data, $index) {
+		$scope.holes[$index].shelf = copyIfTool($data); //$.extend(true, {}, $data);
+		$scope.holes[$index].shelf.socketBinding = $.extend(true, {shelfIndex: $index}, $scope.getTool("Привязка к сокете"));
+		if($scope.holes[$index].shelf.socket) {
+			$scope.holes[$index].shelf.socket.shelfIndex = $index;
+		}
+	}
+
+	function insertHole($data, $index) {
+		$scope.holes[$index].hole = $.extend(true, {}, $data);
+		var hole = $scope.holes[$index].hole;
+
+		if(hole.index !== undefined) {
+			var shelf = $scope.holes[hole.index].shelf;
+			$scope.holes[hole.index].shelf = undefined;
+			$scope.holes[$index].shelf = shelf;
+
+			if(shelf.socket !== undefined) {
+				shelf.socket.shelfIndex = $index;
+			}
+		}
+
+		hole.index = $index;
+	}
+
+	function insertSki($data, $index) {
+		$scope.currentShelf.spiralPlaces[$index].item.ski = $.extend(true, {}, $data);
+	}
+
+	function insertLabel($data, $index) {
+		$scope.currentShelf.labelPlaces[$index].item = $.extend(true, {}, $data);
+	}
+
+	// Вызывается при отпускании инструмента
+	$scope.onToolDragComplete = function($data, $event) {
+		$data.count--;
+	};
+
+	// Вызывается при отпускании элемента в конфигураторе полок
+	$scope.onItemDragComplete = function($data, $event, index) {
+		if($data) $scope.deleteActions[$data.type](index);
+	};
+
+	function insertIfCan($data, $event, $index, toolTypes, callback) {
+		var typeFound = false;
+		for(var i = 0; i < toolTypes.length; i++) {
+			if($data.type == toolTypes[i]) {
+				typeFound = true;
+				break;
+			}
+		}
+
+		if(typeFound) {
+			if($scope.validateActions[$data.type]($index, $data)) {
+				$scope.insertActions[$data.type]($data, $index);
+			} else {
+				restoreTools($data);
+			}
+			if(callback !== undefined) {
+				callback();
+			}
+		} else {
+			restoreTools($data);
+		}
+	}
+
+	// Вызывается при падении чего-либо на дырку
+	$scope.onHoleDropComplete = function($data, $event, $index){
+		insertIfCan($data, $event, $index, [$scope.toolTypes.shelf, $scope.toolTypes.hole], drawBindings);
+	};
+
+	// Вызывается при падении чего-либо на сокету
+	$scope.onSocketDropComplete = function($data, $event, $index){
+		insertIfCan($data, $event, $index, [$scope.toolTypes.socket, $scope.toolTypes.socketBinding], drawBindings);
+	};
+
+	// Вызывается при падении чего-либо на место спирали
+	$scope.onSpiralPlaceDropComplete = function($data, $event, index) {
+		insertIfCan($data, $event, index, [$scope.toolTypes.spiral, $scope.toolTypes.splitter, $scope.toolTypes.ski]);
+	};
+
+	// Вызывается при падении чего-либо на место моторов
+	$scope.onMotorPlaceDropComplete = function($data, $event, index) {
+		insertIfCan($data, $event, index, [$scope.toolTypes.singleMotor, $scope.toolTypes.doubleMotor], drawBindings);
+	};
+
+	// Вызывается при падении чего-либо на место сокеты полки
+	$scope.onHsocketPlaceDropComplete = function($data, $event, index) {
+		insertIfCan($data, $event, index, [$scope.toolTypes.hsocket, $scope.toolTypes.socketBinding], drawBindings);
+	};
+
+	// Вызывается при падении чего-либо на место цены
+	$scope.onLabelPlaceDropComplete = function($data, $event, index) {
+		insertIfCan($data, $event, index, [$scope.toolTypes.label]);
+	};
+
+	// Вызывается, когда что-то падает на склад
+	$scope.onGarbageDropComplete = function($data, $event, hole) {
+		restoreTools($data);
+	};
+
+	// Очищает массив коллизий по заданному индексу для конкретного типа элемента
+	function clearCollision(index, item, collision) {
+		var collisionCount = collision.length;
+		var collisionIndex = index * 2 + 1;
+
+		for(var i = collisionIndex - item.leftOffset; i <= collisionIndex + item.rightOffset; i++) {
+			if(i >= 0 && i < collisionCount) {
+				collision[i] = false;
+			}
+		}
 	}
 
 	function checkOppositeCollision(item, index) {
@@ -640,70 +666,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		}
 
 		return _isItem;
-	}
-
-	function insertItemToPlace(item, index) {
-		if(typeIsInGroup(item.type, $scope.spiralToolTypes)) {
-			fillItemCollision(item, index, $scope.currentShelf.spiralCollision);
-			$scope.currentShelf.spiralPlaces[index].item = $.extend(true, {}, item);
-		} else {
-			fillItemCollision(item, index, $scope.currentShelf.motorCollision);
-			var motorPlace = $scope.currentShelf.motorPlaces[index];
-			motorPlace.item = copyIfTool(item);
-			motorPlace.item.socketBinding = $.extend(true, {motorIndex: index}, $scope.getTool("Привязка к сокете"));
-			if(motorPlace.item.socket) {
-				motorPlace.item.socket.motorIndex = index;
-			}
-		}
-	}
-
-	function insertSocketToPlace(data, socket, sockets) {
-		socket.item = copyIfTool(data);
-		if(socket.item.motorIndex !== undefined) {
-			$scope.currentShelf.motorPlaces[socket.item.motorIndex].item.socket = socket.item;
-		}
-		if(socket.item.shelfIndex !== undefined) {
-			console.log(socket.item.shelfIndex);
-			$scope.holes[socket.item.shelfIndex].shelf.socket = socket.item;
-		}
-		renumberSockets(sockets);
-	}
-
-	function insertSocketBinding(data, socket) {
-		if($scope.mode == $scope.modes.shelf) {
-			var motor = $scope.currentShelf.motorPlaces[data.motorIndex].item;
-			motor.socket = socket.item;
-			socket.item.motorIndex = data.motorIndex;
-		} else {
-			var shelf = $scope.holes[data.shelfIndex].shelf;
-			shelf.socket = socket.item;
-			socket.item.shelfIndex = data.shelfIndex;
-		}
-	}
-
-	function insertShelf($index, $data) {
-		$scope.holes[$index].shelf = copyIfTool($data); //$.extend(true, {}, $data);
-		$scope.holes[$index].shelf.socketBinding = $.extend(true, {shelfIndex: $index}, $scope.getTool("Привязка к сокете"));
-		if($scope.holes[$index].shelf.socket) {
-			$scope.holes[$index].shelf.socket.shelfIndex = $index;
-		}
-	}
-
-	function insertHole($index, $data) {
-		$scope.holes[$index].hole = $.extend(true, {}, $data);
-		var hole = $scope.holes[$index].hole;
-
-		if(hole.index !== undefined) {
-			var shelf = $scope.holes[hole.index].shelf;
-			$scope.holes[hole.index].shelf = undefined;
-			$scope.holes[$index].shelf = shelf;
-
-			if(shelf.socket !== undefined) {
-				shelf.socket.shelfIndex = $index;
-			}
-		}
-
-		hole.index = $index;
 	}
 
 	function fillItemCollision(item, index, collision) {
