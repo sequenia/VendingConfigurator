@@ -21,8 +21,7 @@ html {
 	font-family: Helvetica, Tahoma, Sans-serif
 }
 
-body {	
-	width: 100%;
+body {
 	height: 100%;
 	min-width: 800px;
 	font-size: 14px;
@@ -105,9 +104,14 @@ body {
 
 .tools {
 	width: 150px;
-	padding: 5px;
-	margin-right: 35px;
 	float: left;
+	padding: 5px;
+}
+
+.tools-container {
+	width: 150px;
+	float: left;
+	margin-right: 55px;
 }
 
 .tools ul {
@@ -368,11 +372,6 @@ body {
 .socket-hole {
 	position: relative;
 	width: 100%;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	height: 5px;
-	margin-top: 10px;
-	margin-bottom: 10px;
 }
 
 .socket-hole {
@@ -510,6 +509,7 @@ body {
 .spiral-place,
 .machine-place {
 	float: left;
+	display: inline-block;
 }
 
 .spiral-place {
@@ -521,6 +521,7 @@ body {
 .hsocket-offset,
 .machine-place-offset {
 	float: left;
+	display: inline-block;
 }
 
 .spiral-hole {

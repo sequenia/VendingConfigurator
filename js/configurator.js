@@ -49,202 +49,206 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		$scope.toolTypes.hsocket
 	];
 
-	/*******************
-	 * Инструмент может иметь следующие поля: (могут варьироваться от инструмента и инструменту)
-	 * tool: {
-	 *     type: $scope.toolTypes.any, // Тип инструмента
-	 *     name: "Инструмент",         // Имя, отображаемое на панели инструментов
-	 *     toolClass: "className1",    // Класс, отвечающий за внешний вид на панели инструментов
-	 *     objectClass: "className2",  // Класс, отвечающий за внешний вид в основном режиме показа
-	 *     anyClass: "className3",     // Класс, отвечающий за внешний вид в других режимах
-	 *     count: 10,                  // Доступное количество
-	 *     spiralPlaces: [],           // Массив спиралей (Только у полки)	 
-	 *     motorPlaces: [],            // Массив моторов (Только у полки)
-	 *     hsocketPlaces[],			   // Массив сокет (Только у полки)
-	 *     spiralCollision: [],        // Массив коллизий для спиралей (только у полки)
-	 *     motorCollision: [],         // Массив коллизий для моторов (только у полки)
-	 *     leftOffset: 1,              // Левая граница элемента (необходимо для рассчета коллизий)
-	 *     rightOffset: 1,             // Левая граница элемента (необходимо для рассчета коллизий)
-	 *     modes: [0, 1]               // Режимы, в которых доступен данный инструмент
-	 * }
-	 ******************/
-	$scope.allTools = [{
-			type: $scope.toolTypes.shelf,
-			name: "Полка",
-			toolClass: "shelf-tool",
-			objectClass: "shelf",
-			spiralPlaces: createPlaces($scope.placesOnShelf),
-			motorPlaces: createPlaces($scope.placesOnShelf),
-			hsocketPlaces: createPlaces($scope.placesOnShelf),
-			labelPlaces: createPlaces($scope.placesOnShelf * $scope.labelsLinesCount),
-			hsocketBindings: [],
-			spiralCollision: createCollision($scope.placesOnShelf),
-			motorCollision: createCollision($scope.placesOnShelf),
-			count: 5,
-			mode: $scope.modes.machine
-		},{
-			type: $scope.toolTypes.socket,
-			name: "Сокета",
-			toolClass: "socket-tool",
-			objectClass: "socket",
-			count: 10,
-			mode: $scope.modes.machine
-		},{
-			type: $scope.toolTypes.hsocket,
-			name: "Сокета полки",
-			toolClass: "socket-tool",
-			objectClass: "socket",
-			count: 10,
-			mode: $scope.modes.shelf
-		},{
-			type: $scope.toolTypes.spiral,
-			name: "Спираль левая",
-			toolClass: "spiral-tool",
-			objectClass: "spiral",
-			machineClass: "machine-spiral",
-			leftOffset: 1,
-			rightOffset: 1,
-			count: 15,
-			mode: $scope.modes.shelf,
-			indicators: {
-				direction: ["direction-left"]
-			}
-		},{
-			type: $scope.toolTypes.spiral,
-			name: "Спираль правая",
-			toolClass: "spiral-tool",
-			objectClass: "spiral",
-			machineClass: "machine-spiral",
-			leftOffset: 1,
-			rightOffset: 1,
-			count: 15,
-			mode: $scope.modes.shelf,
-			indicators: {
-				direction: ["direction-right"]
-			}
-		},{
-			type: $scope.toolTypes.splitter,
-			name: "Разделитель",
-			toolClass: "splitter-tool",
-			objectClass: "splitter",
-			machineClass: "machine-splitter",
-			leftOffset: 0,
-			rightOffset: 0,
-			count: 25,
-			mode: $scope.modes.shelf
-		},{
-			type: $scope.toolTypes.singleMotor,
-			name: "Мотор левый",
-			toolClass: "single-motor-tool",
-			objectClass: "single-motor",
-			machineClass: "machine-single-motor",
-			leftOffset: 1,
-			rightOffset: 1,
-			count: 14,
-			mode: $scope.modes.shelf,
-			indicators: {
-				direction: ["direction-left"]
-			}
-		},{
-			type: $scope.toolTypes.singleMotor,
-			name: "Мотор правый",
-			toolClass: "single-motor-tool",
-			objectClass: "single-motor",
-			machineClass: "machine-single-motor",
-			leftOffset: 1,
-			rightOffset: 1,
-			count: 20,
-			mode: $scope.modes.shelf,
-			indicators: {
-				direction: ["direction-right"]
-			}
-		},{
-			type: $scope.toolTypes.doubleMotor,
-			name: "Двойной мотор 1",
-			toolClass: "double-motor-tool",
-			objectClass: "double-motor",
-			machineClass: "machine-double-motor",
-			leftOffset: 3,
-			rightOffset: 3,
-			count: 6,
-			mode: $scope.modes.shelf,
-			indicators: {
-				direction: ["direction-left", "direction-right"]
-			}
-		},{
-			type: $scope.toolTypes.doubleMotor,
-			name: "Двойной мотор 2",
-			toolClass: "double-motor-tool",
-			objectClass: "double-motor",
-			machineClass: "machine-double-motor",
-			leftOffset: 3,
-			rightOffset: 3,
-			count: 8,
-			mode: $scope.modes.shelf,
-			indicators: {
-				direction: ["direction-right", "direction-left"]
-			}
-		},{
-			type: $scope.toolTypes.doubleMotor,
-			name: "Двойной мотор 3",
-			toolClass: "double-motor-tool",
-			objectClass: "double-motor",
-			machineClass: "machine-double-motor",
-			leftOffset: 3,
-			rightOffset: 3,
-			count: 7,
-			mode: $scope.modes.shelf,
-			indicators: {
-				direction: ["direction-left", "direction-left"]
-			}
-		},{
-			type: $scope.toolTypes.doubleMotor,
-			name: "Двойной мотор 4",
-			toolClass: "double-motor-tool",
-			objectClass: "double-motor",
-			machineClass: "machine-double-motor",
-			leftOffset: 3,
-			rightOffset: 3,
-			count: 4,
-			mode: $scope.modes.shelf,
-			indicators: {
-				direction: ["direction-right", "direction-right"]
-			}
-		},{
-			type: $scope.toolTypes.ski,
-			name: "Лыжа",
-			toolClass: "ski-tool",
-			objectClass: "ski",
-			machineClass: "machine-ski",
-			count: 15,
-			mode: $scope.modes.shelf
-		},{
-			type: $scope.toolTypes.label,
-			name: "Надпись",
-			toolClass: "label-tool",
-			objectClass: "label",
-			mode: $scope.modes.shelf
-		},{
-			type: $scope.toolTypes.socketBinding,
-			name: "Привязка к сокете"
-		},{
-			type: $scope.toolTypes.hole,
-			name: "Дырка",
-			toolClass: "hole-tool",
-			objectClass: "hole-object",
-			mode: $scope.modes.machine,
-			count: 15
-		}
-	];
+	createMachine();
 
-	$scope.spiralPlaces = createPlaces($scope.placesOnShelf);
-	$scope.holes = createHoles($scope.holesInMachine);
-	$scope.sockets = createSockets($scope.holesInMachine);
-	$scope.labels = [
-		{name: "Код товара",  class: "number-label"},
-		{name: "Цены",        class: "price-label"},
-		{name: "Комментарии", class: "comment-label"}
-	];
+	function createMachine() {
+		/*******************
+		 * Инструмент может иметь следующие поля: (могут варьироваться от инструмента и инструменту)
+		 * tool: {
+		 *     type: $scope.toolTypes.any, // Тип инструмента
+		 *     name: "Инструмент",         // Имя, отображаемое на панели инструментов
+		 *     toolClass: "className1",    // Класс, отвечающий за внешний вид на панели инструментов
+		 *     objectClass: "className2",  // Класс, отвечающий за внешний вид в основном режиме показа
+		 *     anyClass: "className3",     // Класс, отвечающий за внешний вид в других режимах
+		 *     count: 10,                  // Доступное количество
+		 *     spiralPlaces: [],           // Массив спиралей (Только у полки)	 
+		 *     motorPlaces: [],            // Массив моторов (Только у полки)
+		 *     hsocketPlaces[],			   // Массив сокет (Только у полки)
+		 *     spiralCollision: [],        // Массив коллизий для спиралей (только у полки)
+		 *     motorCollision: [],         // Массив коллизий для моторов (только у полки)
+		 *     leftOffset: 1,              // Левая граница элемента (необходимо для рассчета коллизий)
+		 *     rightOffset: 1,             // Левая граница элемента (необходимо для рассчета коллизий)
+		 *     modes: [0, 1]               // Режимы, в которых доступен данный инструмент
+		 * }
+		 ******************/
+		$scope.allTools = [{
+				type: $scope.toolTypes.shelf,
+				name: "Полка",
+				toolClass: "shelf-tool",
+				objectClass: "shelf",
+				spiralPlaces: createPlaces($scope.placesOnShelf),
+				motorPlaces: createPlaces($scope.placesOnShelf),
+				hsocketPlaces: createPlaces($scope.placesOnShelf),
+				labelPlaces: createPlaces($scope.placesOnShelf * $scope.labelsLinesCount),
+				hsocketBindings: [],
+				spiralCollision: createCollision($scope.placesOnShelf),
+				motorCollision: createCollision($scope.placesOnShelf),
+				count: 5,
+				mode: $scope.modes.machine
+			},{
+				type: $scope.toolTypes.socket,
+				name: "Сокета",
+				toolClass: "socket-tool",
+				objectClass: "socket",
+				count: 10,
+				mode: $scope.modes.machine
+			},{
+				type: $scope.toolTypes.hsocket,
+				name: "Сокета полки",
+				toolClass: "socket-tool",
+				objectClass: "socket",
+				count: 10,
+				mode: $scope.modes.shelf
+			},{
+				type: $scope.toolTypes.spiral,
+				name: "Спираль левая",
+				toolClass: "spiral-tool",
+				objectClass: "spiral",
+				machineClass: "machine-spiral",
+				leftOffset: 1,
+				rightOffset: 1,
+				count: 15,
+				mode: $scope.modes.shelf,
+				indicators: {
+					direction: ["direction-left"]
+				}
+			},{
+				type: $scope.toolTypes.spiral,
+				name: "Спираль правая",
+				toolClass: "spiral-tool",
+				objectClass: "spiral",
+				machineClass: "machine-spiral",
+				leftOffset: 1,
+				rightOffset: 1,
+				count: 15,
+				mode: $scope.modes.shelf,
+				indicators: {
+					direction: ["direction-right"]
+				}
+			},{
+				type: $scope.toolTypes.splitter,
+				name: "Разделитель",
+				toolClass: "splitter-tool",
+				objectClass: "splitter",
+				machineClass: "machine-splitter",
+				leftOffset: 0,
+				rightOffset: 0,
+				count: 25,
+				mode: $scope.modes.shelf
+			},{
+				type: $scope.toolTypes.singleMotor,
+				name: "Мотор левый",
+				toolClass: "single-motor-tool",
+				objectClass: "single-motor",
+				machineClass: "machine-single-motor",
+				leftOffset: 1,
+				rightOffset: 1,
+				count: 14,
+				mode: $scope.modes.shelf,
+				indicators: {
+					direction: ["direction-left"]
+				}
+			},{
+				type: $scope.toolTypes.singleMotor,
+				name: "Мотор правый",
+				toolClass: "single-motor-tool",
+				objectClass: "single-motor",
+				machineClass: "machine-single-motor",
+				leftOffset: 1,
+				rightOffset: 1,
+				count: 20,
+				mode: $scope.modes.shelf,
+				indicators: {
+					direction: ["direction-right"]
+				}
+			},{
+				type: $scope.toolTypes.doubleMotor,
+				name: "Двойной мотор 1",
+				toolClass: "double-motor-tool",
+				objectClass: "double-motor",
+				machineClass: "machine-double-motor",
+				leftOffset: 3,
+				rightOffset: 3,
+				count: 6,
+				mode: $scope.modes.shelf,
+				indicators: {
+					direction: ["direction-left", "direction-right"]
+				}
+			},{
+				type: $scope.toolTypes.doubleMotor,
+				name: "Двойной мотор 2",
+				toolClass: "double-motor-tool",
+				objectClass: "double-motor",
+				machineClass: "machine-double-motor",
+				leftOffset: 3,
+				rightOffset: 3,
+				count: 8,
+				mode: $scope.modes.shelf,
+				indicators: {
+					direction: ["direction-right", "direction-left"]
+				}
+			},{
+				type: $scope.toolTypes.doubleMotor,
+				name: "Двойной мотор 3",
+				toolClass: "double-motor-tool",
+				objectClass: "double-motor",
+				machineClass: "machine-double-motor",
+				leftOffset: 3,
+				rightOffset: 3,
+				count: 7,
+				mode: $scope.modes.shelf,
+				indicators: {
+					direction: ["direction-left", "direction-left"]
+				}
+			},{
+				type: $scope.toolTypes.doubleMotor,
+				name: "Двойной мотор 4",
+				toolClass: "double-motor-tool",
+				objectClass: "double-motor",
+				machineClass: "machine-double-motor",
+				leftOffset: 3,
+				rightOffset: 3,
+				count: 4,
+				mode: $scope.modes.shelf,
+				indicators: {
+					direction: ["direction-right", "direction-right"]
+				}
+			},{
+				type: $scope.toolTypes.ski,
+				name: "Лыжа",
+				toolClass: "ski-tool",
+				objectClass: "ski",
+				machineClass: "machine-ski",
+				count: 15,
+				mode: $scope.modes.shelf
+			},{
+				type: $scope.toolTypes.label,
+				name: "Надпись",
+				toolClass: "label-tool",
+				objectClass: "label",
+				mode: $scope.modes.shelf
+			},{
+				type: $scope.toolTypes.socketBinding,
+				name: "Привязка к сокете"
+			},{
+				type: $scope.toolTypes.hole,
+				name: "Дырка",
+				toolClass: "hole-tool",
+				objectClass: "hole-object",
+				mode: $scope.modes.machine,
+				count: 15
+			}
+		];
+
+		$scope.spiralPlaces = createPlaces($scope.placesOnShelf);
+		$scope.holes = createHoles($scope.holesInMachine);
+		$scope.sockets = createSockets($scope.holesInMachine);
+		$scope.labels = [
+			{name: "Код товара",  class: "number-label"},
+			{name: "Цены",        class: "price-label"},
+			{name: "Комментарии", class: "comment-label"}
+		];
+	}
 
 	$scope.deleteActions = {
 		shelf: deleteShelf,
@@ -1043,20 +1047,23 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function initSettings() {
-		$scope.shelfPlaceWidth     = 45;  // Ширина одного места на полке
-		$scope.splitterWidth       = 8;   // Ширина разделителя
-		$scope.spiralWidth         = 41;  // Ширина спирали на полке
+		$scope.defaultHeight = 300.0;
+		$scope.defaultZoom   = 300.0;
+
+		$scope.zoom          = $scope.defaultZoom;
+		$scope.height        = $scope.defaultHeight;
+		$scope.holeOffset    = 20;
+
+		$scope.holesInMachine      = Math.floor($scope.height / $scope.holeOffset);
 		$scope.machineSpiralWidth  = 26;  // Ширина спирали на автомате
 		$scope.machineSkiWidth     = 12;  // Ширина лыжи на автомате
 
-		$scope.spiralPlaceHeight   = 370; // Длина места для спирали
 		$scope.motorPlaceHeight    = 30;  // Длина места для мотора
 		$scope.hsocketPlaceHeight  = 30;  // Длина места для горизонтального сокета
 		$scope.labelDetectorHeight = 25;  // Высота подписи
 		$scope.motorHeight         = 20;  // Высота мотора
 		$scope.hsocketHeight       = 20;  // Высота горизонтального сокета
 
-		$scope.holesInMachine      = 22;  // Количество дырок в автомате
 		$scope.labelsLinesCount    = 3;   // Количество линий надписей
 		$scope.placesOnShelf       = 12;  // Количество мест на полке
 
@@ -1064,12 +1071,18 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		$scope.shelfPlaceOffset    = 15;  // Ширина отступа слева и справа полки
 
 		$scope.setSettings = function() {
+			var zoomCoef             = $scope.zoom / $scope.defaultZoom;
+			$scope.shelfPlaceWidth   = 45.0 * zoomCoef;  // Ширина одного места на полке
+			$scope.spiralWidth       = 41.0 * zoomCoef;  // Ширина спирали на полке
+			$scope.spiralPlaceHeight = 370.0 * zoomCoef; // Длина места для спирали
+			$scope.splitterWidth     = 8.0 * zoomCoef;   // Ширина разделителя
+
 			$scope.detectorWidth    = $scope.shelfPlaceWidth - 2 * $scope.detectorMargin;     // Ширина детектора без отступов
 			$scope.labelWidth       = $scope.detectorWidth * 1.5;
 			$scope.labelTextWidth   = $scope.labelWidth - 4;
 			$scope.singleMotorWidth = 1 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
 			$scope.doubleMotorWidth = 3 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
-			$scope.singleHsocketWidth= $scope.singleMotorWidth;
+			$scope.singleHsocketWidth = $scope.singleMotorWidth;
 			$scope.shelfLength      = $scope.motorPlaceHeight +  $scope.hsocketPlaceHeight + $scope.spiralPlaceHeight;     // Длина полки
 			
 			$scope.railHeight       = $scope.spiralPlaceHeight - 20;
@@ -1090,6 +1103,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			$scope.machineSkiLeft         = ($scope.machineSpiralWidth - $scope.machineSkiWidth) / 2.0;
 
 			$scope.settings = {
+				allWidth:           { width: $scope.placesOnShelf * $scope.shelfPlaceWidth + 400 },
 				spiralPlaces:       { top:    $scope.motorPlaceHeight  + 'px' },
 				spiralPlace:        { height: $scope.spiralPlaceHeight + 'px', width: $scope.shelfPlaceWidth  + 'px' },
 				machinePlace:       { width:  $scope.shelfPlaceWidth   + 'px', height: '1px' },
@@ -1127,6 +1141,13 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 					'margin-left': $scope.detectorMargin + 'px',
 					'margin-right': $scope.detectorMargin + 'px'
 				},
+				holeHeight: {
+					'padding-top': (10 * zoomCoef) + 'px',
+					'padding-bottom': (10 * zoomCoef) + 'px',
+					'height': (5 * zoomCoef) + 'px',
+					'margin-top': (10 * zoomCoef) + 'px',
+					'margin-bottom': (10 * zoomCoef) + 'px'
+				},
 
 				shelfModel: { height: $scope.shelfLength + 'px' },
 				rail: { height: $scope.railHeight + 'px' },
@@ -1159,6 +1180,36 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 								'margin-left: ' + ($scope.labelTextLeft) + 'px'
 
 			};
+
+			drawBindings();
+		};
+
+		$scope.setHeight = function() {
+			var oldHolesInMachine = $scope.holesInMachine;
+			$scope.holesInMachine = Math.floor($scope.height / $scope.holeOffset);
+
+			if($scope.holesInMachine < oldHolesInMachine) {
+				for(var i = $scope.holesInMachine; i < oldHolesInMachine; i++) {
+					if($scope.holes[i].hole !== undefined) {
+						var hole = $scope.holes[i].hole;
+						var tool = $scope.getTool(hole.name);
+						restoreTools(hole);
+					}
+					if($scope.sockets[i].item !== undefined) {
+						var socket = $scope.sockets[i].item;
+						var tool = $scope.getTool(socket.name);
+						restoreTools(socket);
+					}
+				}
+
+				$scope.holes.splice($scope.holesInMachine, oldHolesInMachine - $scope.holesInMachine);
+				$scope.sockets.splice($scope.holesInMachine, oldHolesInMachine - $scope.holesInMachine);
+			} else {
+				for(var i = oldHolesInMachine; i < $scope.holesInMachine; i++) {
+					$scope.holes.push({id: (i + 1) * 20});
+					$scope.sockets.push({item: undefined});
+				}
+			}
 		};
 
 		$scope.setSettings();

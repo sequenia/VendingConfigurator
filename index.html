@@ -11,40 +11,44 @@
     <script type="text/javascript" src="js/ngDraggable.js"></script>
 </head>
 <body>
-    <div class="configurator" ng-controller="ConfiguratorCtrl">
-        <label for="zoom">Zoom</label>
-        <input id="zoom" ng-model="shelfPlaceWidth" label="Зум" ng-change="setSettings()">
+    <div class="configurator" ng-controller="ConfiguratorCtrl" ng-style="settings.allWidth">
         <!-- ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-        <div class="tools {{toStorage}}"
-             ng-drop="true"
-             ng-drop-success="onGarbageDropComplete($data, $event)">
-            <div class = "title"><strong>Склад</strong></div>
-            <ul>
-                <li ng-repeat="tool in tools" ng-show="tool.count !== 0">
-                    <div class="title">{{tool.name}} <span ng-show="tool.count > 0">({{tool.count}})</span></div>
-                    <div class="tool-container {{tool.toolClass}}"
-                         ng-drag="true"
-                         ng-drag-data="tool"
-                         ng-drag-success="onToolDragComplete($data, $event)"
-                         ng-mousedown="onToolMouseDown(tool)"
-                         ng-mouseup="onToolMouseUp(tool)">
-                         <div>
-                            <div indicators
-                                 ng-repeat="(name, indicator) in tool.indicators"
-                                 tool-name="{{tool.name}}"
-                                 indicator-name="{{name}}"></div>
-                         </div>
-                    </div>
-                    <div class="tool-container {{tool.toolClass}}" ng-show="tool.mouseOver && !itemOver">
-                        <div>
-                          <div indicators
-                               ng-repeat="(name, indicator) in tool.indicators"
-                               tool-name="{{tool.name}}"
-                               indicator-name="{{name}}"></div>
+        <div class="tools-container">
+            <div class="tools {{toStorage}}"
+                 ng-drop="true"
+                 ng-drop-success="onGarbageDropComplete($data, $event)">
+                <div class = "title"><strong>Склад</strong></div>
+                <ul>
+                    <li ng-repeat="tool in tools" ng-show="tool.count !== 0">
+                        <div class="title">{{tool.name}} <span ng-show="tool.count > 0">({{tool.count}})</span></div>
+                        <div class="tool-container {{tool.toolClass}}"
+                             ng-drag="true"
+                             ng-drag-data="tool"
+                             ng-drag-success="onToolDragComplete($data, $event)"
+                             ng-mousedown="onToolMouseDown(tool)"
+                             ng-mouseup="onToolMouseUp(tool)">
+                             <div>
+                                <div indicators
+                                     ng-repeat="(name, indicator) in tool.indicators"
+                                     tool-name="{{tool.name}}"
+                                     indicator-name="{{name}}"></div>
+                             </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
+                        <div class="tool-container {{tool.toolClass}}" ng-show="tool.mouseOver && !itemOver">
+                            <div>
+                              <div indicators
+                                   ng-repeat="(name, indicator) in tool.indicators"
+                                   tool-name="{{tool.name}}"
+                                   indicator-name="{{name}}"></div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <label for="zoom">Зум</label>
+            <input id="zoom" ng-model="zoom" ng-change="setSettings()">
+            <label for="height">Высота</label>
+            <input id="height" ng-model="height" ng-change="setHeight()">
         </div>
         <!-- /ПАНЕЛЬ ИНСТРУМЕНТОВ -->
 
@@ -57,6 +61,7 @@
                     <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
                 </div>
                 <div class="hole {{hole.class}}"
+                     ng-style="settings.holeHeight"
                      ng-repeat="hole in holes"
                      ng-drop="true"
                      ng-drop-success="onHoleDropComplete($data, $event, $index)">
@@ -149,6 +154,7 @@
             </div>
             <div class="sockets">
                 <div class="socket-hole {{socket.class}}"
+                     ng-style="settings.holeHeight"
                      ng-repeat="socket in sockets"
                      ng-drop="true"
                      ng-drop-success="onSocketDropComplete($data, $event, $index)">
