@@ -46,6 +46,8 @@ body {
 .shelf,
 .shelf-tool > div,
 .splitter-tool > div,
+.hole-tool > div,
+.hole-object,
 .splitter,
 .single-motor-tool > div,
 .double-motor-tool > div,
@@ -54,9 +56,9 @@ body {
 .machine-single-motor,
 .machine-double-motor,
 .label-tool > div {
-	-moz-border-radius: 2.5px;
-	-webkit-border-radius: 2.5px;
-	border-radius: 2.5px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
 .machine,
@@ -210,9 +212,6 @@ body {
 }
 
 .hole-tool > div {
-	width: 10px;
-	height: 10px;
-	background: #8F8F8F;
 	border: 1px solid #000000;
 }
 
@@ -400,7 +399,9 @@ body {
 	top: 5px;
 }
 
-.circle {
+.circle,
+.hole-tool > div,
+.hole-object {
 	width: 5px;
 	height: 5px;
 	background: #FFFFFF;
@@ -492,9 +493,6 @@ body {
 
 .hole-object {
 	position: absolute;
-	width: 10px; height: 10px;
-	background: #8F8F8F;
-	border: 1px solid #000000;
 }
 
 .machine-binding-circle {

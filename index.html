@@ -60,6 +60,15 @@
                  id="machine-detector"
                  ng-drop="true"
                  ng-drop-success="onMachineDropComplete($data, $event)">
+              <div ng-repeat="(key, hole) in holes"
+                   class="{{hole.objectClass}}"
+                   ng-style="hole.style"
+                   ng-drag="true"
+                   ng-drag-data="hole"
+                   ng-drag-success="onItemDragComplete($data, $event, key)"
+                   ng-mousedown="onToolMouseDown(hole, key)"
+                   ng-mouseup="onToolMouseUp(hole, key)">
+              </div>
               <div ng-repeat-start="(key, shelf) in shelves"
                    class="{{shelf.objectClass}}"
                    index="{{shelf.index}}"
@@ -122,15 +131,6 @@
               </div>
               <div ng-repeat-end class="configure-shelf" ng-style="shelf.buttonStyle">
                 <button type="button" ng-click="configureShelf(shelf)">Настроить</button>
-              </div>
-              <div ng-repeat="(key, hole) in holes"
-                   class="{{hole.objectClass}}"
-                   ng-style="hole.style"
-                   ng-drag="true"
-                   ng-drag-data="hole"
-                   ng-drag-success="onItemDragComplete($data, $event, key)"
-                   ng-mousedown="onToolMouseDown(hole, key)"
-                   ng-mouseup="onToolMouseUp(hole, key)">
               </div>
             </div>
           </div>

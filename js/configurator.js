@@ -344,6 +344,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			shelf.socketBindingStyle = undefined;
 		}
 		delete $scope.sockets[index];
+		renumberSockets();
 	}
 
 	function deleteHole(index) {
@@ -476,7 +477,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			var top = $scope.toolMouseY - detectorPosition.top;
 			socket.style = { top: top + "px" };
 			socket.height = Math.round(top / 1.5);
-			socket.label = $scope.socketIterator;
 			socket.index = $scope.socketIterator;
 
 			if(socket.shelf !== undefined) {
@@ -484,6 +484,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			}
 
 			$scope.sockets[$scope.socketIterator++] = socket;
+			renumberSockets();
 		} else {
 			var sockets = $scope.currentShelf.hsocketPlaces;
 			var socket = $scope.currentShelf.hsocketPlaces[$index];
@@ -937,12 +938,33 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function renumberSockets(sockets) {
-		var label = 1;
-		for(var i = 0; i < sockets.length; i++) {
-			if(sockets[i].item) {
-				sockets[i].item.label = label;
-				label++;
+		if($scope.mode == $scope.modes.shelf) {
+			var label = 1;
+			for(var i = 0; i < sockets.length; i++) {
+				if(sockets[i].item) {
+					sockets[i].item.label = label;
+					label++;
+				}
 			}
+		} else {
+			$timeout(function() {
+				var _sockets = $('.socket').not('.hidden');
+				_sockets = _sockets.toArray();
+
+				_sockets.sort(function(a, b){
+					var aIndex = $(a).offset().top;
+					var bIndex = $(b).offset().top;
+					return (aIndex > bIndex);
+				});
+
+				console.log(_sockets);
+
+				for(var i = 0; i < _sockets.length; i++) {
+					var socketDom = $(_sockets[i]);
+					var socketIndex = parseInt(socketDom.attr('index'));
+					$scope.sockets[socketIndex].label = i;
+				}
+			});
 		}
 	}
 
