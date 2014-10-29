@@ -48,132 +48,115 @@
             <label for="zoom">Зум</label>
             <input id="zoom" ng-model="zoom" ng-change="setSettings()">
             <label for="height">Высота</label>
-            <input id="height" ng-model="height" ng-change="setHeight()">
+            <input id="height" ng-model="height" ng-change="setSettings()">
         </div>
         <!-- /ПАНЕЛЬ ИНСТРУМЕНТОВ -->
 
         <!-- ГЕНЕРАТОР АВТОМАТА -->
         <div class="machine-generator" ng-show="mode == modes.machine">
-            <div class="machine">
-                <div>
-                    <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                    <div class="machine-place" ng-style="settings.machinePlace" ng-repeat="place in spiralPlaces"></div>
-                    <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                </div>
-                <div class="hole {{hole.class}}"
-                     ng-style="settings.holeHeight"
-                     ng-repeat="hole in holes"
-                     ng-drop="true"
-                     ng-drop-success="onHoleDropComplete($data, $event, $index)">
-                    <div class="circle left">
-                        <div class="hole-object"
-                             ng-show="hole.hole"
-                             ng-drag="true"
-                             ng-drag-data="hole.hole"
-                             ng-drag-success="onItemDragComplete($data, $event, $index)"
-                             ng-mousedown="onToolMouseDown(hole.hole, $index)"
-                             ng-mouseup="onToolMouseUp(hole.hole, $index)"></div>
-                    </div>
-                    <div class="circle right">
-                        <div class="hole-object"
-                             style="right: 0;"
-                             ng-show="hole.hole"
-                             ng-drag="true"
-                             ng-drag-data="hole.hole"
-                             ng-drag-success="onItemDragComplete($data, $event, $index)"
-                             ng-mousedown="onToolMouseDown(hole.hole, $index)"
-                             ng-mouseup="onToolMouseUp(hole.hole, $index)"></div>
-                    </div>
-                    <div ng-show="hole.shelf.socketBindingStyle"
-                         class="motor-hsocket-binding"
-                         ng-style="hole.shelf.socketBindingStyle"></div>
-                    <div class="circle machine-binding-circle"
-                         ng-drag="true"
-                         ng-show="hole.shelf"
-                         ng-drag-data="hole.shelf.socketBinding"
-                         ng-mousedown="onToolMouseDown(hole.shelf.socketBinding, $index)"
-                         ng-mouseup="onToolMouseUp(hole.shelf.socketBinding, $index)"></div>
-                    <div class="hole-label">{{hole.id}}</div>
-                    <div class="configure-shelf" ng-show="hole.shelf">
-                        <button type="button" ng-click="configureShelf(hole.shelf)">Настроить</button>
-                    </div>
-                    <!-- ПОЛКА АВТОМАТА -->
-                    <div class="{{hole.shelf.objectClass}}"
-                         ng-show="hole.shelf"
-                         ng-drag="true"
-                         ng-drag-data="hole.shelf"
-                         ng-drag-success="onItemDragComplete($data, $event, $index)"
-                         ng-mousedown="onToolMouseDown(hole.shelf, $index)"
-                         ng-mouseup="onToolMouseUp(hole.shelf, $index)">
-                        <!-- МОТОРЫ -->
-                        <div class="machine-items">
-                            <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                            <div class="machine-place"
-                                 ng-style="settings.machinePlace"
-                                 ng-repeat="motorPlace in hole.shelf.motorPlaces">
-                                <div class="{{motorPlace.item.machineClass}}"
-                                     style="{{settings[motorPlace.item.machineClass]}}"></div>
-                            </div>
-                            <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                        </div>
-                        <!-- /МОТОРЫ -->
-                        <!-- СПИРАЛИ -->
-                        <div class="machine-items">
-                            <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                            <div class="machine-place"
-                                 ng-style="settings.machinePlace"
-                                 ng-repeat="spiralPlace in hole.shelf.spiralPlaces">
-                                <div class="{{spiralPlace.item.machineClass}}"
-                                     style="{{settings[spiralPlace.item.machineClass]}}">
-                                    <div class="{{spiralPlace.item.ski.machineClass}}"
-                                         style="{{settings[spiralPlace.item.ski.machineClass]}}"></div>
-                                </div>
-                            </div>
-                            <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                        </div>
-                        <!-- /СПИРАЛИ -->
+            <div class="machine"
+                 ng-style="settings.machine">
+              <div class="machine-detector {{machine.class}}"
+                   id="machine-detector"
+                   ng-drop="true"
+                   ng-drop-success="onMachineDropComplete($data, $event)">
+                <div ng-repeat-start="(key, shelf) in shelves"
+                     class="{{shelf.objectClass}}"
+                     ng-style="shelf.style"
+                     ng-drag="true"
+                     ng-drag-data="shelf"
+                     ng-drag-success="onItemDragComplete($data, $event, key)"
+                     ng-mousedown="onToolMouseDown(shelf, key)"
+                     ng-mouseup="onToolMouseUp(shelf, key)">
+                  <!-- МОТОРЫ -->
+                  <div class="machine-items">
+                      <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+                      <div class="machine-place"
+                           ng-style="settings.machinePlace"
+                           ng-repeat="motorPlace in shelf.motorPlaces">
+                          <div class="{{motorPlace.item.machineClass}}"
+                               style="{{settings[motorPlace.item.machineClass]}}"></div>
+                      </div>
+                      <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+                  </div>
+                  <!-- /МОТОРЫ -->
+                  <!-- СПИРАЛИ -->
+                  <div class="machine-items">
+                      <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+                      <div class="machine-place"
+                           ng-style="settings.machinePlace"
+                           ng-repeat="spiralPlace in shelf.spiralPlaces">
+                          <div class="{{spiralPlace.item.machineClass}}"
+                               style="{{settings[spiralPlace.item.machineClass]}}">
+                              <div class="{{spiralPlace.item.ski.machineClass}}"
+                                   style="{{settings[spiralPlace.item.ski.machineClass]}}"></div>
+                          </div>
+                      </div>
+                      <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+                  </div>
+                  <!-- /СПИРАЛИ -->
 
-                        <!-- ЦЕННИКИ И БИРКИ -->
-                        <div class="labels-mini">
-                            <div class="label-container-mini">
-                                <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                                <div ng-repeat="labelPlace in hole.shelf.labelPlaces.slice(0, placesOnShelf)"
-                                     class="label-mini"
-                                     ng-style="settings.machinePlace">
-                                    <span class="number-span">{{labelPlace.item.value}}</span>
-                                    <span class="price-span">{{hole.shelf.labelPlaces[$index + placesOnShelf].item.value}}</span>
-                                    <span class="comment-span">{{hole.shelf.labelPlaces[$index + placesOnShelf * 2].item.value}}</span>
-                                </div>
-                                <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                            </div>
-                        </div>
-                        <!-- /ЦЕННИКИ И БИРКИ -->
-                    </div>
-                    <!-- /ПОЛКА АВТОМАТА -->
+                  <!-- ЦЕННИКИ И БИРКИ -->
+                  <div class="labels-mini">
+                      <div class="label-container-mini">
+                          <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+                          <div ng-repeat="labelPlace in shelf.labelPlaces.slice(0, placesOnShelf)"
+                               class="label-mini"
+                               ng-style="settings.machinePlace">
+                              <span class="number-span">{{labelPlace.item.value}}</span>
+                              <span class="price-span">{{shelf.labelPlaces[$index + placesOnShelf].item.value}}</span>
+                              <span class="comment-span">{{shelf.labelPlaces[$index + placesOnShelf * 2].item.value}}</span>
+                          </div>
+                          <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+                      </div>
+                  </div>
+                  <!-- /ЦЕННИКИ И БИРКИ -->
                 </div>
-            </div>
-            <div class="sockets">
-                <div class="socket-hole {{socket.class}}"
-                     ng-style="settings.holeHeight"
-                     ng-repeat="socket in sockets"
-                     ng-drop="true"
-                     ng-drop-success="onSocketDropComplete($data, $event, $index)">
-                    <div class="{{socket.item.objectClass}}"
-                         ng-drag="true"
-                         ng-drag-data="socket.item"
-                         ng-drag-success="onItemDragComplete($data, $event, $index)"
-                         ng-mousedown="onToolMouseDown(socket.item, $index)"
-                         ng-mouseup="onToolMouseUp(socket.item, $index)">
-                        {{socket.item.label}}
-                    </div>
-                    <div ng-show="sockets[$index].item"
-                         class="socket-height">
-                        {{($index + 1) * 20}}
-                    </div>
-                    <div class="circle center"></div>
+                <div ng-show="shelf.socketBindingStyle"
+                     class="motor-hsocket-binding"
+                     ng-style="shelf.socketBindingStyle"></div>
+                <div class="circle machine-binding-circle"
+                     ng-drag="true"
+                     ng-style="shelf.buttonStyle"
+                     ng-drag-data="shelf.socketBinding"
+                     ng-mousedown="onToolMouseDown(shelf.socketBinding, key)"
+                     ng-mouseup="onToolMouseUp(shelf.socketBinding, key)"></div>
+                <div ng-repeat-end class="configure-shelf" ng-style="shelf.buttonStyle">
+                  <button type="button" ng-click="configureShelf(shelf)">Настроить</button>
                 </div>
+                <div ng-repeat="(key, hole) in holes"
+                     class="{{hole.objectClass}}"
+                     ng-style="hole.style"
+                     ng-drag="true"
+                     ng-drag-data="hole"
+                     ng-drag-success="onItemDragComplete($data, $event, key)"
+                     ng-mousedown="onToolMouseDown(hole, key)"
+                     ng-mouseup="onToolMouseUp(hole, key)">
+                </div>
+              </div>
             </div>
         </div>
+        <div class="sockets">
+          <div class="socket-hole {{socket.class}}"
+               ng-style="settings.holeHeight"
+               ng-repeat="socket in sockets"
+               ng-drop="true"
+               ng-drop-success="onSocketDropComplete($data, $event, $index)">
+              <div class="{{socket.item.objectClass}}"
+                   ng-drag="true"
+                   ng-drag-data="socket.item"
+                   ng-drag-success="onItemDragComplete($data, $event, $index)"
+                   ng-mousedown="onToolMouseDown(socket.item, $index)"
+                   ng-mouseup="onToolMouseUp(socket.item, $index)">
+                  {{socket.item.label}}
+              </div>
+              <div ng-show="sockets[$index].item"
+                   class="socket-height">
+                  {{($index + 1) * 20}}
+              </div>
+              <div class="circle center"></div>
+          </div>
+      </div>
         <!-- /ГЕНЕРАТОР АВТОМАТА -->
 
         <!-- ГЕНЕРАТОР ПОЛКИ -->

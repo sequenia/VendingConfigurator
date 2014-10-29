@@ -106,6 +106,10 @@ angular.module("ngDraggable", [])
 
                         _mx = (evt.pageX || evt.originalEvent.touches[0].pageX);
                         _my = (evt.pageY || evt.originalEvent.touches[0].pageY);
+
+                        $rootScope.toolMouseX = _mx;
+                        $rootScope.toolMouseY = _my;
+
                         _tx=_mx-element.centerX-$window.scrollLeft()
                         _ty=_my -element.centerY-$window.scrollTop();
                         moveElement(_tx, _ty);
@@ -180,6 +184,7 @@ angular.module("ngDraggable", [])
                     var onDragMove = function(evt, obj) {
                         if(! _dropEnabled)return;
                         isTouching(obj.x,obj.y,obj.element);
+                        //console.log(obj.x, obj.y);
                     }
                     var onDragEnd = function(evt, obj) {
                         if(! _dropEnabled)return;
