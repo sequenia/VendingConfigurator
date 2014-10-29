@@ -331,12 +331,15 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function deleteShelf(index) {
+		if($scope.shelves[index].socket !== undefined) {
+			$scope.shelves[index].socket.shelf = undefined;
+		}
 		delete $scope.shelves[index];
 	}
 
 	function deleteSocket(index) {
-		if($scope.sockets[index].shelfIndex !== undefined) {
-			var shelf = $scope.shelves[$scope.sockets[index].shelfIndex];
+		if($scope.sockets[index].shelf !== undefined) {
+			var shelf = $scope.sockets[index].shelf;
 			shelf.socket = undefined;
 			shelf.socketBindingStyle = undefined;
 		}
@@ -389,7 +392,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 				}
 			}
 		} else {
-			if($scope.sockets[index].shelfIndex !== undefined) {
+			if($scope.sockets[index].shelf !== undefined) {
 				result = false;
 			}
 		}
@@ -455,6 +458,11 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		} else {
 			socket = $scope.sockets[index];
 			var shelf = $scope.shelves[data.shelfIndex];
+
+			if(shelf.socket !== undefined) {
+				shelf.socket.shelf = undefined;
+			}
+
 			shelf.socket = socket;
 			socket.shelf = shelf;
 		}
@@ -469,6 +477,11 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			socket.style = { top: top + "px" };
 			socket.height = Math.round(top / 1.5);
 			socket.label = $scope.socketIterator;
+			socket.index = $scope.socketIterator;
+
+			if(socket.shelf !== undefined) {
+				socket.shelf.socket = socket;
+			}
 
 			$scope.sockets[$scope.socketIterator++] = socket;
 		} else {
@@ -490,9 +503,14 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		shelf.style = $.extend(true, {}, $scope.settings.shelfWidth);
 		shelf.style.top = top + "px";
 		shelf.buttonStyle = {top: (top - 10) + "px" };
-		shelf.label = Math.random();
+		shelf.index = $scope.shelfIterator;
 
 		shelf.socketBinding = $.extend(true, {shelfIndex: $index}, $scope.getTool("Привязка к сокете"));
+
+		if(shelf.socket !== undefined) {
+			shelf.socket.shelf = shelf;
+		}
+
 		$scope.shelves[$scope.shelfIterator++] = shelf;
 	}
 
@@ -553,16 +571,16 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	$scope.onMachineDropComplete = function($data, $event) {
-		insertIfCan($data, $event, $scope.shelfIterator, [$scope.toolTypes.shelf, $scope.toolTypes.hole]);
+		insertIfCan($data, $event, $scope.shelfIterator, [$scope.toolTypes.shelf, $scope.toolTypes.hole], drawBindings);
 	};
 
 	// Вызывается при падении чего-либо на сокету
 	$scope.onSocketsDropComplete = function($data, $event, $index){
-		insertIfCan($data, $event, $scope.socketIterator, [$scope.toolTypes.socket]);
+		insertIfCan($data, $event, $scope.socketIterator, [$scope.toolTypes.socket], drawBindings);
 	};
 
 	$scope.onSocketDropComplete = function($data, $event, $index) {
-		insertIfCan($data, $event, $index, [$scope.toolTypes.socketBinding]);
+		insertIfCan($data, $event, $index, [$scope.toolTypes.socketBinding], drawBindings);
 	};
 
 	// Вызывается при падении чего-либо на место спирали
@@ -973,42 +991,75 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 				});
 			} else {
 				var shelves = $('.shelf');
-				var sockets = $('.socket-hole').find('.socket');
-				var shelfIndex = 0;
-				angular.forEach($scope.shelves, function(hole, index) {
-					if(hole.shelf !== undefined) {
-						var shelf = shelves[shelfIndex];
-						if(hole.shelf.socket !== undefined) {
-							var socketIndex = hole.shelf.socket.label;
-							var socket = sockets[socketIndex - 1];
-							var shelfWidth = $(shelf).width();
-							var shelfOffset = $(shelf).offset();
-							var socketOffset = $(socket).offset();
-							var x = socketOffset.left - shelfOffset.left - shelfWidth;
-							var y = shelfOffset.top - socketOffset.top;
-							var width = Math.sqrt(x * x + y * y);
-							var radAngle = Math.asin(y / width);
-							var angle = - 57.325 * radAngle;
+				shelves.each(function(shelfDomIndex) {
+					var shelfDom = $(this);
+					var shelfObjectIndex = parseInt(shelfDom.attr('index'));
+					var shelfObject = $scope.shelves[shelfObjectIndex];
 
-							hole.shelf.socketBindingStyle = {
-								width: width,
-								height: '2px',
-								'background-color': "#000000",
-								position: 'absolute',
-								'z-index': 0,
-								'right': - (Math.cos(radAngle) * 0.5 * width + width * 0.5) + 'px',
-								'margin-top': - y / 2.0 + 'px',
+					if(shelfObject.socket !== undefined) {
+						var socketObjectIndex = shelfObject.socket.index;
+						var socket = $('.socket[index="' + socketObjectIndex + '"]').first();
+						var shelfWidth = shelfDom.width();
+						var shelfOffset = shelfDom.offset();
+						var socketOffset = socket.offset();
+						var x = socketOffset.left - shelfOffset.left - shelfWidth;
+						var y = shelfOffset.top - socketOffset.top;
+						var width = Math.sqrt(x * x + y * y);
+						var radAngle = Math.asin(y / width);
+						var angle = - 57.325 * radAngle;
 
-								'-moz-transform': 'rotate(' + angle + 'deg)',
-								'-webkit-transform': 'rotate(' + angle + 'deg)',
-								'-o-transform': 'rotate(' + angle + 'deg)',
-								'-ms-transform': 'rotate(' + angle + 'deg)',
-								'transform':' rotate(' + angle + 'deg)'
-							};
-						}
-						shelfIndex++;
+						shelfObject.socketBindingStyle = {
+							width: width,
+							height: '2px',
+							'background-color': "#000000",
+							position: 'absolute',
+							'z-index': 0,
+							'right': - (Math.cos(radAngle) * 0.5 * width + width * 0.5) + 'px',
+							'margin-top': - y / 2.0 + 'px',
+
+							'-moz-transform': 'rotate(' + angle + 'deg)',
+							'-webkit-transform': 'rotate(' + angle + 'deg)',
+							'-o-transform': 'rotate(' + angle + 'deg)',
+							'-ms-transform': 'rotate(' + angle + 'deg)',
+							'transform':' rotate(' + angle + 'deg)'
+						};
 					}
 				});
+
+
+				/*angular.forEach($scope.shelves, function(shelfObject, index) {
+
+					var shelf = shelves[shelfIndex];
+					if(hole.shelf.socket !== undefined) {
+						var socketIndex = hole.shelf.socket.label;
+						var socket = sockets[socketIndex - 1];
+						var shelfWidth = $(shelf).width();
+						var shelfOffset = $(shelf).offset();
+						var socketOffset = $(socket).offset();
+						var x = socketOffset.left - shelfOffset.left - shelfWidth;
+						var y = shelfOffset.top - socketOffset.top;
+						var width = Math.sqrt(x * x + y * y);
+						var radAngle = Math.asin(y / width);
+						var angle = - 57.325 * radAngle;
+
+						hole.shelf.socketBindingStyle = {
+							width: width,
+							height: '2px',
+							'background-color': "#000000",
+							position: 'absolute',
+							'z-index': 0,
+							'right': - (Math.cos(radAngle) * 0.5 * width + width * 0.5) + 'px',
+							'margin-top': - y / 2.0 + 'px',
+
+							'-moz-transform': 'rotate(' + angle + 'deg)',
+							'-webkit-transform': 'rotate(' + angle + 'deg)',
+							'-o-transform': 'rotate(' + angle + 'deg)',
+							'-ms-transform': 'rotate(' + angle + 'deg)',
+							'transform':' rotate(' + angle + 'deg)'
+						};
+					}
+					shelfIndex++;
+				});*/
 			}
 		});
 	}
@@ -1039,9 +1090,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 		$scope.zoom          = $scope.defaultZoom;
 		$scope.height        = $scope.defaultHeight;
-		$scope.holeOffset    = 20;
 
-		$scope.holesInMachine      = Math.floor($scope.height / $scope.holeOffset);
 		$scope.machineSpiralWidth  = 26;  // Ширина спирали на автомате
 		$scope.machineSkiWidth     = 12;  // Ширина лыжи на автомате
 
@@ -1130,13 +1179,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 					width: $scope.detectorWidth + 'px',
 					'margin-left': $scope.detectorMargin + 'px',
 					'margin-right': $scope.detectorMargin + 'px'
-				},
-				holeHeight: {
-					'padding-top': (10 * zoomCoef) + 'px',
-					'padding-bottom': (10 * zoomCoef) + 'px',
-					'height': (5 * zoomCoef) + 'px',
-					'margin-top': (10 * zoomCoef) + 'px',
-					'margin-bottom': (10 * zoomCoef) + 'px'
 				},
 
 				shelfModel: { height: $scope.shelfLength + 'px' },

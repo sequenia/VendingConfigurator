@@ -62,6 +62,7 @@
                  ng-drop-success="onMachineDropComplete($data, $event)">
               <div ng-repeat-start="(key, shelf) in shelves"
                    class="{{shelf.objectClass}}"
+                   index="{{shelf.index}}"
                    ng-style="shelf.style"
                    ng-drag="true"
                    ng-drag-data="shelf"
@@ -152,7 +153,8 @@
                  ng-drag-data="socket"
                  ng-drag-success="onItemDragComplete($data, $event, key)"
                  ng-mousedown="onToolMouseDown(socket, key)"
-                 ng-mouseup="onToolMouseUp(socket, key)">
+                 ng-mouseup="onToolMouseUp(socket, key)"
+                 index="{{socket.index}}">
                 <div class="socket-height">
                     {{socket.height}}
                 </div>
