@@ -146,6 +146,10 @@ body {
 	opacity: 0.5;
 }
 
+.hidden {
+	visibility: hidden;
+}
+
 /* ----------------- ИНСТРУМЕНТЫ ------------------------------ */
 .shelf-tool > div {
 	width: 150px;
@@ -360,13 +364,15 @@ body {
 	float: left;
 }
 
-.machine-detector {
+.machine-detector,
+.sockets-detector {
 	position: relative;
 	width: 100%;
 	height: 100%;
 }
 
 .sockets {
+	width: 20px;
 	padding-left: 5px;
 	padding-right: 5px;
 	padding-bottom: 5px;
@@ -497,7 +503,6 @@ body {
 	position: absolute;
 	color: black;
 	right: -30px;
-	top: 5px;
 }
 
 .machine-items {
@@ -611,6 +616,8 @@ body {
 .motor-detector.tool-mouse-over.can-drop,
 .motor-detector.tool-mouse-over.can-not-drop-but-show,
 .machine-detector.can-drop,
+.sockets-detector.can-drop,
+.socket.can-drop,
 .hole.can-drop .circle,
 .hole.can-drop .circle .hole-object {
 	background: #7076FF;
@@ -623,7 +630,9 @@ body {
 .hsocket-detector.drag-enter.can-drop,
 .socket-hole.drag-enter.can-drop,
 .hole.drag-enter.can-drop,
-.machine-detector.drag-enter.can-drop {
+.socket.drag-enter + .can-drop,
+.machine-detector.drag-enter.can-drop,
+.sockets-detector.drag-enter.can-drop {
 	background-color: #83FF7C;
 }
 

@@ -243,9 +243,10 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		$scope.machine = {};
 		$scope.holes = {};
 		$scope.shelves = {};
+		$scope.sockets = {};
 		$scope.shelfIterator = 0;
 		$scope.holesIterator = 0;
-		$scope.sockets = createSockets($scope.holesInMachine);
+		$scope.socketIterator = 0;
 		$scope.labels = [
 			{name: "Код товара",  class: "number-label"},
 			{name: "Цены",        class: "price-label"},
@@ -334,14 +335,12 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function deleteSocket(index) {
-		var socketPlaces = $scope.sockets;
-		if(socketPlaces[index].item.shelfIndex !== undefined) {
-			var shelf = $scope.shelves[socketPlaces[index].item.shelfIndex];
+		if($scope.sockets[index].shelfIndex !== undefined) {
+			var shelf = $scope.shelves[$scope.sockets[index].shelfIndex];
 			shelf.socket = undefined;
 			shelf.socketBindingStyle = undefined;
 		}
-		socketPlaces[index].item = undefined;
-		renumberSockets(socketPlaces);
+		delete $scope.sockets[index];
 	}
 
 	function deleteHole(index) {
@@ -357,7 +356,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function canInsertSocket(index) {
-		return $scope.sockets[index].item === undefined;
+		return true;
 	}
 
 	function canInsertSki(index) {
@@ -390,12 +389,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 				}
 			}
 		} else {
-			if($scope.sockets[index].item === undefined) {
+			if($scope.sockets[index].shelfIndex !== undefined) {
 				result = false;
-			} else {
-				if($scope.sockets[index].item.shelfIndex !== undefined) {
-					result = false;
-				}
 			}
 		}
 		return result;
@@ -450,17 +445,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		}
 	}
 
-	function insertSocketToPlace(data, socket, sockets) {
-		socket.item = copyIfTool(data);
-		if(socket.item.motorIndex !== undefined) {
-			$scope.currentShelf.motorPlaces[socket.item.motorIndex].item.socket = socket.item;
-		}
-		if(socket.item.shelfIndex !== undefined) {
-			$scope.shelves[socket.item.shelfIndex].socket = socket.item;
-		}
-		renumberSockets(sockets);
-	}
-
 	function insertSocketBinding(data, index) {
 		var socket;
 		if($scope.mode == $scope.modes.shelf) {
@@ -471,17 +455,30 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		} else {
 			socket = $scope.sockets[index];
 			var shelf = $scope.shelves[data.shelfIndex];
-			console.log(data);
-			shelf.socket = socket.item;
-			socket.item.shelfIndex = data.shelfIndex;
+			shelf.socket = socket;
+			socket.shelf = shelf;
 		}
 	}
 
 	function insertSocket($data, $index) {
 		if($scope.mode == $scope.modes.machine) {
-			insertSocketToPlace($data, $scope.sockets[$index], $scope.sockets);
+			var detectorPosition = $('#sockets-detector').offset();
+
+			var socket = copyIfTool($data);
+			var top = $scope.toolMouseY - detectorPosition.top;
+			socket.style = { top: top + "px" };
+			socket.height = Math.round(top / 1.5);
+			socket.label = $scope.socketIterator;
+
+			$scope.sockets[$scope.socketIterator++] = socket;
 		} else {
-			insertSocketToPlace($data, $scope.currentShelf.hsocketPlaces[$index], $scope.currentShelf.hsocketPlaces);
+			var sockets = $scope.currentShelf.hsocketPlaces;
+			var socket = $scope.currentShelf.hsocketPlaces[$index];
+			socket.item = copyIfTool($data);
+			if(socket.item.motorIndex !== undefined) {
+				$scope.currentShelf.motorPlaces[socket.item.motorIndex].item.socket = socket.item;
+			}
+			renumberSockets(sockets);
 		}
 	}
 
@@ -493,11 +490,9 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		shelf.style = $.extend(true, {}, $scope.settings.shelfWidth);
 		shelf.style.top = top + "px";
 		shelf.buttonStyle = {top: (top - 10) + "px" };
+		shelf.label = Math.random();
 
 		shelf.socketBinding = $.extend(true, {shelfIndex: $index}, $scope.getTool("Привязка к сокете"));
-		if(shelf.socket) {
-			shelf.socket.shelfIndex = $index;
-		}
 		$scope.shelves[$scope.shelfIterator++] = shelf;
 	}
 
@@ -561,14 +556,13 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		insertIfCan($data, $event, $scope.shelfIterator, [$scope.toolTypes.shelf, $scope.toolTypes.hole]);
 	};
 
-	// Вызывается при падении чего-либо на дырку
-	$scope.onHoleDropComplete = function($data, $event, $index){
-		insertIfCan($data, $event, $index, [$scope.toolTypes.shelf, $scope.toolTypes.hole], drawBindings);
+	// Вызывается при падении чего-либо на сокету
+	$scope.onSocketsDropComplete = function($data, $event, $index){
+		insertIfCan($data, $event, $scope.socketIterator, [$scope.toolTypes.socket]);
 	};
 
-	// Вызывается при падении чего-либо на сокету
-	$scope.onSocketDropComplete = function($data, $event, $index){
-		insertIfCan($data, $event, $index, [$scope.toolTypes.socket, $scope.toolTypes.socketBinding], drawBindings);
+	$scope.onSocketDropComplete = function($data, $event, $index) {
+		insertIfCan($data, $event, $index, [$scope.toolTypes.socketBinding]);
 	};
 
 	// Вызывается при падении чего-либо на место спирали
@@ -725,9 +719,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			if(tool.type == $scope.toolTypes.label) {
 				showFreePlaces($scope.currentShelf.labelPlaces, canInsertLabel);
 			}
-			if(tool.type == $scope.toolTypes.socket) {
-				showFreePlaces($scope.sockets, canInsertSocket);
-			}
 			if(tool.type == $scope.toolTypes.socketBinding) {
 				if($scope.mode == $scope.modes.shelf) {
 					showFreePlaces($scope.currentShelf.hsocketPlaces, canInsertSocketBinding);
@@ -737,6 +728,9 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			}
 			if(tool.type == $scope.toolTypes.shelf || tool.type == $scope.toolTypes.hole) {
 				$scope.machine.class = $scope.classes.canDrop;
+			}
+			if(tool.type == $scope.toolTypes.socket) {
+				$scope.machine.socketClass = $scope.classes.canDrop;
 			}
 			$scope.currentTool = curTool;
 
@@ -798,6 +792,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		if($scope.mode == $scope.modes.machine) {
 			removeClasses($scope.sockets);
 			$scope.machine.class = $scope.classes.noClass;
+			$scope.machine.socketClass = $scope.classes.noClass;
 		}
 	}
 
@@ -1096,8 +1091,9 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 			$scope.settings = {
 				allWidth:           { width: $scope.placesOnShelf * $scope.shelfPlaceWidth + 400 },
-				shelfWidth:         { width: $scope.placesOnShelf * $scope.shelfPlaceWidth },
-				machine:            { width: $scope.placesOnShelf * $scope.shelfPlaceWidth, height: $scope.height * 1.5 },
+				shelfWidth:         { width: $scope.placesOnShelf * $scope.shelfPlaceWidth + 2 * $scope.shelfPlaceOffset },
+				machine:            { width: $scope.placesOnShelf * $scope.shelfPlaceWidth + 2 * $scope.shelfPlaceOffset, height: $scope.height * 1.5 },
+				sockets:            { height: $scope.height * 1.5 },
 				spiralPlaces:       { top:    $scope.motorPlaceHeight  + 'px' },
 				spiralPlace:        { height: $scope.spiralPlaceHeight + 'px', width: $scope.shelfPlaceWidth  + 'px' },
 				machinePlace:       { width:  $scope.shelfPlaceWidth   + 'px', height: '1px' },
