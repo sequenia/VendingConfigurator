@@ -140,7 +140,8 @@ body {
 .socket:hover,
 .motor-circle:hover,
 .machine-binding-circle:hover,
-.hole-object:hover {
+.hole-object:hover,
+.guide:hover {
 	cursor: pointer;
 }
 
@@ -160,6 +161,14 @@ body {
 .shelf-tool > div {
 	width: 150px;
 	height: 5px;
+}
+
+.guide-tool > div,
+.guide {
+	width: 12px;
+	height: 12px;
+	background-color: #B0B0B0;
+	border: 1px solid #000000;
 }
 
 .spiral-tool > div {
@@ -241,6 +250,10 @@ body {
 }
 
 .splitter {
+	position: absolute;
+}
+
+.guide {
 	position: absolute;
 }
 

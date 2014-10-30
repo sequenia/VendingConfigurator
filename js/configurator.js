@@ -21,7 +21,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		socket: 7,
 		hsocket: 8,
 		socketBinding: 9,
-		hole: 10
+		hole: 10,
+		guide: 11
 	};
 
 	$scope.classes = {
@@ -237,6 +238,14 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 				objectClass: "hole-object",
 				mode: $scope.modes.machine,
 				count: 15
+			},
+			{
+				type: $scope.toolTypes.guide,
+				name: "Направляющая",
+				toolClass: "guide-tool",
+				objectClass: "guide",
+				mode: $scope.modes.machine,
+				count: 9
 			}
 		];
 
@@ -244,9 +253,11 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		$scope.holes = {};
 		$scope.shelves = {};
 		$scope.sockets = {};
+		$scope.guides = {};
 		$scope.shelfIterator = 0;
 		$scope.holesIterator = 0;
 		$scope.socketIterator = 0;
+		$scope.guideIterator = 0;
 		$scope.labels = [
 			{name: "Код товара",  class: "number-label"},
 			{name: "Цены",        class: "price-label"},
@@ -265,7 +276,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		socket: deleteSocket,
 		hsocket: deleteHsocket,
 		socketBinding: function() {},
-		hole: deleteHole
+		hole: deleteHole,
+		guide: deleteGuide
 	};
 
 	$scope.validateActions = {
@@ -279,7 +291,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		socket: canInsertSocket,
 		hsocket: canInsertHsocket,
 		socketBinding: canInsertSocketBinding,
-		hole: canInsertHole
+		hole: canInsertHole,
+		guide: canInsertGuide
 	};
 
 	$scope.insertActions = {
@@ -293,7 +306,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		socket: insertSocket,
 		hsocket: insertSocket,
 		socketBinding: insertSocketBinding,
-		hole: insertHole
+		hole: insertHole,
+		guide: insertGuide
 	};
 
 	setMode($scope.modes.machine);
@@ -351,6 +365,10 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		delete $scope.holes[index];
 	}
 
+	function deleteGuide(index) {
+		delete $scope.guides[index];
+	}
+
 	function canInsertShelf(index) {
 		return true;
 	}
@@ -360,6 +378,10 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function canInsertSocket(index) {
+		return true;
+	}
+
+	function canInsertGuide(index) {
 		return true;
 	}
 
@@ -527,7 +549,20 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		}
 
 		$scope.holes[$scope.holesIterator++] = hole;
+	}
 
+	function insertGuide($data, $index) {
+		var detectorPosition = $('#machine-detector').offset();
+
+		var guide = $.extend(true, {}, $data);
+		var top = $scope.toolMouseY - detectorPosition.top;
+		guide.style = { top: top + "px" };
+
+		if($scope.toolMouseX - detectorPosition.left > $scope.settings.shelfWidth.width / 2.0) {
+			guide.style.right = 0;
+		}
+
+		$scope.guides[$scope.guideIterator++] = guide;
 	}
 
 	function insertSki($data, $index) {
@@ -572,7 +607,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	$scope.onMachineDropComplete = function($data, $event) {
-		insertIfCan($data, $event, $scope.shelfIterator, [$scope.toolTypes.shelf, $scope.toolTypes.hole], drawBindings);
+		insertIfCan($data, $event, $scope.shelfIterator, [$scope.toolTypes.shelf, $scope.toolTypes.hole, $scope.toolTypes.guide], drawBindings);
 	};
 
 	// Вызывается при падении чего-либо на сокету
@@ -745,7 +780,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 					showFreePlaces($scope.sockets, canInsertSocketBinding);
 				}
 			}
-			if(tool.type == $scope.toolTypes.shelf || tool.type == $scope.toolTypes.hole) {
+			if(tool.type == $scope.toolTypes.shelf || tool.type == $scope.toolTypes.hole || tool.type == $scope.toolTypes.guide) {
 				$scope.machine.class = $scope.classes.canDrop;
 			}
 			if(tool.type == $scope.toolTypes.socket) {

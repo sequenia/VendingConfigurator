@@ -69,6 +69,15 @@
                    ng-mousedown="onToolMouseDown(hole, key)"
                    ng-mouseup="onToolMouseUp(hole, key)">
               </div>
+              <div ng-repeat="(key, guide) in guides"
+                   class="{{guide.objectClass}}"
+                   ng-style="guide.style"
+                   ng-drag="true"
+                   ng-drag-data="guide"
+                   ng-drag-success="onItemDragComplete($data, $event, key)"
+                   ng-mousedown="onToolMouseDown(guide, key)"
+                   ng-mouseup="onToolMouseUp(guide, key)">
+              </div>
               <div ng-repeat-start="(key, shelf) in shelves"
                    class="{{shelf.objectClass}}"
                    index="{{shelf.index}}"
