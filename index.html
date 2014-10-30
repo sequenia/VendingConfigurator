@@ -46,9 +46,11 @@
                 </ul>
             </div>
             <label for="zoom">Зум</label>
-            <input id="zoom" ng-model="zoom" ng-change="setSettings()">
+            <input id="zoom" type="number" ng-model="zoom" ng-change="setSettings('zoom')">
+            <label for="width">Ширина</label>
+            <input id="width" type="number" ng-model="realWidth" ng-change="setSettings('width')">
             <label for="height">Высота</label>
-            <input id="height" ng-model="height" ng-change="setSettings()">
+            <input id="height" type="number" ng-model="realHeight" ng-change="setSettings('height')">
         </div>
         <!-- /ПАНЕЛЬ ИНСТРУМЕНТОВ -->
 

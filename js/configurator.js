@@ -497,8 +497,9 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 			var socket = copyIfTool($data);
 			var top = $scope.toolMouseY - detectorPosition.top;
-			socket.style = { top: top + "px" };
-			socket.height = Math.round(top / 1.5);
+			var heightMulty =  $scope.realHeight / $scope.height;
+			socket.style = { top: top };
+			socket.height = Math.round(top * heightMulty);
 			socket.index = $scope.socketIterator;
 
 			if(socket.shelf !== undefined) {
@@ -524,8 +525,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		var shelf = copyIfTool($data);
 		var top = $scope.toolMouseY - detectorPosition.top;
 		shelf.style = $.extend(true, {}, $scope.settings.shelfWidth);
-		shelf.style.top = top + "px";
-		shelf.buttonStyle = {top: (top - 10) + "px" };
+		shelf.style.top = top;
+		shelf.buttonStyle = {top: (top - 10) };
 		shelf.index = $scope.shelfIterator;
 
 		shelf.socketBinding = $.extend(true, {shelfIndex: $index}, $scope.getTool("Привязка к сокете"));
@@ -542,7 +543,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 		var hole = $.extend(true, {}, $data);
 		var top = $scope.toolMouseY - detectorPosition.top;
-		hole.style = { top: top + "px" };
+		hole.style = { top: top };
 
 		if($scope.toolMouseX - detectorPosition.left > $scope.settings.shelfWidth.width / 2.0) {
 			hole.style.right = 0;
@@ -556,7 +557,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 		var guide = $.extend(true, {}, $data);
 		var top = $scope.toolMouseY - detectorPosition.top;
-		guide.style = { top: top + "px" };
+		guide.style = { top: top };
 
 		if($scope.toolMouseX - detectorPosition.left > $scope.settings.shelfWidth.width / 2.0) {
 			guide.style.right = 0;
@@ -992,8 +993,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 					return (aIndex > bIndex);
 				});
 
-				console.log(_sockets);
-
 				for(var i = 0; i < _sockets.length; i++) {
 					var socketDom = $(_sockets[i]);
 					var socketIndex = parseInt(socketDom.attr('index'));
@@ -1082,41 +1081,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 						};
 					}
 				});
-
-
-				/*angular.forEach($scope.shelves, function(shelfObject, index) {
-
-					var shelf = shelves[shelfIndex];
-					if(hole.shelf.socket !== undefined) {
-						var socketIndex = hole.shelf.socket.label;
-						var socket = sockets[socketIndex - 1];
-						var shelfWidth = $(shelf).width();
-						var shelfOffset = $(shelf).offset();
-						var socketOffset = $(socket).offset();
-						var x = socketOffset.left - shelfOffset.left - shelfWidth;
-						var y = shelfOffset.top - socketOffset.top;
-						var width = Math.sqrt(x * x + y * y);
-						var radAngle = Math.asin(y / width);
-						var angle = - 57.325 * radAngle;
-
-						hole.shelf.socketBindingStyle = {
-							width: width,
-							height: '2px',
-							'background-color': "#000000",
-							position: 'absolute',
-							'z-index': 0,
-							'right': - (Math.cos(radAngle) * 0.5 * width + width * 0.5) + 'px',
-							'margin-top': - y / 2.0 + 'px',
-
-							'-moz-transform': 'rotate(' + angle + 'deg)',
-							'-webkit-transform': 'rotate(' + angle + 'deg)',
-							'-o-transform': 'rotate(' + angle + 'deg)',
-							'-ms-transform': 'rotate(' + angle + 'deg)',
-							'transform':' rotate(' + angle + 'deg)'
-						};
-					}
-					shelfIndex++;
-				});*/
 			}
 		});
 	}
@@ -1142,11 +1106,12 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	}
 
 	function initSettings() {
-		$scope.defaultHeight = 300.0;
-		$scope.defaultZoom   = 300.0;
+		$scope.placesOnShelf       = 12;    // Количество мест на полке
+		$scope.maxWidth            = 450.0; // Ширина автомата в пикселях без зума
 
-		$scope.zoom          = $scope.defaultZoom;
-		$scope.height        = $scope.defaultHeight;
+		$scope.realHeight          = 300.0; // Высота автомата в миллиметрах
+		$scope.realWidth           = 300.0; // Ширина автомата в миллиметрах
+		$scope.zoom                = 100.0;
 
 		$scope.machineSpiralWidth  = 26;  // Ширина спирали на автомате
 		$scope.machineSkiWidth     = 12;  // Ширина лыжи на автомате
@@ -1158,36 +1123,43 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		$scope.hsocketHeight       = 20;  // Высота горизонтального сокета
 
 		$scope.labelsLinesCount    = 3;   // Количество линий надписей
-		$scope.placesOnShelf       = 12;  // Количество мест на полке
 
 		$scope.detectorMargin      = 2;   // Отступы детекторов
 		$scope.shelfPlaceOffset    = 15;  // Ширина отступа слева и справа полки
 
-		$scope.setSettings = function() {
-			var zoomCoef             = $scope.zoom / $scope.defaultZoom;
-			$scope.shelfPlaceWidth   = 45.0 * zoomCoef;  // Ширина одного места на полке
-			$scope.spiralWidth       = 41.0 * zoomCoef;  // Ширина спирали на полке
-			$scope.spiralPlaceHeight = 370.0 * zoomCoef; // Длина места для спирали
-			$scope.splitterWidth     = 8.0 * zoomCoef;   // Ширина разделителя
+		$scope.setSettings = function(type) {
+			if(lessThanZero($scope.zoom)) $scope.zoom = 1;
+			if(lessThanZero($scope.realWidth)) $scope.realWidth = 1;
+			if(lessThanZero($scope.realHeight)) $scope.realHeight = 1;
 
-			$scope.detectorWidth    = $scope.shelfPlaceWidth - 2 * $scope.detectorMargin;     // Ширина детектора без отступов
-			$scope.labelWidth       = $scope.detectorWidth * 1.5;
-			$scope.labelTextWidth   = $scope.labelWidth - 4;
-			$scope.singleMotorWidth = 1 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
-			$scope.doubleMotorWidth = 3 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
+			var hwCoef    = $scope.realHeight / $scope.realWidth;
+			var zoomCoef  = $scope.zoom / 100.0;
+			$scope.height = $scope.maxWidth * hwCoef * zoomCoef;
+			$scope.width  = $scope.maxWidth * zoomCoef;
+
+			$scope.shelfPlaceWidth    = ($scope.width - 2 * $scope.shelfPlaceOffset) / $scope.placesOnShelf; //45.0; //* zoomCoef;  // Ширина одного места на полке
+			$scope.spiralWidth        = $scope.shelfPlaceWidth * 0.9; //41.0; //* zoomCoef;  // Ширина спирали на полке
+			$scope.spiralPlaceHeight  = 370.0; //* zoomCoef; // Длина места для спирали
+			$scope.splitterWidth      = $scope.shelfPlaceWidth * 0.18; //8.0; //* zoomCoef;   // Ширина разделителя
+
+			$scope.detectorWidth      = $scope.shelfPlaceWidth - 2 * $scope.detectorMargin;     // Ширина детектора без отступов
+			$scope.labelWidth         = $scope.detectorWidth * 1.5;
+			$scope.labelTextWidth     = $scope.labelWidth - 4;
+			$scope.singleMotorWidth   = 1 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
+			$scope.doubleMotorWidth   = 3 * parseInt($scope.shelfPlaceWidth) + parseInt($scope.shelfPlaceWidth) / 3;
 			$scope.singleHsocketWidth = $scope.singleMotorWidth;
-			$scope.shelfLength      = $scope.motorPlaceHeight +  $scope.hsocketPlaceHeight + $scope.spiralPlaceHeight;     // Длина полки
+			$scope.shelfLength        = $scope.motorPlaceHeight +  $scope.hsocketPlaceHeight + $scope.spiralPlaceHeight;     // Длина полки
 			
-			$scope.railHeight       = $scope.spiralPlaceHeight - 20;
-			$scope.skiHeight        = $scope.spiralPlaceHeight - 10;                          // Длина лыжи
-			$scope.spiralHeight     = $scope.spiralPlaceHeight - 10;                          // Длина спирали
-			$scope.splitterHeight   = $scope.spiralPlaceHeight - 5;                           // Длина разделителя
+			$scope.railHeight         = $scope.spiralPlaceHeight - 20;
+			$scope.skiHeight          = $scope.spiralPlaceHeight - 10;                          // Длина лыжи
+			$scope.spiralHeight       = $scope.spiralPlaceHeight - 10;                          // Длина спирали
+			$scope.splitterHeight     = $scope.spiralPlaceHeight - 5;                           // Длина разделителя
 
-			$scope.spiralLeft       = ($scope.detectorWidth - $scope.spiralWidth)      / 2.0; // Отступ спирали на полке
-			$scope.splitterLeft     = ($scope.detectorWidth - $scope.splitterWidth)    / 2.0; // Отступ разделителя на полке
-			$scope.singleMotorLeft  = ($scope.detectorWidth - $scope.singleMotorWidth) / 2.0; // Отступ мотора на полке
-			$scope.doubleMotorLeft  = ($scope.detectorWidth - $scope.doubleMotorWidth) / 2.0; // Отступ двойного мотора на полке
-			$scope.labelTextLeft    = ($scope.labelWidth    - $scope.labelTextWidth)   / 2.0; // Отступ спирали на полке
+			$scope.spiralLeft         = ($scope.detectorWidth - $scope.spiralWidth)      / 2.0; // Отступ спирали на полке
+			$scope.splitterLeft       = ($scope.detectorWidth - $scope.splitterWidth)    / 2.0; // Отступ разделителя на полке
+			$scope.singleMotorLeft    = ($scope.detectorWidth - $scope.singleMotorWidth) / 2.0; // Отступ мотора на полке
+			$scope.doubleMotorLeft    = ($scope.detectorWidth - $scope.doubleMotorWidth) / 2.0; // Отступ двойного мотора на полке
+			$scope.labelTextLeft      = ($scope.labelWidth    - $scope.labelTextWidth)   / 2.0; // Отступ спирали на полке
 
 			$scope.machineSpiralLeft      = ($scope.shelfPlaceWidth - $scope.machineSpiralWidth - 4) / 2.0;
 			$scope.machineSplitterLeft    = ($scope.shelfPlaceWidth - $scope.splitterWidth) / 2.0;
@@ -1198,8 +1170,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			$scope.settings = {
 				allWidth:           { width: $scope.placesOnShelf * $scope.shelfPlaceWidth + 400 },
 				shelfWidth:         { width: $scope.placesOnShelf * $scope.shelfPlaceWidth + 2 * $scope.shelfPlaceOffset },
-				machine:            { width: $scope.placesOnShelf * $scope.shelfPlaceWidth + 2 * $scope.shelfPlaceOffset, height: $scope.height * 1.5 },
-				sockets:            { height: $scope.height * 1.5 },
+				machine:            { width: $scope.placesOnShelf * $scope.shelfPlaceWidth + 2 * $scope.shelfPlaceOffset, height: $scope.height },
+				sockets:            { height: $scope.height },
 				spiralPlaces:       { top:    $scope.motorPlaceHeight  + 'px' },
 				spiralPlace:        { height: $scope.spiralPlaceHeight + 'px', width: $scope.shelfPlaceWidth  + 'px' },
 				machinePlace:       { width:  $scope.shelfPlaceWidth   + 'px', height: '1px' },
@@ -1270,7 +1242,65 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 			};
 
+			resetElementsOnMachine();
 			drawBindings();
+
+			$scope.oldRealWidth = $scope.realWidth;
+			$scope.oldRealHeight = $scope.realHeight;
+			$scope.oldZoom = $scope.zoom;
+
+			function resetElementsOnMachine() {
+				if(type == 'height') {
+					onHeightChange($scope.shelves);
+					onHeightChange($scope.holes);
+					onHeightChange($scope.guides);
+					onHeightChange($scope.sockets);
+				}
+
+				if(type == 'width') {
+					onWidthChange($scope.shelves);
+					onWidthChange($scope.holes);
+					onWidthChange($scope.guides);
+					onWidthChange($scope.sockets);
+				}
+
+				if(type == 'zoom') {
+					onZoomChange($scope.shelves);
+					onZoomChange($scope.holes);
+					onZoomChange($scope.guides);
+					onZoomChange($scope.sockets);
+				}
+
+				function onHeightChange(array) {
+					angular.forEach(array, function(elem, index) {
+						if(elem.style.top > $scope.height) {
+							restoreTools(elem);
+							$scope.deleteActions[elem.type](index);
+						}
+					});
+				}
+
+				function onWidthChange(array) {
+					var widthMulty = $scope.realWidth / $scope.oldRealWidth;
+					angular.forEach(array, function(elem, index) {
+						elem.style.top = elem.style.top / widthMulty;
+					});
+				}
+
+				function onZoomChange(array) {
+					var zoomMulty = $scope.zoom / $scope.oldZoom;
+					angular.forEach(array, function(elem, index) {
+						elem.style.top = elem.style.top * zoomMulty;
+						if(elem.type == $scope.toolTypes.shelf) {
+							elem.style.width = elem.style.width * zoomMulty;
+						}
+					});
+				}
+			}
+
+			function lessThanZero(number) {
+				return (number === 0 || number === null || isNaN(number) || number < 0);
+			}
 		};
 
 		$scope.setSettings();
