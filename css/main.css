@@ -129,6 +129,9 @@ body {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+.tool-container.dragging {
+	margin-top: -5px;
+}
 
 .tool-container:hover,
 .splitter:hover,
@@ -253,10 +256,6 @@ body {
 	position: absolute;
 }
 
-.guide {
-	position: absolute;
-}
-
 .single-motor {
 	position: absolute;
 	bottom: 1px;
@@ -371,6 +370,12 @@ body {
 }
 
 /* ----------------- "ЭЛЕМЕНТЫ НА АВТОМАТЕ" ------------------------------ */
+.shelf.dragging,
+.guide.dragging,
+.hole.dragging {
+	margin-top: 0px !important;
+}
+
 .machine {
 	padding-left: 5px;
 	padding-right: 5px;
@@ -419,6 +424,9 @@ body {
 	height: 5px;
 	background: #FFFFFF;
 }
+.hole-object {
+	margin-top: -2px;
+}
 
 .motor-circle {
 	position: relative;
@@ -429,6 +437,12 @@ body {
 
 .shelf {
 	height: 5px;
+	margin-top: -2px;
+	position: absolute;
+}
+
+.guide {
+	margin-top: -6px;
 	position: absolute;
 }
 

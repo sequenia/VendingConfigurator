@@ -996,7 +996,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 				for(var i = 0; i < _sockets.length; i++) {
 					var socketDom = $(_sockets[i]);
 					var socketIndex = parseInt(socketDom.attr('index'));
-					$scope.sockets[socketIndex].label = i;
+					$scope.sockets[socketIndex].label = i + 1;
 				}
 			});
 		}
