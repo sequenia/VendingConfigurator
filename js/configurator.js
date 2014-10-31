@@ -496,17 +496,16 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			var detectorPosition = $('#sockets-detector').offset();
 			var socket = copyIfTool($data);
 			var top = $scope.toolMouseY - detectorPosition.top;
-			var heightMulty = $scope.realHeight / $scope.height;
 
 			socket.style = { top: top };
-			socket.height = Math.round(top * heightMulty);
+			socket.height = Math.round(top * $scope.heightMulty);
 			socket.index = $scope.socketIterator;
 
 			if(socket.shelf !== undefined) {
 				socket.shelf.socket = socket;
 			}
 
-			$scope.elemHeight = Math.round(top * heightMulty);
+			$scope.elemHeight = Math.round(top * $scope.heightMulty);
 			$scope.sockets[$scope.socketIterator++] = socket;
 			$scope.currentElem = socket;
 			renumberSockets();
@@ -525,7 +524,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		var detectorPosition = $('#machine-detector').offset();
 		var shelf = copyIfTool($data);
 		var top = $scope.toolMouseY - detectorPosition.top;
-		var heightMulty = $scope.realHeight / $scope.height;
 
 		shelf.style = $.extend(true, {}, $scope.settings.shelfWidth);
 		shelf.style.top = top;
@@ -538,7 +536,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			shelf.socket.shelf = shelf;
 		}
 
-		$scope.elemHeight = Math.round(top * heightMulty);
+		$scope.elemHeight = Math.round(top * $scope.heightMulty);
 		$scope.shelves[$scope.shelfIterator++] = shelf;
 		$scope.currentElem = shelf;
 	}
@@ -547,7 +545,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		var detectorPosition = $('#machine-detector').offset();
 		var hole = $.extend(true, {}, $data);
 		var top = $scope.toolMouseY - detectorPosition.top;
-		var heightMulty = $scope.realHeight / $scope.height;
 
 		hole.style = { top: top };
 
@@ -555,7 +552,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			hole.style.right = 0;
 		}
 
-		$scope.elemHeight = Math.round(top * heightMulty);
+		$scope.elemHeight = Math.round(top * $scope.heightMulty);
 		$scope.holes[$scope.holesIterator++] = hole;
 		$scope.currentElem = hole;
 	}
@@ -564,7 +561,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		var detectorPosition = $('#machine-detector').offset();
 		var guide = $.extend(true, {}, $data);
 		var top = $scope.toolMouseY - detectorPosition.top;
-		var heightMulty = $scope.realHeight / $scope.height;
 
 		guide.style = { top: top };
 
@@ -572,7 +568,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			guide.style.right = 0;
 		}
 
-		$scope.elemHeight = Math.round(top * heightMulty);
+		$scope.elemHeight = Math.round(top * $scope.heightMulty);
 		$scope.guides[$scope.guideIterator++] = guide;
 		$scope.currentElem = guide;
 	}
@@ -1116,6 +1112,10 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		$scope[actionsName] = actions;
 	}
 
+	function lessThanZero(number) {
+		return (number === 0 || number === null || isNaN(number) || number < 0);
+	}
+
 	function initSettings() {
 		$scope.placesOnShelf       = 12;    // Количество мест на полке
 		$scope.maxWidth            = 450.0; // Ширина автомата в пикселях без зума
@@ -1147,6 +1147,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			var zoomCoef  = $scope.zoom / 100.0;
 			$scope.height = $scope.maxWidth * hwCoef * zoomCoef;
 			$scope.width  = $scope.maxWidth * zoomCoef;
+			$scope.heightMulty =  $scope.realHeight / $scope.height;
 
 			$scope.shelfPlaceWidth    = ($scope.width - 2 * $scope.shelfPlaceOffset) / $scope.placesOnShelf; //45.0; //* zoomCoef;  // Ширина одного места на полке
 			$scope.spiralWidth        = $scope.shelfPlaceWidth * 0.9; //41.0; //* zoomCoef;  // Ширина спирали на полке
@@ -1253,18 +1254,6 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 			};
 
-			$scope.setHeight = function() {
-				var elem = $scope.currentElem;
-				var heightMulty =  $scope.realHeight / $scope.height;
-				elem.style.top = $scope.elemHeight / heightMulty;
-				if(elem.type === $scope.toolTypes.shelf) {
-					elem.buttonStyle.top = elem.style.top - 10;
-				}
-				if(elem.type === $scope.toolTypes.socket) {
-					elem.height = $scope.elemHeight;
-				}
-			};
-
 			resetElementsOnMachine();
 			drawBindings();
 
@@ -1324,9 +1313,26 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 					});
 				}
 			}
+		};
 
-			function lessThanZero(number) {
-				return (number === 0 || number === null || isNaN(number) || number < 0);
+		$scope.setHeight = function() {
+			var elem = $scope.currentElem;
+
+			if(lessThanZero($scope.elemHeight)) {
+				$scope.elemHeight = 0;
+			}
+			if($scope.elemHeight > $scope.realHeight) {
+				$scope.elemHeight = $scope.realHeight;
+			}
+
+			elem.style.top = $scope.elemHeight / $scope.heightMulty;
+			if(elem.type === $scope.toolTypes.shelf) {
+				elem.buttonStyle.top = elem.style.top - 10;
+				drawBindings();
+			}
+			if(elem.type === $scope.toolTypes.socket) {
+				elem.height = $scope.elemHeight;
+				drawBindings();
 			}
 		};
 
