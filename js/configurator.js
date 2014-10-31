@@ -1284,6 +1284,9 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 					var widthMulty = $scope.realWidth / $scope.oldRealWidth;
 					angular.forEach(array, function(elem, index) {
 						elem.style.top = elem.style.top / widthMulty;
+						if(elem.type == $scope.toolTypes.shelf) {
+							elem.buttonStyle.top = elem.buttonStyle.top / widthMulty;
+						}
 					});
 				}
 
@@ -1293,6 +1296,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 						elem.style.top = elem.style.top * zoomMulty;
 						if(elem.type == $scope.toolTypes.shelf) {
 							elem.style.width = elem.style.width * zoomMulty;
+							elem.buttonStyle.top = elem.buttonStyle.top * zoomMulty;
 						}
 					});
 				}

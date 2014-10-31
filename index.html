@@ -1,322 +1,329 @@
 <!DOCTYPE html>
 <html ng-app="ConfiguratorApp">
 <head>
-    <title></title>
-    <meta charset="utf-8"> 
-    <link rel="stylesheet" href="css/main.css">
-    <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="js/angular.min.js"></script>
-    <script type="text/javascript" src="js/configurator.js"></script>
-    <script type="text/javascript" src="js/directives.js"></script>
-    <script type="text/javascript" src="js/ngDraggable.js"></script>
+  <title></title>
+  <meta charset="utf-8"> 
+  <link rel="stylesheet" href="css/main.css">
+  <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="js/angular.min.js"></script>
+  <script type="text/javascript" src="js/configurator.js"></script>
+  <script type="text/javascript" src="js/directives.js"></script>
+  <script type="text/javascript" src="js/ngDraggable.js"></script>
 </head>
 <body>
-    <div class="configurator" ng-controller="ConfiguratorCtrl" ng-style="settings.allWidth">
-        <!-- ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-        <div class="tools-container">
-            <div class="tools {{toStorage}}"
-                 ng-drop="true"
-                 ng-drop-success="onGarbageDropComplete($data, $event)">
-                <div class = "title"><strong>Склад</strong></div>
-                <ul>
-                    <li ng-repeat="tool in tools" ng-show="tool.count !== 0">
-                        <div class="title">{{tool.name}} <span ng-show="tool.count > 0">({{tool.count}})</span></div>
-                        <div class="tool-container {{tool.toolClass}}"
-                             ng-drag="true"
-                             ng-drag-data="tool"
-                             ng-drag-success="onToolDragComplete($data, $event)"
-                             ng-mousedown="onToolMouseDown(tool)"
-                             ng-mouseup="onToolMouseUp(tool)">
-                             <div>
-                                <div indicators
-                                     ng-repeat="(name, indicator) in tool.indicators"
-                                     tool-name="{{tool.name}}"
-                                     indicator-name="{{name}}"></div>
-                             </div>
-                        </div>
-                        <div class="tool-container {{tool.toolClass}}" ng-show="tool.mouseOver && !itemOver">
-                            <div>
-                              <div indicators
-                                   ng-repeat="(name, indicator) in tool.indicators"
-                                   tool-name="{{tool.name}}"
-                                   indicator-name="{{name}}"></div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <label for="zoom">Зум</label>
-            <input id="zoom" type="number" ng-model="zoom" ng-change="setSettings('zoom')">
-            <label for="width">Ширина</label>
-            <input id="width" type="number" ng-model="realWidth" ng-change="setSettings('width')">
-            <label for="height">Высота</label>
-            <input id="height" type="number" ng-model="realHeight" ng-change="setSettings('height')">
-        </div>
-        <!-- /ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-
-        <!-- ГЕНЕРАТОР АВТОМАТА -->
-        <div class="machine-generator" ng-show="mode == modes.machine">
-          <div class="machine"
-               ng-style="settings.machine">
-            <div class="machine-detector {{machine.class}}"
-                 id="machine-detector"
-                 ng-drop="true"
-                 ng-drop-success="onMachineDropComplete($data, $event)">
-              <div ng-repeat="(key, guide) in guides"
-                   class="{{guide.objectClass}}"
-                   ng-style="guide.style"
-                   ng-drag="true"
-                   ng-drag-data="guide"
-                   ng-drag-success="onItemDragComplete($data, $event, key)"
-                   ng-mousedown="onToolMouseDown(guide, key)"
-                   ng-mouseup="onToolMouseUp(guide, key)">
-              </div>
-              <div ng-repeat-start="(key, shelf) in shelves"
-                   class="{{shelf.objectClass}}"
-                   index="{{shelf.index}}"
-                   ng-style="shelf.style"
-                   ng-drag="true"
-                   ng-drag-data="shelf"
-                   ng-drag-success="onItemDragComplete($data, $event, key)"
-                   ng-mousedown="onToolMouseDown(shelf, key)"
-                   ng-mouseup="onToolMouseUp(shelf, key)">
-                <!-- МОТОРЫ -->
-                <div class="machine-items">
-                    <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                    <div class="machine-place"
-                         ng-style="settings.machinePlace"
-                         ng-repeat="motorPlace in shelf.motorPlaces">
-                        <div class="{{motorPlace.item.machineClass}}"
-                             style="{{settings[motorPlace.item.machineClass]}}"></div>
-                    </div>
-                    <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                </div>
-                <!-- /МОТОРЫ -->
-                <!-- СПИРАЛИ -->
-                <div class="machine-items">
-                    <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                    <div class="machine-place"
-                         ng-style="settings.machinePlace"
-                         ng-repeat="spiralPlace in shelf.spiralPlaces">
-                        <div class="{{spiralPlace.item.machineClass}}"
-                             style="{{settings[spiralPlace.item.machineClass]}}">
-                            <div class="{{spiralPlace.item.ski.machineClass}}"
-                                 style="{{settings[spiralPlace.item.ski.machineClass]}}"></div>
-                        </div>
-                    </div>
-                    <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                </div>
-                <!-- /СПИРАЛИ -->
-                <!-- ЦЕННИКИ И БИРКИ -->
-                <div class="labels-mini">
-                    <div class="label-container-mini">
-                        <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                        <div ng-repeat="labelPlace in shelf.labelPlaces.slice(0, placesOnShelf)"
-                             class="label-mini"
-                             ng-style="settings.machinePlace">
-                            <span class="number-span">{{labelPlace.item.value}}</span>
-                            <span class="price-span">{{shelf.labelPlaces[$index + placesOnShelf].item.value}}</span>
-                            <span class="comment-span">{{shelf.labelPlaces[$index + placesOnShelf * 2].item.value}}</span>
-                        </div>
-                        <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                    </div>
-                </div>
-                <!-- /ЦЕННИКИ И БИРКИ -->
-                <div ng-show="shelf.socketBindingStyle"
-                   class="motor-hsocket-binding"
-                   ng-style="shelf.socketBindingStyle"></div>
-                <div class="circle machine-binding-circle"
-                     ng-drag="true"
-                     ng-drag-data="shelf.socketBinding"
-                     ng-mousedown="onToolMouseDown(shelf.socketBinding, key)"
-                     ng-mouseup="onToolMouseUp(shelf.socketBinding, key)"></div>
-              </div>
-              <div ng-repeat-end class="configure-shelf" ng-style="shelf.buttonStyle">
-                <button type="button" ng-click="configureShelf(shelf)">Настроить</button>
-              </div>
-              <div ng-repeat="(key, hole) in holes"
-                   class="{{hole.objectClass}}"
-                   ng-style="hole.style"
-                   ng-drag="true"
-                   ng-drag-data="hole"
-                   ng-drag-success="onItemDragComplete($data, $event, key)"
-                   ng-mousedown="onToolMouseDown(hole, key)"
-                   ng-mouseup="onToolMouseUp(hole, key)">
-              </div>
-            </div>
-          </div>
-          <div class="sockets"
-               ng-style="settings.sockets">
-            <div class="sockets-detector {{machine.socketClass}}"
-                 id="sockets-detector"
-                 ng-drop="true"
-                 ng-drop-success="onSocketsDropComplete($data, $event)">
-              <div ng-repeat-start="(key, socket) in sockets"
-                   class="{{socket.objectClass}} hidden"
-                   ng-style="socket.style"
-                   ng-drop="true"
-                   ng-drop-success="onSocketDropComplete($data, $event, key)">
-              </div>
-              <div ng-repeat-end
-                 class="{{socket.objectClass}} {{socket.class}}"
-                 ng-style="socket.style"
+  <div class="configurator" ng-controller="ConfiguratorCtrl" ng-style="settings.allWidth">
+    <!-- ПАНЕЛЬ ИНСТРУМЕНТОВ -->
+    <div tool-container class="tools-container">
+      <div class="tools {{toStorage}}"
+           ng-drop="true"
+           ng-drop-success="onGarbageDropComplete($data, $event)">
+        <div class = "title"><strong>Склад</strong></div>
+        <ul>
+          <li ng-repeat="tool in tools" ng-show="tool.count !== 0">
+            <div class="title">{{tool.name}} <span ng-show="tool.count > 0">({{tool.count}})</span></div>
+            <div class="tool-container {{tool.toolClass}}"
                  ng-drag="true"
-                 ng-drag-data="socket"
-                 ng-drag-success="onItemDragComplete($data, $event, key)"
-                 ng-mousedown="onToolMouseDown(socket, key)"
-                 ng-mouseup="onToolMouseUp(socket, key)"
-                 index="{{socket.index}}">
-                <div class="socket-height">
-                    {{socket.height}}
-                </div>
-                {{socket.label}}
+                 ng-drag-data="tool"
+                 ng-drag-success="onToolDragComplete($data, $event)"
+                 ng-mousedown="onToolMouseDown(tool)"
+                 ng-mouseup="onToolMouseUp(tool)">
+              <div>
+                <div indicators
+                     ng-repeat="(name, indicator) in tool.indicators"
+                     tool-name="{{tool.name}}"
+                     indicator-name="{{name}}">
+                 </div>
               </div>
             </div>
+            <div class="tool-container {{tool.toolClass}}" ng-show="tool.mouseOver && !itemOver">
+              <div>
+                <div indicators
+                     ng-repeat="(name, indicator) in tool.indicators"
+                     tool-name="{{tool.name}}"
+                     indicator-name="{{name}}">
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="machine-properties">
+        <label for="zoom">Зум</label>
+        <input id="zoom" type="number" ng-model="zoom" ng-change="setSettings('zoom')">
+        <label for="width">Ширина</label>
+        <input id="width" type="number" ng-model="realWidth" ng-change="setSettings('width')">
+        <label for="height">Высота</label>
+        <input id="height" type="number" ng-model="realHeight" ng-change="setSettings('height')">
+      </div>
+    </div>
+    <!-- /ПАНЕЛЬ ИНСТРУМЕНТОВ -->
+
+    <!-- ГЕНЕРАТОР АВТОМАТА -->
+    <div class="machine-generator" ng-show="mode == modes.machine">
+      <div class="machine"
+           ng-style="settings.machine">
+        <div class="machine-detector {{machine.class}}"
+             id="machine-detector"
+             ng-drop="true"
+             ng-drop-success="onMachineDropComplete($data, $event)">
+          <div ng-repeat="(key, guide) in guides"
+               class="{{guide.objectClass}}"
+               ng-style="guide.style"
+               ng-drag="true"
+               ng-drag-data="guide"
+               ng-drag-success="onItemDragComplete($data, $event, key)"
+               ng-mousedown="onToolMouseDown(guide, key)"
+               ng-mouseup="onToolMouseUp(guide, key)">
+          </div>
+          <div ng-repeat-start="(key, shelf) in shelves"
+               class="{{shelf.objectClass}}"
+               index="{{shelf.index}}"
+               ng-style="shelf.style"
+               ng-drag="true"
+               ng-drag-data="shelf"
+               ng-drag-success="onItemDragComplete($data, $event, key)"
+               ng-mousedown="onToolMouseDown(shelf, key)"
+               ng-mouseup="onToolMouseUp(shelf, key)">
+            <!-- МОТОРЫ -->
+            <div class="machine-items">
+              <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+              <div class="machine-place"
+                   ng-style="settings.machinePlace"
+                   ng-repeat="motorPlace in shelf.motorPlaces">
+                <div class="{{motorPlace.item.machineClass}}"
+                     style="{{settings[motorPlace.item.machineClass]}}">
+                </div>
+              </div>
+              <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+            </div>
+            <!-- /МОТОРЫ -->
+            <!-- СПИРАЛИ -->
+            <div class="machine-items">
+              <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+              <div class="machine-place"
+                   ng-style="settings.machinePlace"
+                   ng-repeat="spiralPlace in shelf.spiralPlaces">
+                <div class="{{spiralPlace.item.machineClass}}"
+                     style="{{settings[spiralPlace.item.machineClass]}}">
+                  <div class="{{spiralPlace.item.ski.machineClass}}"
+                       style="{{settings[spiralPlace.item.ski.machineClass]}}">
+                  </div>
+                </div>
+              </div>
+              <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+            </div>
+            <!-- /СПИРАЛИ -->
+            <!-- ЦЕННИКИ И БИРКИ -->
+            <div class="labels-mini">
+              <div class="label-container-mini">
+                <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+                <div ng-repeat="labelPlace in shelf.labelPlaces.slice(0, placesOnShelf)"
+                     class="label-mini"
+                     ng-style="settings.machinePlace">
+                  <span class="number-span">{{labelPlace.item.value}}</span>
+                  <span class="price-span">{{shelf.labelPlaces[$index + placesOnShelf].item.value}}</span>
+                  <span class="comment-span">{{shelf.labelPlaces[$index + placesOnShelf * 2].item.value}}</span>
+                </div>
+                <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+              </div>
+            </div>
+            <!-- /ЦЕННИКИ И БИРКИ -->
+            <div ng-show="shelf.socketBindingStyle"
+               class="motor-hsocket-binding"
+               ng-style="shelf.socketBindingStyle"></div>
+            <div class="circle machine-binding-circle"
+                 ng-drag="true"
+                 ng-drag-data="shelf.socketBinding"
+                 ng-mousedown="onToolMouseDown(shelf.socketBinding, key)"
+                 ng-mouseup="onToolMouseUp(shelf.socketBinding, key)">
+            </div>
+          </div>
+          <div ng-repeat-end class="configure-shelf" ng-style="shelf.buttonStyle">
+            <button type="button" ng-click="configureShelf(shelf)">Настроить</button>
+          </div>
+          <div ng-repeat="(key, hole) in holes"
+               class="{{hole.objectClass}}"
+               ng-style="hole.style"
+               ng-drag="true"
+               ng-drag-data="hole"
+               ng-drag-success="onItemDragComplete($data, $event, key)"
+               ng-mousedown="onToolMouseDown(hole, key)"
+               ng-mouseup="onToolMouseUp(hole, key)">
           </div>
         </div>
-        <!-- /ГЕНЕРАТОР АВТОМАТА -->
+      </div>
+      <div class="sockets"
+           ng-style="settings.sockets">
+        <div class="sockets-detector {{machine.socketClass}}"
+             id="sockets-detector"
+             ng-drop="true"
+             ng-drop-success="onSocketsDropComplete($data, $event)">
+          <div ng-repeat-start="(key, socket) in sockets"
+               class="{{socket.objectClass}} hidden"
+               ng-style="socket.style"
+               ng-drop="true"
+               ng-drop-success="onSocketDropComplete($data, $event, key)">
+          </div>
+          <div ng-repeat-end
+             class="{{socket.objectClass}} {{socket.class}}"
+             ng-style="socket.style"
+             ng-drag="true"
+             ng-drag-data="socket"
+             ng-drag-success="onItemDragComplete($data, $event, key)"
+             ng-mousedown="onToolMouseDown(socket, key)"
+             ng-mouseup="onToolMouseUp(socket, key)"
+             index="{{socket.index}}">
+            <div class="socket-height">
+                {{socket.height}}
+            </div>
+            {{socket.label}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /ГЕНЕРАТОР АВТОМАТА -->
 
-        <!-- ГЕНЕРАТОР ПОЛКИ -->
-        <div class="shelf-generator" ng-show="mode == modes.shelf">
-            <div class="shelf-model" ng-style="settings.shelfModel">
-                <div class="hsocket-place" ng-style="settings.hsocketPlace"></div>
-                <div class="motor-place" ng-style="settings.motorPlace"></div>
-                <div class="spiral-places" ng-style="settings.spiralPlaces">
-                    <div class="place-offset" ng-style="settings.placeOffset"></div>
-                    <div class="spiral-place"
-                         ng-style="settings.spiralPlace"
-                         ng-repeat="spiralPlace in currentShelf.spiralPlaces">
-                        <div class="spiral-hole"></div>
-                        <div class="rail" ng-style="settings.rail"></div>
-                    </div>
-                    <div class="place-offset" ng-style="settings.placeOffset"></div>
+    <!-- ГЕНЕРАТОР ПОЛКИ -->
+    <div class="shelf-generator" ng-show="mode == modes.shelf">
+      <div class="shelf-model" ng-style="settings.shelfModel">
+        <div class="hsocket-place" ng-style="settings.hsocketPlace"></div>
+        <div class="motor-place" ng-style="settings.motorPlace"></div>
+        <div class="spiral-places" ng-style="settings.spiralPlaces">
+          <div class="place-offset" ng-style="settings.placeOffset"></div>
+          <div class="spiral-place"
+               ng-style="settings.spiralPlace"
+               ng-repeat="spiralPlace in currentShelf.spiralPlaces">
+            <div class="spiral-hole"></div>
+            <div class="rail" ng-style="settings.rail"></div>
+          </div>
+          <div class="place-offset" ng-style="settings.placeOffset"></div>
+        </div>
+        <div class="single-spiral-detectors" ng-style="settings.singleSpiralDetectors">
+          <div class="place-offset" ng-style="settings.placeOffset"></div>
+          <div class="single-spiral-detector {{spiralPlace.class}}"
+               ng-class="{'tool-mouse-over': currentTool.mouseOver}"
+               ng-style="settings.singleSpiralDetector"
+               ng-repeat="spiralPlace in currentShelf.spiralPlaces"
+               ng-drop="true"
+               ng-drop-success="onSpiralPlaceDropComplete($data, $event, $index)">
+            <div class="{{spiralPlace.item.objectClass}}"
+                 style="{{settings[spiralPlace.item.objectClass]}}"
+                 ng-drag="true"
+                 ng-drag-data="spiralPlace.item"
+                 ng-drag-success="onItemDragComplete($data, $event, $index)"
+                 ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
+                 ng-mouseup="onToolMouseUp(spiralPlace.item, $index)">
+              <div class="{{spiralPlace.item.ski.objectClass}}"
+                   style="{{settings[spiralPlace.item.ski.objectClass]}}">
+              </div>
+              <div class="shelf-indicators">
+                <div indicators
+                     ng-repeat="(name, indicator) in spiralPlace.item.indicators"
+                     tool-name="{{spiralPlace.item.name}}"
+                     indicator-name="{{name}}">
                 </div>
-                <div class="single-spiral-detectors" ng-style="settings.singleSpiralDetectors">
-                    <div class="place-offset" ng-style="settings.placeOffset"></div>
-                    <div class="single-spiral-detector {{spiralPlace.class}}"
-                         ng-class="{'tool-mouse-over': currentTool.mouseOver}"
-                         ng-style="settings.singleSpiralDetector"
-                         ng-repeat="spiralPlace in currentShelf.spiralPlaces"
-                         ng-drop="true"
-                         ng-drop-success="onSpiralPlaceDropComplete($data, $event, $index)">
-                        <div class="{{spiralPlace.item.objectClass}}"
-                             style="{{settings[spiralPlace.item.objectClass]}}"
-                             ng-drag="true"
-                             ng-drag-data="spiralPlace.item"
-                             ng-drag-success="onItemDragComplete($data, $event, $index)"
-                             ng-mousedown="onToolMouseDown(spiralPlace.item, $index)"
-                             ng-mouseup="onToolMouseUp(spiralPlace.item, $index)">
-                            <div class="{{spiralPlace.item.ski.objectClass}}"
-                                 style="{{settings[spiralPlace.item.ski.objectClass]}}"></div>
-                            <div class="shelf-indicators">
-                                <div indicators
-                                 ng-repeat="(name, indicator) in spiralPlace.item.indicators"
-                                 tool-name="{{spiralPlace.item.name}}"
-                                 indicator-name="{{name}}"></div>
-                            </div>
-                        </div>
-                        <div class="detector-rail" ng-style="settings.rail"></div>
-                    </div>
-                    <div class="place-offset" ng-style="settings.placeOffset"></div>
+              </div>
+            </div>
+            <div class="detector-rail" ng-style="settings.rail"></div>
+          </div>
+          <div class="place-offset" ng-style="settings.placeOffset"></div>
+        </div>
+        <div class="motor-detectors">
+          <div class="motor-offset" ng-style="settings.motorOffset"></div>
+          <div class="motor-detector {{motorPlace.class}}"
+               ng-class="{'tool-mouse-over': currentTool.mouseOver}"
+               ng-style="settings.motorDetector"
+               ng-repeat="motorPlace in currentShelf.motorPlaces"
+               ng-drop="true"
+               ng-drop-success="onMotorPlaceDropComplete($data, $event, $index)">
+            <div class="{{motorPlace.item.objectClass}}"
+                 style="{{settings[motorPlace.item.objectClass]}}"
+                 ng-drag="true"
+                 ng-drag-data="motorPlace.item"
+                 ng-drag-success="onItemDragComplete($data, $event, $index)"
+                 ng-mousedown="onToolMouseDown(motorPlace.item, $index)"
+                 ng-mouseup="onToolMouseUp(motorPlace.item, $index)">
+              <div class="shelf-indicators">
+                <div indicators
+                 ng-repeat="(name, indicator) in motorPlace.item.indicators"
+                 tool-name="{{motorPlace.item.name}}"
+                 indicator-name="{{name}}">
                 </div>
-                <div class="motor-detectors">
-                    <div class="motor-offset" ng-style="settings.motorOffset"></div>
-                    <div class="motor-detector {{motorPlace.class}}"
-                         ng-class="{'tool-mouse-over': currentTool.mouseOver}"
-                         ng-style="settings.motorDetector"
-                         ng-repeat="motorPlace in currentShelf.motorPlaces"
-                         ng-drop="true"
-                         ng-drop-success="onMotorPlaceDropComplete($data, $event, $index)">
-                        <div class="{{motorPlace.item.objectClass}}"
-                             style="{{settings[motorPlace.item.objectClass]}}"
-                             ng-drag="true"
-                             ng-drag-data="motorPlace.item"
-                             ng-drag-success="onItemDragComplete($data, $event, $index)"
-                             ng-mousedown="onToolMouseDown(motorPlace.item, $index)"
-                             ng-mouseup="onToolMouseUp(motorPlace.item, $index)">
-                            <div class="shelf-indicators">
-                                <div indicators
-                                 ng-repeat="(name, indicator) in motorPlace.item.indicators"
-                                 tool-name="{{motorPlace.item.name}}"
-                                 indicator-name="{{name}}">
-                                </div>
-                            </div>
-                            <span ng-show="motorPlace.item.socket" class="motor-hsocket-label">
-                                {{motorPlace.item.socket.label}}
-                            </span>
-                        </div>
-                        <div ng-show="motorPlace.item.socketBindingStyle"
-                             class="motor-hsocket-binding"
-                             ng-style="motorPlace.item.socketBindingStyle">
-                        </div>
-                        <div class="circle motor-circle"
-                             ng-style="settings.motorCircle"
-                             ng-show="motorPlace.item"
-                             ng-drag="true"
-                             ng-drag-data="motorPlace.item.socketBinding"
-                             ng-mousedown="onToolMouseDown(motorPlace.item.socketBinding, $index)"
-                             ng-mouseup="onToolMouseUp(motorPlace.item.socketBinding, $index)">
-                        </div>
-                    </div>
-                    <div class="motor-offset"></div>
-                </div>
-                <div class="hsocket-detectors">
-                    <div class="hsocket-offset" ng-style="settings.hsocketOffset"></div>
-                    <div class="hsocket-detector {{hsocketPlace.class}}"
-                         ng-class="{'tool-mouse-over': currentTool.mouseOver}"
-                         ng-style="settings.hsocketDetector"
-                         ng-repeat="hsocketPlace in currentShelf.hsocketPlaces"
-                         ng-drop="true"
-                         ng-drop-success="onHsocketPlaceDropComplete($data, $event, $index)">
-                        <div class="{{hsocketPlace.item.objectClass}}"
-                             style="{{settings[hsocketPlace.item.objectClass]}}"
-                             ng-drag="true"
-                             ng-drag-data="hsocketPlace.item"
-                             ng-drag-success="onItemDragComplete($data, $event, $index)"
-                             ng-mousedown="onToolMouseDown(hsocketPlace.item, $index)"
-                             ng-mouseup="onToolMouseUp(hsocketPlace.item, $index)">
-                             {{hsocketPlace.item.label}}
-                        </div>
-                    </div>
-                    <div class="hsocket-offset"></div>
-                </div>
-
-                <div class="label-detectors"
-                     ng-style="settings.labelDetectors">
-                    <div ng-repeat="labelIdx in getTimes(labelsLinesCount)" class="label-container">
-                        <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                        <div ng-repeat="labelPlace in currentShelf.labelPlaces.slice(labelIdx * placesOnShelf, (labelIdx + 1) * placesOnShelf)"
-                             class="label-detector {{labelPlace.class}}"
-                             ng-style="settings.labelDetector"
-                             ng-drop="true"
-                             ng-drop-success="onLabelPlaceDropComplete($data, $event, $index + labelIdx * placesOnShelf)">
-                            <div ng-show="labelPlace.item"
-                                 class="{{labelPlace.item.objectClass}} {{labels[labelIdx].class}}"
-                                 style="{{settings[labelPlace.item.objectClass]}}"
-                                 ng-drag="true"
-                                 ng-drag-data="labelPlace.item"
-                                 ng-drag-success="onItemDragComplete($data, $event, $index + labelIdx * placesOnShelf)"
-                                 ng-mousedown="onToolMouseDown(labelPlace.item, $index)"
-                                 ng-mouseup="onToolMouseUp(labelPlace.item, $index)">
-                                <input class="label-text"
-                                       style="{{settings['label-text']}}"
-                                       type="text"
-                                       ng-model="labelPlace.item.value"
-                                       ng-mousedown="preventDrag($event)">
-                            </div>
-                        </div>
-                        <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
-                        <div class="label-name">
-                            {{labels[labelIdx].name}}
-                        </div>
-                    </div>
+              </div>
+              <span ng-show="motorPlace.item.socket" class="motor-hsocket-label">
+                  {{motorPlace.item.socket.label}}
+              </span>
+            </div>
+            <div ng-show="motorPlace.item.socketBindingStyle"
+                 class="motor-hsocket-binding"
+                 ng-style="motorPlace.item.socketBindingStyle">
+            </div>
+            <div class="circle motor-circle"
+                 ng-style="settings.motorCircle"
+                 ng-show="motorPlace.item"
+                 ng-drag="true"
+                 ng-drag-data="motorPlace.item.socketBinding"
+                 ng-mousedown="onToolMouseDown(motorPlace.item.socketBinding, $index)"
+                 ng-mouseup="onToolMouseUp(motorPlace.item.socketBinding, $index)">
+            </div>
+          </div>
+          <div class="motor-offset"></div>
+        </div>
+        <div class="hsocket-detectors">
+            <div class="hsocket-offset" ng-style="settings.hsocketOffset"></div>
+            <div class="hsocket-detector {{hsocketPlace.class}}"
+                 ng-class="{'tool-mouse-over': currentTool.mouseOver}"
+                 ng-style="settings.hsocketDetector"
+                 ng-repeat="hsocketPlace in currentShelf.hsocketPlaces"
+                 ng-drop="true"
+                 ng-drop-success="onHsocketPlaceDropComplete($data, $event, $index)">
+                <div class="{{hsocketPlace.item.objectClass}}"
+                     style="{{settings[hsocketPlace.item.objectClass]}}"
+                     ng-drag="true"
+                     ng-drag-data="hsocketPlace.item"
+                     ng-drag-success="onItemDragComplete($data, $event, $index)"
+                     ng-mousedown="onToolMouseDown(hsocketPlace.item, $index)"
+                     ng-mouseup="onToolMouseUp(hsocketPlace.item, $index)">
+                     {{hsocketPlace.item.label}}
                 </div>
             </div>
-            <div class="to-machine">
-                <button type="button" ng-click="configureMachine()">К автомату</button>
+            <div class="hsocket-offset"></div>
+        </div>
+
+        <div class="label-detectors"
+             ng-style="settings.labelDetectors">
+            <div ng-repeat="labelIdx in getTimes(labelsLinesCount)" class="label-container">
+              <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+              <div ng-repeat="labelPlace in currentShelf.labelPlaces.slice(labelIdx * placesOnShelf, (labelIdx + 1) * placesOnShelf)"
+                   class="label-detector {{labelPlace.class}}"
+                   ng-style="settings.labelDetector"
+                   ng-drop="true"
+                   ng-drop-success="onLabelPlaceDropComplete($data, $event, $index + labelIdx * placesOnShelf)">
+                <div ng-show="labelPlace.item"
+                     class="{{labelPlace.item.objectClass}} {{labels[labelIdx].class}}"
+                     style="{{settings[labelPlace.item.objectClass]}}"
+                     ng-drag="true"
+                     ng-drag-data="labelPlace.item"
+                     ng-drag-success="onItemDragComplete($data, $event, $index + labelIdx * placesOnShelf)"
+                     ng-mousedown="onToolMouseDown(labelPlace.item, $index)"
+                     ng-mouseup="onToolMouseUp(labelPlace.item, $index)">
+                  <input class="label-text"
+                         style="{{settings['label-text']}}"
+                         type="text"
+                         ng-model="labelPlace.item.value"
+                         ng-mousedown="preventDrag($event)">
+                </div>
+              </div>
+              <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
+              <div class="label-name">{{labels[labelIdx].name}}</div>
             </div>
         </div>
-        <!-- /ГЕНЕРАТОР ПОЛКИ -->
+      </div>
+      <div class="to-machine">
+          <button type="button" ng-click="configureMachine()">К автомату</button>
+      </div>
     </div>
+    <!-- /ГЕНЕРАТОР ПОЛКИ -->
+  </div>
 </body>
 </html>

@@ -44,4 +44,23 @@ function Indicators() {
 	};
 }
 
+function ToolContainer() {
+	return {
+		link: function($scope, element, attrs) {
+			setHeight();
+
+			$(window).on('resize', function() {
+				setHeight();
+			});
+
+			function setHeight() {
+				$(element).css({
+					height: $(window).height() - 60
+				});
+			}
+		}
+	};
+}
+
 app.directive('indicators', [Indicators]);
+app.directive('toolContainer', [ToolContainer]);

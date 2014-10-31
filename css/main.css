@@ -28,7 +28,8 @@ body {
 }
 
 .configurator {
-	padding: 30px;
+	padding-top: 30px;
+	padding-left: 15px;
 }
 
 .machine,
@@ -104,16 +105,28 @@ body {
 	margin: 0 auto;
 }
 
+.machine-properties input {
+	width: 150px;
+}
+.machine-properties,
 .tools {
 	width: 150px;
-	float: left;
+}
+.tools {
 	padding: 5px;
+	background-color: #FFFFFF;
 }
 
 .tools-container {
-	width: 150px;
-	float: left;
-	margin-right: 55px;
+	width: 180px;
+	position: fixed;
+	overflow-y: auto;
+	z-index: 999;
+}
+
+.machine-generator,
+.shelf-generator {
+	margin-left: 200px;
 }
 
 .tools ul {
