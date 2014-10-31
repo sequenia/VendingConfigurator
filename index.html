@@ -55,6 +55,10 @@
         <label for="height">Высота</label>
         <input id="height" type="number" ng-model="realHeight" ng-change="setSettings('height')">
       </div>
+      <div class="machine-properties">
+        <label for="elem-height" ng-show="elemHeight">Позиция</label>
+        <input id="elem-height" ng-show="elemHeight" type="number" ng-model="elemHeight" ng-change="setHeight()">
+      </div>
     </div>
     <!-- /ПАНЕЛЬ ИНСТРУМЕНТОВ -->
 

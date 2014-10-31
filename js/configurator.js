@@ -494,10 +494,10 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 	function insertSocket($data, $index) {
 		if($scope.mode == $scope.modes.machine) {
 			var detectorPosition = $('#sockets-detector').offset();
-
 			var socket = copyIfTool($data);
 			var top = $scope.toolMouseY - detectorPosition.top;
-			var heightMulty =  $scope.realHeight / $scope.height;
+			var heightMulty = $scope.realHeight / $scope.height;
+
 			socket.style = { top: top };
 			socket.height = Math.round(top * heightMulty);
 			socket.index = $scope.socketIterator;
@@ -506,7 +506,9 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 				socket.shelf.socket = socket;
 			}
 
+			$scope.elemHeight = Math.round(top * heightMulty);
 			$scope.sockets[$scope.socketIterator++] = socket;
+			$scope.currentElem = socket;
 			renumberSockets();
 		} else {
 			var sockets = $scope.currentShelf.hsocketPlaces;
@@ -521,9 +523,10 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 	function insertShelf($data, $index) {
 		var detectorPosition = $('#machine-detector').offset();
-
 		var shelf = copyIfTool($data);
 		var top = $scope.toolMouseY - detectorPosition.top;
+		var heightMulty = $scope.realHeight / $scope.height;
+
 		shelf.style = $.extend(true, {}, $scope.settings.shelfWidth);
 		shelf.style.top = top;
 		shelf.buttonStyle = {top: (top - 10) };
@@ -535,35 +538,43 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			shelf.socket.shelf = shelf;
 		}
 
+		$scope.elemHeight = Math.round(top * heightMulty);
 		$scope.shelves[$scope.shelfIterator++] = shelf;
+		$scope.currentElem = shelf;
 	}
 
 	function insertHole($data, $index) {
 		var detectorPosition = $('#machine-detector').offset();
-
 		var hole = $.extend(true, {}, $data);
 		var top = $scope.toolMouseY - detectorPosition.top;
+		var heightMulty = $scope.realHeight / $scope.height;
+
 		hole.style = { top: top };
 
 		if($scope.toolMouseX - detectorPosition.left > $scope.settings.shelfWidth.width / 2.0) {
 			hole.style.right = 0;
 		}
 
+		$scope.elemHeight = Math.round(top * heightMulty);
 		$scope.holes[$scope.holesIterator++] = hole;
+		$scope.currentElem = hole;
 	}
 
 	function insertGuide($data, $index) {
 		var detectorPosition = $('#machine-detector').offset();
-
 		var guide = $.extend(true, {}, $data);
 		var top = $scope.toolMouseY - detectorPosition.top;
+		var heightMulty = $scope.realHeight / $scope.height;
+
 		guide.style = { top: top };
 
 		if($scope.toolMouseX - detectorPosition.left > $scope.settings.shelfWidth.width / 2.0) {
 			guide.style.right = 0;
 		}
 
+		$scope.elemHeight = Math.round(top * heightMulty);
 		$scope.guides[$scope.guideIterator++] = guide;
+		$scope.currentElem = guide;
 	}
 
 	function insertSki($data, $index) {
@@ -1240,6 +1251,18 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 				'label-text':   'width: '       + ($scope.labelTextWidth) + 'px; ' + 
 								'margin-left: ' + ($scope.labelTextLeft) + 'px'
 
+			};
+
+			$scope.setHeight = function() {
+				var elem = $scope.currentElem;
+				var heightMulty =  $scope.realHeight / $scope.height;
+				elem.style.top = $scope.elemHeight / heightMulty;
+				if(elem.type === $scope.toolTypes.shelf) {
+					elem.buttonStyle.top = elem.style.top - 10;
+				}
+				if(elem.type === $scope.toolTypes.socket) {
+					elem.height = $scope.elemHeight;
+				}
 			};
 
 			resetElementsOnMachine();
