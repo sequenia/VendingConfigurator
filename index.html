@@ -69,6 +69,11 @@
 
     <!-- ГЕНЕРАТОР АВТОМАТА -->
     <div class="machine-generator" ng-show="mode == modes.machine">
+      <div class="scale">
+        <div ng-repeat="division in divisions"
+             class="division"
+             style="top: {{divisionHeight * $index + 14}}px">{{division}}</div>
+      </div>
       <div class="machine"
            ng-style="settings.machine">
         <div class="machine-detector {{machine.class}}"

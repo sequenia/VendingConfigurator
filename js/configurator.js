@@ -1138,6 +1138,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 		$scope.detectorMargin      = 2;   // Отступы детекторов
 		$scope.shelfPlaceOffset    = 15;  // Ширина отступа слева и справа полки
 
+		resetScale();
+
 		$scope.setSettings = function(type) {
 			if(lessThanZero($scope.zoom)) $scope.zoom = 1;
 			if(lessThanZero($scope.realWidth)) $scope.realWidth = 1;
@@ -1153,6 +1155,7 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			$scope.spiralWidth        = $scope.shelfPlaceWidth * 0.9; //41.0; //* zoomCoef;  // Ширина спирали на полке
 			$scope.spiralPlaceHeight  = 370.0; //* zoomCoef; // Длина места для спирали
 			$scope.splitterWidth      = $scope.shelfPlaceWidth * 0.18; //8.0; //* zoomCoef;   // Ширина разделителя
+			$scope.divisionHeight     = $scope.height / (($scope.realHeight) / 20.0);
 
 			$scope.detectorWidth      = $scope.shelfPlaceWidth - 2 * $scope.detectorMargin;     // Ширина детектора без отступов
 			$scope.labelWidth         = $scope.detectorWidth * 1.5;
@@ -1290,6 +1293,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 							$scope.deleteActions[elem.type](index);
 						}
 					});
+
+					resetScale();
 				}
 
 				function onWidthChange(array) {
@@ -1333,8 +1338,17 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 			if(elem.type === $scope.toolTypes.socket) {
 				elem.height = $scope.elemHeight;
 				drawBindings();
+				renumberSockets();
 			}
 		};
+
+		function resetScale() {
+			$scope.divisions = [];
+			var divCount = Math.floor($scope.realHeight / 20.0) + 1;
+			for(var i = 0; i < divCount; i++) {
+				$scope.divisions.push(i * 20);
+			}
+		}
 
 		$scope.setSettings();
 	}
