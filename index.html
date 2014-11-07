@@ -82,6 +82,7 @@
              ng-drop-success="onMachineDropComplete($data, $event)">
           <div ng-repeat="(key, guide) in guides"
                class="{{guide.objectClass}}"
+               ng-class="{'selected': guide.selected}"
                ng-style="guide.style"
                ng-drag="true"
                ng-drag-data="guide"
@@ -91,13 +92,15 @@
           </div>
           <div ng-repeat-start="(key, shelf) in shelves"
                class="{{shelf.objectClass}}"
+               ng-class="{'selected': shelf.selected}"
                index="{{shelf.index}}"
                ng-style="shelf.style"
                ng-drag="true"
                ng-drag-data="shelf"
                ng-drag-success="onItemDragComplete($data, $event, key)"
                ng-mousedown="onToolMouseDown(shelf, key)"
-               ng-mouseup="onToolMouseUp(shelf, key)">
+               ng-mouseup="onToolMouseUp(shelf, key)"
+               ng-prevent-drag="true">
             <!-- МОТОРЫ -->
             <div class="machine-items">
               <div class="machine-place-offset" ng-style="settings.machinePlaceOffset"></div>
@@ -157,6 +160,7 @@
           </div>
           <div ng-repeat="(key, hole) in holes"
                class="{{hole.objectClass}}"
+               ng-class="{'selected': hole.selected}"
                ng-style="hole.style"
                ng-drag="true"
                ng-drag-data="hole"
@@ -180,6 +184,7 @@
           </div>
           <div ng-repeat-end
              class="{{socket.objectClass}} {{socket.class}}"
+             ng-class="{'selected': socket.selected}"
              ng-style="socket.style"
              ng-drag="true"
              ng-drag-data="socket"

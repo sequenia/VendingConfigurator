@@ -507,7 +507,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 			$scope.elemHeight = Math.round(top * $scope.heightMulty);
 			$scope.sockets[$scope.socketIterator++] = socket;
-			$scope.currentElem = socket;
+			select(socket);
+
 			renumberSockets();
 		} else {
 			var sockets = $scope.currentShelf.hsocketPlaces;
@@ -538,7 +539,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 		$scope.elemHeight = Math.round(top * $scope.heightMulty);
 		$scope.shelves[$scope.shelfIterator++] = shelf;
-		$scope.currentElem = shelf;
+
+		select(shelf);
 	}
 
 	function insertHole($data, $index) {
@@ -554,7 +556,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 		$scope.elemHeight = Math.round(top * $scope.heightMulty);
 		$scope.holes[$scope.holesIterator++] = hole;
-		$scope.currentElem = hole;
+
+		select(hole);
 	}
 
 	function insertGuide($data, $index) {
@@ -570,7 +573,8 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 		$scope.elemHeight = Math.round(top * $scope.heightMulty);
 		$scope.guides[$scope.guideIterator++] = guide;
-		$scope.currentElem = guide;
+
+		select(guide);
 	}
 
 	function insertSki($data, $index) {
@@ -1114,6 +1118,14 @@ var ConfiguratorCtrl = function($scope, $timeout) {
 
 	function lessThanZero(number) {
 		return (number === 0 || number === null || isNaN(number) || number < 0);
+	}
+
+	function select(tool) {
+		if($scope.currentElem) {
+			$scope.currentElem.selected = false;
+		}
+		$scope.currentElem = tool;
+		$scope.currentElem.selected = true;
 	}
 
 	function initSettings() {
